@@ -25,6 +25,13 @@
   <property name="windowTitle">
    <string>botgram</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">btn_verify:hover
+{
+
+	background-color: rgb(31, 162, 190);
+}</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
     <string notr="true">color: rgb(255, 255, 255);</string>
@@ -244,7 +251,7 @@ border-radius:25px;
        <enum>QFrame::Raised</enum>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http;//www.roshd.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#E6C323;&quot; &gt;Learn more &amp;gt;&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://www.roshd.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#E6C323;&quot; &gt;Learn more &amp;gt;&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="scaledContents">
        <bool>false</bool>
@@ -267,6 +274,16 @@ border-radius:25px;
      </widget>
     </widget>
     <widget class="QWidget" name="page_2">
+     <property name="styleSheet">
+      <string notr="true">btn_verify
+{
+background-color: rgb(96, 204, 243,0);
+color: rgb(131, 155, 166);
+border-radius:25px;
+border:1px solid;
+border-color: rgb(131, 155, 151);
+}</string>
+     </property>
      <widget class="QLabel" name="label_2">
       <property name="geometry">
        <rect>
@@ -300,13 +317,20 @@ border-radius:25px;
         <height>691</height>
        </rect>
       </property>
+      <property name="styleSheet">
+       <string notr="true">btn_verify:hover
+{
+
+	background-color: rgb(35, 154, 186);
+}</string>
+      </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QLineEdit" name="lineEdit">
+      <widget class="QLineEdit" name="txt_username">
        <property name="geometry">
         <rect>
          <x>90</x>
@@ -337,7 +361,7 @@ color:rgb(255, 255, 255);</string>
         <string>User name</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="lineEdit_2">
+      <widget class="QLineEdit" name="txt_password">
        <property name="geometry">
         <rect>
          <x>90</x>
@@ -359,13 +383,17 @@ color:rgb(255, 255, 255);</string>
     background-color:#00000000 ;
 
  border: 1px solid;
-border-color: rgb(131, 155, 151);</string>
+border-color: rgb(131, 155, 151);
+padding-left:10px;</string>
        </property>
        <property name="placeholderText">
-        <string>   Password</string>
+        <string>Password</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="lineEdit_3">
+      <widget class="QLineEdit" name="txt_email">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>90</x>
@@ -391,6 +419,9 @@ padding-left:10px;</string>
        </property>
       </widget>
       <widget class="QLabel" name="lbl_capcha">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>90</x>
@@ -418,11 +449,13 @@ padding-left:10px;</string>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(96, 204, 243,0);
+        <string notr="true">
+
 color: rgb(131, 155, 166);
 border-radius:25px;
 border:1px solid;
 border-color: rgb(131, 155, 151);
+
 </string>
        </property>
        <property name="text">

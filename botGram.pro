@@ -16,11 +16,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    libraries_BotGram/database_complex.cpp \
     main.cpp \
     botgram.cpp
 
 HEADERS += \
-    botgram.h
+    botgram.h \
+    libraries_BotGram/database_complex.h
 
 FORMS += \
     botgram.ui
@@ -32,3 +34,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     DataFiles/files.qrc
+
+DISTFILES += \
+    DataBases/sample.xml

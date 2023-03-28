@@ -1,0 +1,13 @@
+<dataroot>
+	<users>
+		<user token="" id="">
+			<username>mhka</username>
+			<password>1234</password>
+			<logined>0</logined>
+		</user>
+	</users>
+	<app_vars>
+                <first_entering>1</first_entering>
+	</app_vars>
+</dataroot>
+

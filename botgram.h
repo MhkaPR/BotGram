@@ -18,6 +18,10 @@ public:
 private slots:
     void on_StartApplication_btn_clicked();
 
+    void on_btn_verify_pressed();
+
+    void on_btn_verify_released();
+
 private:
     Ui::botgram *ui;
 };
