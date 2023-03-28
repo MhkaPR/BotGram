@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "libraries_BotGram/database/database_complex.h"
 #include "libraries_BotGram/Accont/Account.h"
+#include "libraries_BotGram/database/user_database.h"
 
 
 
@@ -15,7 +16,7 @@ botgram::botgram(QWidget *parent)
     ui->frame_alarm->setVisible(false);
     ui->frame_alarm_2->setVisible(false);
     ui->txt_email->setVisible(false);
-    ui->lbl_capcha->setVisible(false);
+
     ui->btn_verify->setGeometry(ui->txt_email->geometry().x(),
                                 ui->txt_email->geometry().y(),
                                 ui->btn_verify->geometry().width(),
@@ -147,44 +148,60 @@ void botgram::on_txt_email_textChanged(const QString &arg1)
 
 void botgram::on_btn_verify_clicked()
 {
-    dataBase_complex db;
-    xml_node<>* root=db.connectToXml("sample.xml");
-    if(root)
+    if(!ui->txt_email->isVisible())
     {
-        xml_node<>* node=root->first_node("users");
-        if(!node)
+        if(ui->lbl_Alarm->text()=="it's correct :)" && ui->lbl_alarm2->text()=="it's correct :)")
         {
-            sendMessage("Not found node (users)");
-            exit(0);
-        }
-        else {
-            node=node->first_node("user");
-            if(strcmp(node->first_node("username")->value(),ui->txt_username->text().toStdString().c_str())==0)
-            {
-                if(strcmp(node->first_node("password")->value(),ui->txt_password->text().toStdString().c_str())==0)
-                {
-                    node->first_node("logined")->value("1");
 
-                    dataBase_complex db_personal;
-                    xml_node<>* root =db_personal.connectToXml("BotGramData.xml");
-                    if(root)
-                    {
-                        xml_node<>* nodePersonal=root->first_node("app_vars");
-                        nodePersonal->first_node("first_entering")->value("1");
-                        db_personal.save_modifies();
-                    }
-                    db.save_modifies();
-                    ui->stackedWidget->setCurrentIndex(2);
-                    sendMessage("Wellcome to BotGram");
+            User_DataBase Udb;
+            xml_node<>* root=Udb.connectToXml("sample.xml");
+            if(root)
+            {
+                xml_node<>* MyUsernameNode=Udb.search(ui->txt_username->text().toStdString());
+                if(!MyUsernameNode)
+                {
+                    sendMessage("Not found such user!");
+                    ui->txt_email->setVisible(true);
+                    ui->btn_verify->setGeometry(ui->btn_verify->geometry().x(),
+                                                ui->btn_verify->geometry().y()+2*ui->txt_email->geometry().y(),
+                                                ui->btn_verify->geometry().width(),
+                                                ui->btn_verify->geometry().height());
 
 
                 }
+                else {
+                    if(strcmp(MyUsernameNode->first_node("password")->value(),ui->txt_password->text().toStdString().c_str())==0)
+                    {
+                        MyUsernameNode->first_node("logined")->value("1");
+                        //codes must be chenged
+                        dataBase_complex Perso;
+                        xml_node<>* rootPerso=Perso.connectToXml("BotGramData.xml");
+                        rootPerso->first_node("app_vars")->first_node("first_entering")->value("1");
+                        ui->stackedWidget->setCurrentIndex(2);
+
+                        Perso.save_modifies();
+                        Udb.save_modifies();
+
+                    }
+                }
             }
+            else
+            {
+                sendMessage("not found root\n or   added new file\n or is a Error ");
+            }
+        }
+        else {
+            ui->lbl_Alarm->setText("fill username Correct!!!");
+            ui->lbl_pic_alarm->setStyleSheet("background-color:red;"
+                                             " border-radius:5px;");
+            ui->lbl_alarm2->setText("fill password Correct!!!");
+            ui->lbl_pic_alarm2->setStyleSheet("background-color:red;"
+                                              " border-radius:5px;");
         }
     }
     else
     {
-        sendMessage("not found root\n or   added new file\n or is a Error ");
+
     }
 
 }

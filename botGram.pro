@@ -20,9 +20,10 @@ SOURCES += \
     libraries_BotGram/Accont/Account.cpp \
     libraries_BotGram/database/database_complex.cpp \
 #    libraries_BotGram/database_complex.cpp \
+    libraries_BotGram/database/user_database.cpp \
     main.cpp \
     botgram.cpp \
-    user_database.cpp
+#    user_database.cpp
 
 HEADERS += \
 #    accontvalidity.h \
@@ -30,7 +31,8 @@ HEADERS += \
     libraries_BotGram/Accont/Account.h \
     libraries_BotGram/database/database_complex.h \
  \#    libraries_BotGram/database_complex.h
-    user_database.h
+ \#    user_database.h
+    libraries_BotGram/database/user_database.h
 
 FORMS += \
     botgram.ui

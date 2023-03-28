@@ -52,7 +52,7 @@
      <enum>QFrame::NoFrame</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="page">
      <widget class="QLabel" name="label">
@@ -420,27 +420,11 @@ padding-left:10px;</string>
         <string>E-mail</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lbl_capcha">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>530</y>
-         <width>391</width>
-         <height>91</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>capcha</string>
-       </property>
-      </widget>
       <widget class="QPushButton" name="btn_verify">
        <property name="geometry">
         <rect>
          <x>90</x>
-         <y>630</y>
+         <y>620</y>
          <width>381</width>
          <height>51</height>
         </rect>
@@ -626,7 +610,6 @@ height:20px;</string>
       <zorder>txt_email</zorder>
       <zorder>txt_username</zorder>
       <zorder>txt_password</zorder>
-      <zorder>lbl_capcha</zorder>
       <zorder>btn_verify</zorder>
       <zorder>frame_alarm</zorder>
       <zorder>frame_alarm_2</zorder>
@@ -656,35 +639,6 @@ color:black;
 }
 </string>
      </property>
-    </widget>
-    <widget class="QWidget" name="page_4">
-     <widget class="QPushButton" name="pushButton_2">
-      <property name="geometry">
-       <rect>
-        <x>490</x>
-        <y>390</y>
-        <width>80</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="textEdit">
-      <property name="geometry">
-       <rect>
-        <x>450</x>
-        <y>140</y>
-        <width>251</width>
-        <height>171</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">color:red;
-</string>
-      </property>
-     </widget>
     </widget>
    </widget>
   </widget>

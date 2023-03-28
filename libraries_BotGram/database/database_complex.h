@@ -42,7 +42,7 @@ FIND_ROOT,FIND_BY_NAME,FIND_BY_VALUE
     string* nextNode();
 
     //add objescts
-    void addNode(xml_node<>*,string,string=" ");
+    virtual void addNode(xml_node<>*,string,string=" ");
     void addAttribute(string,string=" ");
 
     //get information

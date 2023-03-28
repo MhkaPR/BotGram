@@ -5,6 +5,10 @@ class User_DataBase : public dataBase_complex
 {
 public:
     User_DataBase();
+    void addNode(string,const string=" ");
+    xml_node<>* search(string);
+private:
+
 };
 
 #endif // USER_DATABASE_H

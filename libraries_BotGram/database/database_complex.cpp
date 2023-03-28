@@ -52,12 +52,6 @@ xml_node<>* dataBase_complex::connectToXml(string nameFile)
     }
 
 
-
-
-
-
-
-
 }
 
 string* dataBase_complex::intoNode()
