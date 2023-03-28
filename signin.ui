@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SignIn</class>
+ <widget class="QWidget" name="SignIn">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1310</width>
+    <height>772</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QPushButton" name="btn_connectTofile">
+   <property name="geometry">
+    <rect>
+     <x>1090</x>
+     <y>40</y>
+     <width>181</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Connect To DataBase</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_addNode">
+   <property name="geometry">
+    <rect>
+     <x>1090</x>
+     <y>150</y>
+     <width>181</width>
+     <height>82</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add node</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_addAttr">
+   <property name="geometry">
+    <rect>
+     <x>1090</x>
+     <y>260</y>
+     <width>181</width>
+     <height>82</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add Attribute</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_intoNode">
+   <property name="geometry">
+    <rect>
+     <x>1090</x>
+     <y>370</y>
+     <width>181</width>
+     <height>82</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>In to Node</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
