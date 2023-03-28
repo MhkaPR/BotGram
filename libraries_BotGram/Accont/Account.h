@@ -40,6 +40,9 @@ public:
 
     bool setLogined(bool);
     bool getLogined();
+
+    string ErrorStr(int);
+
 private:
     string username;
     string password;
@@ -58,6 +61,7 @@ private:
     bool IsWeakPassword(string);
 
     bool IsEndOfString(string,string);
+
 };
 
 #endif // ACCONTVALIDITY_H

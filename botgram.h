@@ -16,6 +16,7 @@ class botgram : public QMainWindow
 public:
     botgram(QWidget *parent = nullptr);
     void sendMessage(string);
+    void fixErrorinAlarmLabel(int,/*ERROR Type*/int);
     ~botgram();
 
 private slots:
@@ -32,6 +33,8 @@ private slots:
     void on_txt_email_textChanged(const QString &arg1);
 
     void on_btn_verify_clicked();
+
+
 
 private:
     Ui::botgram *ui;

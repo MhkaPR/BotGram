@@ -2,5 +2,10 @@
     <qresource prefix="/new/prefix1">
         <file>LoginAndSignIn.jpg</file>
         <file>pishvazThemBotGram.jpg</file>
+        <file>alarm_red.png</file>
+        <file>alarm_yello.png</file>
+        <file>alarmC_green.png</file>
+        <file>alarmC_red.png</file>
+        <file>alarmC_yello.png</file>
     </qresource>
 </RCC>

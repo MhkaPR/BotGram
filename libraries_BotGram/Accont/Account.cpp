@@ -95,14 +95,14 @@ int Account::checkPassword(std::string password_temp)
 
 int Account::checkEmail(std::string str)
 {
-if(!IsEndOfString(str,"@gmail.com"))
-   if(!IsEndOfString(str,"@outlook.com"))
-       if(!IsEndOfString(str,"@icloud.com"))
-           if(!IsEndOfString(str,"@yahoo.com"))
-           {
-               return EMAIL_IS_NOT_EMAIL;
-           }
-return IS_CORRECT;
+    if(!IsEndOfString(str,"@gmail.com"))
+        if(!IsEndOfString(str,"@outlook.com"))
+            if(!IsEndOfString(str,"@icloud.com"))
+                if(!IsEndOfString(str,"@yahoo.com"))
+                {
+                    return EMAIL_IS_NOT_EMAIL;
+                }
+    return IS_CORRECT;
 
 }
 
@@ -147,12 +147,27 @@ bool Account::IsEndOfString(std::string str, std::string strEnd)
     int len=int(str.length());
     for (int i=len-1;len-i <= int(strEnd.length());i--) {
 
-    if(str[i]!=strEnd[i])
-    {
-        return false;
-    }
+        if(str[i]!=strEnd[i])
+        {
+            return false;
+        }
     }
     return  true;
+}
+
+std::string Account::ErrorStr(int Error)
+{
+    switch (Error) {
+    case USERNAME_IS_SHORT:return "your username is short";
+    case USERNAME_IS_REPETITIVE: return "this username is used before";
+    case USERNAME_IS_NOT_STANDARD:return "you can use aAbBcC... & 12... & _ just";
+    case PASSWORD_IS_WEAK: return "No! this password is weak!";
+    case PASSWORD_IS_SHORT: return "your password is short yet";
+    case PASSWORD_IS_NOT_STANDARD:return "you most not use from <,>,\\,\',\",/";
+    case EMAIL_IS_NOT_EMAIL:return "email is not correct";
+    case IS_CORRECT:return "it's correct :)";
+    default:return "undefined Error";
+    }
 }
 
 
