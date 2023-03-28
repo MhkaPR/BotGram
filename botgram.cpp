@@ -2,7 +2,11 @@
 #include "ui_botgram.h"
 #include <QMessageBox>
 #include <QWidget>
-#include "libraries_BotGram/database_complex.h"
+#include "libraries_BotGram/database/database_complex.h"
+#include "libraries_BotGram/Accont/Account.h"
+
+Account myAccount;
+
 botgram::botgram(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::botgram)
@@ -21,6 +25,14 @@ botgram::botgram(QWidget *parent)
     {
         ui->stackedWidget->setCurrentIndex(1);
     }
+}
+
+void botgram::sendMessage(string str)
+{
+    QMessageBox msg;
+    msg.setText(QString::fromStdString(str));
+    msg.show();
+    msg.exec();
 }
 
 botgram::~botgram()
@@ -49,4 +61,33 @@ void botgram::on_btn_verify_released()
                 "  border-radius:25px;"
                 "  border:1px solid;"
                 " border-color: rgb(131, 155, 151);");
+}
+
+void botgram::on_txt_username_textChanged(const QString &arg1)
+{
+
+    myAccount.setUsername(ui->txt_username->text().toStdString());
+
+
+}
+
+void botgram::on_txt_password_textChanged(const QString &arg1)
+{
+
+    myAccount.setPassword(ui->txt_password->text().toStdString());
+
+}
+
+void botgram::on_txt_email_textChanged(const QString &arg1)
+{
+     myAccount.setEmail(ui->txt_email->text().toStdString());
+}
+
+void botgram::on_btn_verify_clicked()
+{
+//    string temp=myAccount.getUsername()+'\n';
+//    temp.append(myAccount.getPassword()+'\n');
+//    temp.append(myAccount.getEmail()+'\n');
+//    sendMessage(temp);
+
 }

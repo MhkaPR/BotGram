@@ -16,13 +16,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    libraries_BotGram/database_complex.cpp \
+#    accontvalidity.cpp \
+    libraries_BotGram/Accont/Account.cpp \
+    libraries_BotGram/database/database_complex.cpp \
+#    libraries_BotGram/database_complex.cpp \
     main.cpp \
     botgram.cpp
 
 HEADERS += \
+#    accontvalidity.h \
     botgram.h \
-    libraries_BotGram/database_complex.h
+    libraries_BotGram/Accont/Account.h \
+    libraries_BotGram/database/database_complex.h \
+#    libraries_BotGram/database_complex.h
 
 FORMS += \
     botgram.ui
