@@ -21,11 +21,11 @@ botgram::botgram(QWidget *parent)
                                 ui->btn_verify->geometry().width(),
                                 ui->btn_verify->geometry().height());
     dataBase_complex db;
-    xml_node<>* root=db.connectToXml("sd");
+    xml_node<>* root=db.connectToXml("BotGramData.xml");
     xml_node<>* node=root->first_node("app_vars");
     if(strcmp(node->first_node("first_entering")->value(),"1")==0)
     {
-        ui->stackedWidget->setCurrentIndex(1);
+        ui->stackedWidget->setCurrentIndex(2);
     }
 }
 
@@ -49,18 +49,18 @@ void botgram::fixErrorinAlarmLabel(int Error, int fixFor)
         ui->lbl_Alarm->setText(QString::fromStdString(TempStr));
         if(Error==Account::USERNAME_IS_SHORT)
         {
-           ui->lbl_pic_alarm->setStyleSheet("background-color:yellow;"
-                                           " border-radius:5px;");
+            ui->lbl_pic_alarm->setStyleSheet("background-color:yellow;"
+                                             " border-radius:5px;");
         }
         else if(Error==Account::USERNAME_IS_REPETITIVE || Error==Account::USERNAME_IS_NOT_STANDARD)
         {
             ui->lbl_pic_alarm->setStyleSheet("background-color:red;"
-                                            " border-radius:5px;");
+                                             " border-radius:5px;");
         }
         else if(Error==Account::IS_CORRECT)
         {
             ui->lbl_pic_alarm->setStyleSheet("background-color:green;"
-                                            " border-radius:5px;");
+                                             " border-radius:5px;");
         }
         break;
     }
@@ -71,18 +71,18 @@ void botgram::fixErrorinAlarmLabel(int Error, int fixFor)
         ui->lbl_alarm2->setText(QString::fromStdString(TempStr));
         if(Error==Account::PASSWORD_IS_SHORT)
         {
-           ui->lbl_pic_alarm2->setStyleSheet("background-color:yellow;"
-                                           " border-radius:5px;");
+            ui->lbl_pic_alarm2->setStyleSheet("background-color:yellow;"
+                                              " border-radius:5px;");
         }
         else if(Error==Account::PASSWORD_IS_WEAK || Error==Account::PASSWORD_IS_NOT_STANDARD)
         {
             ui->lbl_pic_alarm2->setStyleSheet("background-color:red;"
-                                            " border-radius:5px;");
+                                              " border-radius:5px;");
         }
         else if(Error==Account::IS_CORRECT)
         {
             ui->lbl_pic_alarm2->setStyleSheet("background-color:green;"
-                                            " border-radius:5px;");
+                                              " border-radius:5px;");
         }
 
         break;
@@ -123,7 +123,7 @@ void botgram::on_btn_verify_released()
 void botgram::on_txt_username_textChanged(const QString &arg1)
 {
     Account myAccount;
-    int Error=myAccount.setUsername(ui->txt_username->text().toStdString());
+    int Error=myAccount.checkCorrect_Text(ui->txt_username->text().toStdString(),Account::USERNAME);
     fixErrorinAlarmLabel(Error,Account::USERNAME);
 
 
@@ -132,7 +132,7 @@ void botgram::on_txt_username_textChanged(const QString &arg1)
 void botgram::on_txt_password_textChanged(const QString &arg1)
 {
     Account myAccount;
-   int Error= myAccount.setPassword(ui->txt_password->text().toStdString());
+    int Error= myAccount.checkCorrect_Text(ui->txt_password->text().toStdString(),Account::PASSWORD);
     fixErrorinAlarmLabel(Error,Account::PASSWORD);
 
 }
@@ -140,27 +140,52 @@ void botgram::on_txt_password_textChanged(const QString &arg1)
 void botgram::on_txt_email_textChanged(const QString &arg1)
 {
     Account myAccount;
-   int Error= myAccount.setEmail(ui->txt_email->text().toStdString());
-   fixErrorinAlarmLabel(Error,Account::EMAIL);
+    int Error= myAccount.checkCorrect_Text(ui->txt_email->text().toStdString(),Account::EMAIL);
+    fixErrorinAlarmLabel(Error,Account::EMAIL);
 
 }
 
 void botgram::on_btn_verify_clicked()
 {
-    //    string temp=myAccount.getUsername()+'\n';
-    //    temp.append(myAccount.getPassword()+'\n');
-    //    temp.append(myAccount.getEmail()+'\n');
-    //    sendMessage(temp);
-    QPushButton *usernameInfo=new QPushButton();
-    usernameInfo->setGeometry(ui->txt_username->geometry().x(),
-                              ui->txt_username->geometry().y()+ui->txt_username->geometry().height()+5,
-                              ui->txt_username->geometry().width(),
-                              ui->txt_username->geometry().height());
-    usernameInfo->setText("Hello");
-    //   usernameInfo->setStyleSheet("background-color:red;");
+    dataBase_complex db;
+    xml_node<>* root=db.connectToXml("sample.xml");
+    if(root)
+    {
+        xml_node<>* node=root->first_node("users");
+        if(!node)
+        {
+            sendMessage("Not found node (users)");
+            exit(0);
+        }
+        else {
+            node=node->first_node("user");
+            if(strcmp(node->first_node("username")->value(),ui->txt_username->text().toStdString().c_str())==0)
+            {
+                if(strcmp(node->first_node("password")->value(),ui->txt_password->text().toStdString().c_str())==0)
+                {
+                    node->first_node("logined")->value("1");
+
+                    dataBase_complex db_personal;
+                    xml_node<>* root =db_personal.connectToXml("BotGramData.xml");
+                    if(root)
+                    {
+                        xml_node<>* nodePersonal=root->first_node("app_vars");
+                        nodePersonal->first_node("first_entering")->value("1");
+                        db_personal.save_modifies();
+                    }
+                    db.save_modifies();
+                    ui->stackedWidget->setCurrentIndex(2);
+                    sendMessage("Wellcome to BotGram");
 
 
-
+                }
+            }
+        }
+    }
+    else
+    {
+        sendMessage("not found root\n or   added new file\n or is a Error ");
+    }
 
 }
 

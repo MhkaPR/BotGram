@@ -21,14 +21,16 @@ SOURCES += \
     libraries_BotGram/database/database_complex.cpp \
 #    libraries_BotGram/database_complex.cpp \
     main.cpp \
-    botgram.cpp
+    botgram.cpp \
+    user_database.cpp
 
 HEADERS += \
 #    accontvalidity.h \
     botgram.h \
     libraries_BotGram/Accont/Account.h \
     libraries_BotGram/database/database_complex.h \
-#    libraries_BotGram/database_complex.h
+ \#    libraries_BotGram/database_complex.h
+    user_database.h
 
 FORMS += \
     botgram.ui
@@ -42,4 +44,5 @@ RESOURCES += \
     DataFiles/files.qrc
 
 DISTFILES += \
+    DataBases/BotGramData.xml \
     DataBases/sample.xml

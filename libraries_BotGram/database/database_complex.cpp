@@ -1,37 +1,62 @@
 #include "database_complex.h"
 #include <QMessageBox>
+
 dataBase_complex::dataBase_complex()
 {
 
-    file<> f("C:\\Users\\mhkap\\Documents\\BotGram\\DataBases\\sample.xml");
-    DATA_str=f.data();
-    doc.parse<parse_no_data_nodes>(&DATA_str[0]);
-    root=doc.first_node("dataroot");
+    //    file<> f("C:\\Users\\mhkap\\Documents\\BotGram\\DataBases\\sample.xml");
+    //    DATA_str=f.data();
+    //    doc.parse<parse_no_data_nodes>(&DATA_str[0]);
+    //    root=doc.first_node("dataroot");
 
 }
 
 bool dataBase_complex::createDataBase(string nameDataBase)
 {
-    try {
-        ofstream newfile(nameDataBase,ios_base::in);
+        string temp="C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\"+nameDataBase;
+        QFile newFile;
+        newFile.setFileName(temp.c_str());
+        newFile.open(QIODevice::WriteOnly);
         name=nameDataBase;
-        newfile.close();
+        newFile.close();
         return  true;
-    } catch (int) {
-        return  false;
-    }
 
 }
 
 //root node must be :dataroot
 xml_node<>* dataBase_complex::connectToXml(string nameFile)
 {
-//returns Root
-    file<> f("C:\\Users\\mhkap\\Documents\\BotGram\\DataBases\\sample.xml");
-    DATA_str=f.data();
-    doc.parse<parse_no_data_nodes>(&DATA_str[0]);
-    root=doc.first_node("dataroot");
-    return  root;
+    //returns Root
+    string tempAdd="C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\"+nameFile;
+    QFile f;
+    f.setFileName(tempAdd.c_str());
+    if(!f.exists())
+    {
+        createDataBase(nameFile);
+        return NULL;
+    }
+    else
+    {
+        if(!f.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            return  NULL;
+        }
+        DATA_str=f.readAll().toStdString();
+        doc.parse<parse_no_data_nodes>(&DATA_str[0]);
+        root=doc.first_node("dataroot");
+
+        name=nameFile;
+        f.close();
+        return  root;
+
+    }
+
+
+
+
+
+
+
 
 }
 
@@ -65,10 +90,10 @@ string *dataBase_complex::nextNode()
     return  temp;
 }
 
-void dataBase_complex::addNode(string nameNode, string valueNode)
+void dataBase_complex::addNode(xml_node<>* node,string nameNode, string valueNode)
 {
     xml_node<>* temp=doc.allocate_node(node_element,nameNode.c_str(),valueNode.c_str());
-    pointer->append_node(temp);
+    node->append_node(temp);
 }
 
 void dataBase_complex::addAttribute(string nameAttr, string valueAttr)
@@ -197,8 +222,7 @@ xml_node<>* dataBase_complex::findNode(string str, int typeFind)
 
 bool dataBase_complex::save_modifies()
 {
-    ofstream f("C:\\Users\\mhkap\\Documents\\BotGram\\sample.xml");
-    f << "<?xml version=\"1.0\" encoding=\"utf-8\"?>"<<endl;
+    ofstream f(("C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\"+name).c_str());
     f << doc;
     f.close();
     return true;

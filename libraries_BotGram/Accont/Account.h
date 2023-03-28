@@ -43,6 +43,8 @@ public:
 
     string ErrorStr(int);
 
+    int checkCorrect_Text(string,int);
+
 private:
     string username;
     string password;
@@ -51,7 +53,7 @@ private:
 
 
 
-    int checkCorrect_Text(string,int);
+
     int checkUsername(string);
     int checkPassword(string);
     int checkEmail(string);

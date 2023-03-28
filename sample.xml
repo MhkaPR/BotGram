@@ -3,8 +3,11 @@
 		<user token="" id="">
 			<username>mhka1382</username>
 			<password>123456789!</password>
-			<logined>1</logined>
+			<logined>0</logined>
 		</user>
 	</users>
+	<app_vars>
+		<first_entering>0</first_entering>
+	</app_vars>
 </dataroot>
 

@@ -7,14 +7,15 @@ Account::Account()
 
 int Account::setUsername(std::string str)
 {
-    int ErrorType=checkCorrect_Text(str,USERNAME);
-    if(!ErrorType)
-    {
-        username=str;
-        return IS_CORRECT;
-    }
-    username="";
-    return ErrorType;
+//    int ErrorType=checkCorrect_Text(str,USERNAME);
+//    if(!ErrorType)
+//    {
+//        username=str;
+//        return IS_CORRECT;
+//    }
+//    username="";
+//    return ErrorType;
+    username = str;
 }
 
 std::string Account::getUsername()
@@ -24,14 +25,15 @@ std::string Account::getUsername()
 
 int Account::setPassword(std::string str)
 {
-    int ErrorType=checkCorrect_Text(str,PASSWORD);
-    if(!ErrorType){
-        password=str;
-        return IS_CORRECT;
-    }
+//    int ErrorType=checkCorrect_Text(str,PASSWORD);
+//    if(!ErrorType){
+//        password=str;
+//        return IS_CORRECT;
+//    }
 
-    password="";
-    return ErrorType;
+//    password="";
+//    return ErrorType;
+    password=str;
 }
 
 std::string Account::getPassword()

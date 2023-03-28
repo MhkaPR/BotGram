@@ -26,6 +26,7 @@ FIND_ROOT,FIND_BY_NAME,FIND_BY_VALUE
 
     xml_node<>* pointer=NULL;
     string name;
+
     string DATA_str;
     xml_node<>* root=NULL;
     xml_document<> doc;
@@ -41,7 +42,7 @@ FIND_ROOT,FIND_BY_NAME,FIND_BY_VALUE
     string* nextNode();
 
     //add objescts
-    void addNode(string,string=" ");
+    void addNode(xml_node<>*,string,string=" ");
     void addAttribute(string,string=" ");
 
     //get information
