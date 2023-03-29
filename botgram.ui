@@ -317,7 +317,7 @@ border-color: rgb(131, 155, 151);
         <x>670</x>
         <y>0</y>
         <width>601</width>
-        <height>691</height>
+        <height>761</height>
        </rect>
       </property>
       <property name="font">
@@ -418,34 +418,6 @@ padding-left:10px;</string>
        </property>
        <property name="placeholderText">
         <string>E-mail</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btn_verify">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>620</y>
-         <width>381</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">
-
-color: rgb(131, 155, 166);
-border-radius:25px;
-border:1px solid;
-border-color: rgb(131, 155, 151);
-
-</string>
-       </property>
-       <property name="text">
-        <string>Verify</string>
        </property>
       </widget>
       <widget class="QFrame" name="frame_alarm">
@@ -607,12 +579,154 @@ height:20px;</string>
         </layout>
        </widget>
       </widget>
+      <widget class="QFrame" name="frame_alarm_3">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>530</y>
+         <width>381</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QWidget" name="horizontalLayoutWidget_3">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>381</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="hlayout_alarm_3" stretch="1,20">
+         <item>
+          <widget class="QLabel" name="lbl_pic_alarm3">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>10</width>
+             <height>10</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>10</width>
+             <height>10</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <stylestrategy>PreferDefault</stylestrategy>
+            </font>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::NoContextMenu</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color:red;
+border-radius:5px;
+width:20px;
+height:20px;</string>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lbl_alarm3">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QFrame" name="frame_Verify">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>640</y>
+         <width>381</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QPushButton" name="btn_SignIn">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>60</y>
+          <width>80</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+border-radius:1px;</string>
+        </property>
+        <property name="text">
+         <string>Sign In</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btn_verify">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>381</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+
+color: rgb(131, 155, 166);
+border-radius:25px;
+border:1px solid;
+border-color: rgb(131, 155, 151);
+
+</string>
+        </property>
+        <property name="text">
+         <string>Verify</string>
+        </property>
+       </widget>
+      </widget>
       <zorder>txt_email</zorder>
       <zorder>txt_username</zorder>
       <zorder>txt_password</zorder>
-      <zorder>btn_verify</zorder>
       <zorder>frame_alarm</zorder>
       <zorder>frame_alarm_2</zorder>
+      <zorder>frame_alarm_3</zorder>
+      <zorder>frame_Verify</zorder>
      </widget>
     </widget>
     <widget class="QWidget" name="page_3">

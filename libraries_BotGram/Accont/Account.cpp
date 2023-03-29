@@ -7,14 +7,14 @@ Account::Account()
 
 int Account::setUsername(std::string str)
 {
-//    int ErrorType=checkCorrect_Text(str,USERNAME);
-//    if(!ErrorType)
-//    {
-//        username=str;
-//        return IS_CORRECT;
-//    }
-//    username="";
-//    return ErrorType;
+    //    int ErrorType=checkCorrect_Text(str,USERNAME);
+    //    if(!ErrorType)
+    //    {
+    //        username=str;
+    //        return IS_CORRECT;
+    //    }
+    //    username="";
+    //    return ErrorType;
     username = str;
 }
 
@@ -25,14 +25,14 @@ std::string Account::getUsername()
 
 int Account::setPassword(std::string str)
 {
-//    int ErrorType=checkCorrect_Text(str,PASSWORD);
-//    if(!ErrorType){
-//        password=str;
-//        return IS_CORRECT;
-//    }
+    //    int ErrorType=checkCorrect_Text(str,PASSWORD);
+    //    if(!ErrorType){
+    //        password=str;
+    //        return IS_CORRECT;
+    //    }
 
-//    password="";
-//    return ErrorType;
+    //    password="";
+    //    return ErrorType;
     password=str;
 }
 
@@ -146,14 +146,19 @@ bool Account::IsWeakPassword(std::string str)
 
 bool Account::IsEndOfString(std::string str, std::string strEnd)
 {
-    int len=int(str.length());
-    for (int i=len-1;len-i <= int(strEnd.length());i--) {
+    int len = int(str.length());
+    int lenEnd = int(strEnd.length());
+    if (len > lenEnd)
+    {
+        for (int i = len - 1; len - i <= lenEnd; i--) {
 
-        if(str[i]!=strEnd[i])
-        {
-            return false;
+            if (str[i] != strEnd[i - (len - lenEnd)])
+            {
+                return false;
+            }
         }
     }
+    else return false;
     return  true;
 }
 
@@ -163,6 +168,7 @@ std::string Account::ErrorStr(int Error)
     case USERNAME_IS_SHORT:return "your username is short";
     case USERNAME_IS_REPETITIVE: return "this username is used before";
     case USERNAME_IS_NOT_STANDARD:return "you can use aAbBcC... & 12... & _ just";
+    case USERNAME_NOT_FOUND: return "username not found";
     case PASSWORD_IS_WEAK: return "No! this password is weak!";
     case PASSWORD_IS_SHORT: return "your password is short yet";
     case PASSWORD_IS_NOT_STANDARD:return "you most not use from <,>,\\,\',\",/";

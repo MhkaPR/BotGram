@@ -11,6 +11,15 @@ dataBase_complex::dataBase_complex()
 
 }
 
+void dataBase_complex::sendMessage(string str)
+{
+    QMessageBox msg;
+    msg.setText(QString::fromStdString(str));
+    msg.show();
+    msg.exec();
+}
+
+
 bool dataBase_complex::createDataBase(string nameDataBase)
 {
         string temp="C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\"+nameDataBase;

@@ -32,6 +32,9 @@ FIND_ROOT,FIND_BY_NAME,FIND_BY_VALUE
     xml_document<> doc;
     vector<char> Buffer;
     explicit dataBase_complex();
+
+    void sendMessage(string);
+
     //connection to dataBase
     //root node must be :dataroot
     bool createDataBase(string);

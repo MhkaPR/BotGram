@@ -4,9 +4,15 @@
 class User_DataBase : public dataBase_complex
 {
 public:
+    enum typeSearchUser
+    {
+        USERNAME,
+        PASSWORD,
+        EMAIL,
+    };
     User_DataBase();
-    void addNode(string,const string=" ");
-    xml_node<>* search(string);
+    xml_node<>* addUser(const string,const string,const string);
+    xml_node<>* search(string,string);
 private:
 
 };

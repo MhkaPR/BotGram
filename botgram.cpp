@@ -6,8 +6,6 @@
 #include "libraries_BotGram/Accont/Account.h"
 #include "libraries_BotGram/database/user_database.h"
 
-
-
 botgram::botgram(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::botgram)
@@ -15,12 +13,13 @@ botgram::botgram(QWidget *parent)
     ui->setupUi(this);
     ui->frame_alarm->setVisible(false);
     ui->frame_alarm_2->setVisible(false);
+    ui->frame_alarm_3->setVisible(false);
     ui->txt_email->setVisible(false);
 
-    ui->btn_verify->setGeometry(ui->txt_email->geometry().x(),
-                                ui->txt_email->geometry().y(),
-                                ui->btn_verify->geometry().width(),
-                                ui->btn_verify->geometry().height());
+    ui->frame_Verify->setGeometry(ui->txt_email->geometry().x(),
+                                  ui->txt_email->geometry().y(),
+                                  ui->frame_Verify->geometry().width(),
+                                  ui->frame_Verify->geometry().height());
     dataBase_complex db;
     xml_node<>* root=db.connectToXml("BotGramData.xml");
     xml_node<>* node=root->first_node("app_vars");
@@ -28,6 +27,16 @@ botgram::botgram(QWidget *parent)
     {
         ui->stackedWidget->setCurrentIndex(2);
     }
+    else ui->stackedWidget->setCurrentIndex(1);
+}
+bool botgram::get_LoginVar()
+{
+    return IsInLogin;
+}
+
+void botgram::set_LoginVar(bool v_Login)
+{
+    IsInLogin=v_Login;
 }
 
 void botgram::sendMessage(string str)
@@ -53,7 +62,9 @@ void botgram::fixErrorinAlarmLabel(int Error, int fixFor)
             ui->lbl_pic_alarm->setStyleSheet("background-color:yellow;"
                                              " border-radius:5px;");
         }
-        else if(Error==Account::USERNAME_IS_REPETITIVE || Error==Account::USERNAME_IS_NOT_STANDARD)
+        else if(Error==Account::USERNAME_IS_REPETITIVE ||
+                Error==Account::USERNAME_IS_NOT_STANDARD ||
+                Error==Account::USERNAME_NOT_FOUND)
         {
             ui->lbl_pic_alarm->setStyleSheet("background-color:red;"
                                              " border-radius:5px;");
@@ -88,7 +99,23 @@ void botgram::fixErrorinAlarmLabel(int Error, int fixFor)
 
         break;
     }
-    case Account::EMAIL:;
+    case Account::EMAIL:
+    {
+        ui->frame_alarm_3->setVisible(true);
+        ui->lbl_alarm3->setVisible(true);
+        ui->lbl_alarm3->setText(QString::fromStdString(TempStr));
+        if(Error==Account::EMAIL_IS_NOT_EMAIL)
+        {
+            ui->lbl_pic_alarm3->setStyleSheet("background-color:red;"
+                                              " border-radius:5px;");
+        }
+        else if(Error==Account::IS_CORRECT)
+        {
+            ui->lbl_pic_alarm3->setStyleSheet("background-color:green;"
+                                              " border-radius:5px;");
+        }
+        break;
+    }
     }
 
 }
@@ -123,6 +150,11 @@ void botgram::on_btn_verify_released()
 
 void botgram::on_txt_username_textChanged(const QString &arg1)
 {
+    ui->txt_password->setStyleSheet("border-radius: 20px;"
+                                    " background-color:#00000000 ;"
+                                    " border: 1px solid;"
+                                    "border-color: rgb(131, 155, 151);"
+                                    "padding-left:10px;");
     Account myAccount;
     int Error=myAccount.checkCorrect_Text(ui->txt_username->text().toStdString(),Account::USERNAME);
     fixErrorinAlarmLabel(Error,Account::USERNAME);
@@ -132,6 +164,11 @@ void botgram::on_txt_username_textChanged(const QString &arg1)
 
 void botgram::on_txt_password_textChanged(const QString &arg1)
 {
+    ui->txt_password->setStyleSheet("border-radius: 20px;"
+                                    " background-color:#00000000 ;"
+                                    " border: 1px solid;"
+                                    "border-color: rgb(131, 155, 151);"
+                                    "padding-left:10px;");
     Account myAccount;
     int Error= myAccount.checkCorrect_Text(ui->txt_password->text().toStdString(),Account::PASSWORD);
     fixErrorinAlarmLabel(Error,Account::PASSWORD);
@@ -148,28 +185,27 @@ void botgram::on_txt_email_textChanged(const QString &arg1)
 
 void botgram::on_btn_verify_clicked()
 {
-    if(!ui->txt_email->isVisible())
+    Account mac;
+    int ErrorUsername=mac.checkCorrect_Text(ui->txt_username->text().toStdString().c_str(),Account::USERNAME);
+    int ErrorPassword=mac.checkCorrect_Text(ui->txt_password->text().toStdString().c_str(),Account::PASSWORD);
+
+    if(!ErrorUsername && !ErrorPassword)
     {
-        if(ui->lbl_Alarm->text()=="it's correct :)" && ui->lbl_alarm2->text()=="it's correct :)")
+        User_DataBase Udb;
+        if(get_LoginVar()==true)
         {
 
-            User_DataBase Udb;
+
             xml_node<>* root=Udb.connectToXml("sample.xml");
             if(root)
             {
-                xml_node<>* MyUsernameNode=Udb.search(ui->txt_username->text().toStdString());
+                xml_node<>* MyUsernameNode=Udb.search(ui->txt_username->text().toStdString(),"username");
                 if(!MyUsernameNode)
                 {
-                    sendMessage("Not found such user!");
-                    ui->txt_email->setVisible(true);
-                    ui->btn_verify->setGeometry(ui->btn_verify->geometry().x(),
-                                                ui->btn_verify->geometry().y()+2*ui->txt_email->geometry().y(),
-                                                ui->btn_verify->geometry().width(),
-                                                ui->btn_verify->geometry().height());
-
-
+                    fixErrorinAlarmLabel(Account::USERNAME_NOT_FOUND,Account::USERNAME);
                 }
-                else {
+                else // username is correct
+                {
                     if(strcmp(MyUsernameNode->first_node("password")->value(),ui->txt_password->text().toStdString().c_str())==0)
                     {
                         MyUsernameNode->first_node("logined")->value("1");
@@ -183,26 +219,117 @@ void botgram::on_btn_verify_clicked()
                         Udb.save_modifies();
 
                     }
+                    else
+                    {
+
+                        ui->txt_password->setStyleSheet("border-radius: 20px;"
+                                                        " background-color:#00000000 ;"
+                                                        " border: 1px solid;"
+                                                        "border-color: #dc0000;"
+                                                        "padding-left:10px;");
+                    }
                 }
             }
             else
             {
                 sendMessage("not found root\n or   added new file\n or is a Error ");
             }
+
         }
-        else {
+        else//Sign in
+        {
+            int ErrorEmail=mac.checkCorrect_Text(ui->txt_email->text().toStdString().c_str(),Account::EMAIL);
+            if(!ErrorEmail)
+            {
+                dataBase_complex Perso;
+                xml_node<>* rootPerso=Perso.connectToXml("BotGramData.xml");
+                xml_node <>* newUser=Udb.addUser(ui->txt_username->text().toStdString(),
+                                                 ui->txt_password->text().toStdString(),
+                                                 ui->txt_email->text().toStdString());
+                if(!newUser)
+                {
+                    sendMessage("Error in Add new User");
+                    exit(1);
+                }
+
+                newUser->first_node("logined")->value("1");
+
+                rootPerso->first_node("app_vars")->first_node("first_entering")->value("1");
+
+                ui->stackedWidget->setCurrentIndex(2);
+
+                Perso.save_modifies();
+                Udb.save_modifies();
+            }
+            else fixErrorinAlarmLabel(ErrorEmail,Account::EMAIL);
+
+        }
+
+    }
+    else
+    {
+        ui->frame_alarm->setVisible(true);
+        ui->frame_alarm_2->setVisible(true);
+        if(ErrorUsername)
+        {
             ui->lbl_Alarm->setText("fill username Correct!!!");
             ui->lbl_pic_alarm->setStyleSheet("background-color:red;"
                                              " border-radius:5px;");
+        }
+        else
+        {
+            fixErrorinAlarmLabel(ErrorUsername,Account::USERNAME);
+        }
+        if(ErrorPassword)
+        {
             ui->lbl_alarm2->setText("fill password Correct!!!");
             ui->lbl_pic_alarm2->setStyleSheet("background-color:red;"
                                               " border-radius:5px;");
         }
-    }
-    else
-    {
-
+        else
+        {
+            fixErrorinAlarmLabel(ErrorPassword,Account::PASSWORD);
+        }
     }
 
 }
 
+
+
+
+void botgram::on_btn_SignIn_pressed()
+{
+    ui->btn_SignIn->setStyleSheet("text-decoration:underline ;"
+                                  "border-radius:1px;");
+}
+
+void botgram::on_btn_SignIn_released()
+{
+    ui->btn_SignIn->setStyleSheet("border-radius:1px;");
+}
+
+void botgram::on_btn_SignIn_clicked()
+{
+    if(get_LoginVar())
+    {
+        set_LoginVar(false);
+        ui->txt_email->setVisible(true);
+        ui->frame_Verify->setGeometry(ui->frame_Verify->geometry().x(),
+                                      ui->frame_Verify->geometry().y()+2*ui->txt_email->geometry().height(),
+                                      ui->frame_Verify->geometry().width(),
+                                      ui->frame_Verify->geometry().height());
+        ui->btn_verify->setText("Sign In");
+        ui->btn_SignIn->setText("Back");
+    }
+    else
+    {
+        set_LoginVar(true);
+        ui->txt_email->setVisible(false);
+        ui->frame_Verify->setGeometry(ui->frame_Verify->geometry().x(),
+                                      ui->frame_Verify->geometry().y()-2*ui->txt_email->geometry().height(),
+                                      ui->frame_Verify->geometry().width(),
+                                      ui->frame_Verify->geometry().height());
+        ui->btn_verify->setText("Login");
+        ui->btn_SignIn->setText("Sign In");
+    }
+}

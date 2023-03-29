@@ -34,9 +34,19 @@ private slots:
 
     void on_btn_verify_clicked();
 
+    bool get_LoginVar();
+    void set_LoginVar(bool);
 
+
+
+    void on_btn_SignIn_pressed();
+
+    void on_btn_SignIn_released();
+
+    void on_btn_SignIn_clicked();
 
 private:
     Ui::botgram *ui;
+    bool IsInLogin=true;
 };
 #endif // BOTGRAM_H
