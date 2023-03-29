@@ -11,7 +11,7 @@ public:
         EMAIL,
     };
     User_DataBase();
-    xml_node<>* addUser(const string,const string,const string);
+    xml_node<>* addUser(const string&,const string&,const string&);
     xml_node<>* search(string,string);
 private:
 

@@ -1,6 +1,6 @@
 <dataroot>
 	<users>
-		<user id="mhkapr">
+		<user token="0" id="mhkapr">
 			<username>mhka1382</username>
 			<password>123456789!</password>
 			<email>mhka1382@gmail.com</email>

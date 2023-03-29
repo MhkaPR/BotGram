@@ -242,32 +242,41 @@ void botgram::on_btn_verify_clicked()
             int ErrorEmail=mac.checkCorrect_Text(ui->txt_email->text().toStdString().c_str(),Account::EMAIL);
             if(!ErrorEmail)
             {
-                dataBase_complex Perso;
-                xml_node<>* rootPerso=Perso.connectToXml("BotGramData.xml");
-                xml_node <>* newUser=Udb.addUser(ui->txt_username->text().toStdString(),
-                                                 ui->txt_password->text().toStdString(),
-                                                 ui->txt_email->text().toStdString());
-                if(!newUser)
+                xml_node<>* MyUsernameNode=Udb.search(ui->txt_username->text().toStdString(),"username");
+                if(!MyUsernameNode)
                 {
-                    sendMessage("Error in Add new User");
-                    exit(1);
+                    dataBase_complex Perso;
+                    xml_node<>* rootPerso=Perso.connectToXml("BotGramData.xml");
+
+                    string username_txt=ui->txt_username->text().toStdString();
+                    string password_txt=ui->txt_password->text().toStdString();
+                    string email_txt=ui->txt_email->text().toStdString();
+                    xml_node <>* newUser=Udb.addUser(username_txt,password_txt, email_txt);
+                    if(!newUser)
+                    {
+                        sendMessage("Error in Add new User");
+                        exit(1);
+                    }
+
+                    newUser->first_node("logined")->value("1");
+
+                    rootPerso->first_node("app_vars")->first_node("first_entering")->value("0");//must be 1
+
+                    ui->stackedWidget->setCurrentIndex(2);
+
+                    //                string fileMeStr;
+                    //                print(back_inserter(fileMeStr),Udb.doc);
+                    //                sendMessage(fileMeStr);
+
+                    Perso.save_modifies();
+                    Udb.save_modifies();
+                }
+                else
+                {
+                    fixErrorinAlarmLabel(Account::USERNAME_IS_REPETITIVE,Account::USERNAME);
                 }
 
-                newUser->first_node("logined")->value("1");
-
-                rootPerso->first_node("app_vars")->first_node("first_entering")->value("0");
-
-                ui->stackedWidget->setCurrentIndex(2);
-
-//                string fileMeStr;
-//                print(back_inserter(fileMeStr),Udb.doc);
-//                sendMessage(fileMeStr);
-
-                Perso.save_modifies();
-//                Udb.save_modifies();
-            }
-            else fixErrorinAlarmLabel(ErrorEmail,Account::EMAIL);
-
+            } else fixErrorinAlarmLabel(ErrorEmail,Account::EMAIL);
         }
 
     }

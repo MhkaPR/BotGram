@@ -4,66 +4,55 @@ User_DataBase::User_DataBase()
 {
 
 }
-xml_node<>* User_DataBase::addUser(const string nameUser,const string passwordUser,const string emailUser)
+xml_node<>* User_DataBase::addUser(const string& nameUser,const string& passwordUser,const string& emailUser)
 {
 
-    //    if(!root)
-    //    {
-    //   root=connectToXml("sample.xml");
-    //        if(!root) exit(1);
-    //    }
-    xml_document<> docME;
-    xml_node<>* rootME;
-    string tempAdd="C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\sample.xml";
-    QFile f;
-    f.setFileName(tempAdd.c_str());
-
-    if(!f.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        return  NULL;
-    }
-    string DATA_strME=f.readAll().toStdString();
-    docME.parse<parse_full>(&DATA_strME[0]);
-    rootME=docME.first_node("dataroot");
-
-    //        name=nameFile;
-    f.close();
-    //        return  root;
-
+        if(!root)
+        {
+       root=connectToXml("sample.xml");
+            if(!root) exit(1);
+        }
 
     //------------------------------------------
-    xml_node<>* newUser=docME.allocate_node(node_element,"user"," ");
-    xml_node<>* users=rootME->first_node("users");
+    xml_node<>* newUser=doc.allocate_node(node_element,"user"," ");
+    xml_node<>* users=root->first_node("users");
     users->append_node(newUser);
     newUser=NULL;
     newUser=users->last_node("user");
 
-    xml_attribute<>* newAtt=docME.allocate_attribute("id","@");
+    xml_attribute<>* newAtt=doc.allocate_attribute("id","@");
     newUser->append_attribute(newAtt);
     newAtt=NULL;
 
 
+    string* previousTokenStr=new string();
+    *previousTokenStr=newUser->previous_sibling()->value();
+    int previousToken=Toint(*previousTokenStr);
+    previousToken++;
+    *previousTokenStr=to_string(previousToken);
+
+    newAtt=doc.allocate_attribute("token",previousTokenStr->c_str());
+    newUser->prepend_attribute(newAtt);
 
 
 
-    xml_node<>* newUserInfo=docME.allocate_node(node_element,"username",nameUser.c_str());
+    xml_node<>* newUserInfo=doc.allocate_node(node_element,"username",nameUser.c_str());
     newUser->append_node(newUserInfo);
     newUserInfo=NULL;
 
-    newUserInfo=docME.allocate_node(node_element,"password",passwordUser.c_str());
+    newUserInfo=doc.allocate_node(node_element,"password",passwordUser.c_str());
     newUser->append_node(newUserInfo);
     newUserInfo=NULL;
 
-    newUserInfo=docME.allocate_node(node_element,"email",emailUser.c_str());
+    newUserInfo=doc.allocate_node(node_element,"email",emailUser.c_str());
     newUser->append_node(newUserInfo);
     newUserInfo=NULL;
 
-    newUserInfo=docME.allocate_node(node_element,"logined","0");
+    newUserInfo=doc.allocate_node(node_element,"logined","0");
     newUser->append_node(newUserInfo);
 
-    ofstream FF("C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\sample.xml");
-    FF << docME;
-    FF.close();
+
+
     return newUser;
 
 }
