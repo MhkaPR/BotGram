@@ -19,6 +19,16 @@ void dataBase_complex::sendMessage(string str)
     msg.exec();
 }
 
+int dataBase_complex::Toint(string str)
+{
+    int ans=0;
+    for (int i=0;str[i];i++) {
+        int temp=str[i]-48;
+        ans=10*ans+temp;
+    }
+    return ans;
+}
+
 
 bool dataBase_complex::createDataBase(string nameDataBase)
 {
@@ -51,7 +61,7 @@ xml_node<>* dataBase_complex::connectToXml(string nameFile)
             return  NULL;
         }
         DATA_str=f.readAll().toStdString();
-        doc.parse<parse_no_data_nodes>(&DATA_str[0]);
+        doc.parse<parse_full>(&DATA_str[0]);
         root=doc.first_node("dataroot");
 
         name=nameFile;
@@ -225,6 +235,16 @@ xml_node<>* dataBase_complex::findNode(string str, int typeFind)
 
 bool dataBase_complex::save_modifies()
 {
+//    QFile Fm(("C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\"+name).c_str());
+
+//    if(!Fm.open(QIODevice::WriteOnly))
+//    {
+//        return  false;
+//    }
+//    string fileMeStr;
+//    print(back_inserter(fileMeStr),doc);
+//    Fm.write( fileMeStr.c_str());
+//    Fm.close();
     ofstream f(("C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\"+name).c_str());
     f << doc;
     f.close();

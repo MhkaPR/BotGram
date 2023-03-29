@@ -34,6 +34,7 @@ FIND_ROOT,FIND_BY_NAME,FIND_BY_VALUE
     explicit dataBase_complex();
 
     void sendMessage(string);
+    int Toint(string);
 
     //connection to dataBase
     //root node must be :dataroot
@@ -45,7 +46,7 @@ FIND_ROOT,FIND_BY_NAME,FIND_BY_VALUE
     string* nextNode();
 
     //add objescts
-    virtual void addNode(xml_node<>*,string,string=" ");
+    void addNode(xml_node<>*,string,string=" ");
     void addAttribute(string,string=" ");
 
     //get information
@@ -62,6 +63,9 @@ FIND_ROOT,FIND_BY_NAME,FIND_BY_VALUE
 
     //search funcs
     xml_node<>* findNode(string,int);
+
+
+
 
     bool save_modifies();
 

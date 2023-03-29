@@ -1,4 +1,4 @@
-#include "user_database.h"
+﻿#include "user_database.h"
 #include <QString>
 User_DataBase::User_DataBase()
 {
@@ -6,43 +6,64 @@ User_DataBase::User_DataBase()
 }
 xml_node<>* User_DataBase::addUser(const string nameUser,const string passwordUser,const string emailUser)
 {
-    if(!root)
+
+    //    if(!root)
+    //    {
+    //   root=connectToXml("sample.xml");
+    //        if(!root) exit(1);
+    //    }
+    xml_document<> docME;
+    xml_node<>* rootME;
+    string tempAdd="C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\sample.xml";
+    QFile f;
+    f.setFileName(tempAdd.c_str());
+
+    if(!f.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        root=connectToXml("sample.xml");
-        if(!root) exit(1);
+        return  NULL;
     }
-    xml_node<>* newUser=doc.allocate_node(node_element,"user"," ");
-    xml_node<>* users=root->first_node("users");
+    string DATA_strME=f.readAll().toStdString();
+    docME.parse<parse_full>(&DATA_strME[0]);
+    rootME=docME.first_node("dataroot");
+
+    //        name=nameFile;
+    f.close();
+    //        return  root;
+
+
+    //------------------------------------------
+    xml_node<>* newUser=docME.allocate_node(node_element,"user"," ");
+    xml_node<>* users=rootME->first_node("users");
     users->append_node(newUser);
     newUser=NULL;
     newUser=users->last_node("user");
 
-    xml_node<>* temp=newUser->previous_sibling();
-    string tempStr=temp->first_attribute("token")->value();
-    sendMessage(tempStr);
-    int previosToken=QString::fromStdString(tempStr).toInt();
-    previosToken++;
-    tempStr=to_string(previosToken);
-    const char* ch=tempStr.c_str();
-    sendMessage(ch);
-    xml_attribute<>* newAttForNewUser=doc.allocate_attribute("token",ch);
-    newUser->append_attribute(newAttForNewUser);
-    newAttForNewUser=NULL;
-    newAttForNewUser=doc.allocate_attribute("id","@");
-    newUser->append_attribute(newAttForNewUser);
+    xml_attribute<>* newAtt=docME.allocate_attribute("id","@");
+    newUser->append_attribute(newAtt);
+    newAtt=NULL;
 
-    xml_node<>* newUserInfo=doc.allocate_node(node_element,"username",nameUser.c_str());
+
+
+
+
+    xml_node<>* newUserInfo=docME.allocate_node(node_element,"username",nameUser.c_str());
     newUser->append_node(newUserInfo);
     newUserInfo=NULL;
-    newUserInfo=doc.allocate_node(node_element,"password",passwordUser.c_str());
+
+    newUserInfo=docME.allocate_node(node_element,"password",passwordUser.c_str());
     newUser->append_node(newUserInfo);
     newUserInfo=NULL;
-    newUserInfo=doc.allocate_node(node_element,"email",emailUser.c_str());
+
+    newUserInfo=docME.allocate_node(node_element,"email",emailUser.c_str());
     newUser->append_node(newUserInfo);
     newUserInfo=NULL;
-    newUserInfo=doc.allocate_node(node_element,"logined","0");
+
+    newUserInfo=docME.allocate_node(node_element,"logined","0");
     newUser->append_node(newUserInfo);
 
+    ofstream FF("C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\sample.xml");
+    FF << docME;
+    FF.close();
     return newUser;
 
 }

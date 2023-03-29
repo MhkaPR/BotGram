@@ -215,6 +215,7 @@ void botgram::on_btn_verify_clicked()
                         rootPerso->first_node("app_vars")->first_node("first_entering")->value("1");
                         ui->stackedWidget->setCurrentIndex(2);
 
+
                         Perso.save_modifies();
                         Udb.save_modifies();
 
@@ -254,12 +255,16 @@ void botgram::on_btn_verify_clicked()
 
                 newUser->first_node("logined")->value("1");
 
-                rootPerso->first_node("app_vars")->first_node("first_entering")->value("1");
+                rootPerso->first_node("app_vars")->first_node("first_entering")->value("0");
 
                 ui->stackedWidget->setCurrentIndex(2);
 
+//                string fileMeStr;
+//                print(back_inserter(fileMeStr),Udb.doc);
+//                sendMessage(fileMeStr);
+
                 Perso.save_modifies();
-                Udb.save_modifies();
+//                Udb.save_modifies();
             }
             else fixErrorinAlarmLabel(ErrorEmail,Account::EMAIL);
 

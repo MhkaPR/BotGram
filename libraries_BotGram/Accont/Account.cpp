@@ -89,7 +89,7 @@ int Account::checkUsername(std::string username_temp)
 int Account::checkPassword(std::string password_temp)
 {
     if(password_temp.length()<PASSWORD_LENGHT)return  PASSWORD_IS_SHORT;
-    if(!IsWeakPassword(password_temp)) return PASSWORD_IS_WEAK;
+    //if(!IsWeakPassword(password_temp)) return PASSWORD_IS_WEAK;
     if(!IsStandardPassword(password_temp)) return  PASSWORD_IS_NOT_STANDARD;
     else return IS_CORRECT;
 
