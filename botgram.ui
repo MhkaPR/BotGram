@@ -26,11 +26,7 @@
    <string>botgram</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">btn_verify:hover
-{
-
-	background-color: rgb(31, 162, 190);
-}</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
@@ -275,14 +271,7 @@ border-radius:25px;
     </widget>
     <widget class="QWidget" name="page_2">
      <property name="styleSheet">
-      <string notr="true">btn_verify
-{
-background-color: rgb(96, 204, 243,0);
-color: rgb(131, 155, 166);
-border-radius:25px;
-border:1px solid;
-border-color: rgb(131, 155, 151);
-}</string>
+      <string notr="true"/>
      </property>
      <widget class="QLabel" name="label_2">
       <property name="geometry">
@@ -315,9 +304,9 @@ border-color: rgb(131, 155, 151);
       <property name="geometry">
        <rect>
         <x>670</x>
-        <y>0</y>
+        <y>-80</y>
         <width>601</width>
-        <height>761</height>
+        <height>891</height>
        </rect>
       </property>
       <property name="font">
@@ -326,11 +315,7 @@ border-color: rgb(131, 155, 151);
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">btn_verify:hover
-{
-
-	background-color: rgb(35, 154, 186);
-}</string>
+       <string notr="true"/>
       </property>
       <widget class="QLineEdit" name="txt_username">
        <property name="geometry">
@@ -387,6 +372,9 @@ color:rgb(255, 255, 255);</string>
  border: 1px solid;
 border-color: rgb(131, 155, 151);
 padding-left:10px;</string>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhHiddenText</set>
        </property>
        <property name="placeholderText">
         <string>Password</string>
@@ -663,10 +651,13 @@ height:20px;</string>
        <property name="geometry">
         <rect>
          <x>90</x>
-         <y>640</y>
+         <y>760</y>
          <width>381</width>
-         <height>111</height>
+         <height>101</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
        </property>
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
@@ -678,7 +669,7 @@ height:20px;</string>
         <property name="geometry">
          <rect>
           <x>150</x>
-          <y>60</y>
+          <y>70</y>
           <width>80</width>
           <height>25</height>
          </rect>
@@ -708,7 +699,7 @@ border-radius:1px;</string>
         <property name="styleSheet">
          <string notr="true">
 
-color: rgb(131, 155, 166);
+color: rgb(131, 155, 151);;
 border-radius:25px;
 border:1px solid;
 border-color: rgb(131, 155, 151);
@@ -720,6 +711,49 @@ border-color: rgb(131, 155, 151);
         </property>
        </widget>
       </widget>
+      <widget class="QPushButton" name="eye_btn">
+       <property name="geometry">
+        <rect>
+         <x>470</x>
+         <y>320</y>
+         <width>61</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">
+
+    background-color:#00000000 ;
+
+ border: 0px solid;
+
+color:rgb(255, 255, 255);
+image: url(:/Eye/closedEye.png);</string>
+       </property>
+       <property name="text">
+        <string>l</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>690</y>
+         <width>381</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border-radius: 20px;
+    background-color:#00000000 ;
+ border: 1px solid;
+border-color: rgb(131, 155, 151);
+padding-left:10px;</string>
+       </property>
+       <property name="placeholderText">
+        <string>Enter capcha Code</string>
+       </property>
+      </widget>
       <zorder>txt_email</zorder>
       <zorder>txt_username</zorder>
       <zorder>txt_password</zorder>
@@ -727,33 +761,109 @@ border-color: rgb(131, 155, 151);
       <zorder>frame_alarm_2</zorder>
       <zorder>frame_alarm_3</zorder>
       <zorder>frame_Verify</zorder>
+      <zorder>eye_btn</zorder>
+      <zorder>lineEdit</zorder>
      </widget>
     </widget>
     <widget class="QWidget" name="page_3">
      <property name="styleSheet">
-      <string notr="true">QPushButton:hover{
-	background-color: rgb(65, 205, 82);
-}
-QLineEdit
-{
-border:1px		solid		gray;
-border-radius:8px;
-font-size:14px;
-min-height:25px;
-}
-
-QLineEdit:focus
-{
-border:1px		solid		#03dac6;
-border-radius:4px;
-
-}
-*{
-color:black;
-}
-</string>
+      <string notr="true"/>
      </property>
+     <widget class="QLineEdit" name="txt_CodeText">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>200</y>
+        <width>481</width>
+        <height>121</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>22</pointsize>
+       </font>
+      </property>
+      <property name="mouseTracking">
+       <bool>true</bool>
+      </property>
+      <property name="tabletTracking">
+       <bool>false</bool>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">text-align:center;
+border-radius: 20px;
+    background-color:#00000000 ;
+
+ border: 1px solid;
+border-color:rgb(45, 45, 45);
+
+padding-left:10px;
+color:#1e1e1e;</string>
+      </property>
+      <property name="maxLength">
+       <number>5</number>
+      </property>
+      <property name="echoMode">
+       <enum>QLineEdit::Normal</enum>
+      </property>
+      <property name="dragEnabled">
+       <bool>false</bool>
+      </property>
+      <property name="readOnly">
+       <bool>false</bool>
+      </property>
+      <property name="placeholderText">
+       <string>Enter code</string>
+      </property>
+      <property name="clearButtonEnabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_checkVerifyCode">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>370</y>
+        <width>241</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+
+color:#1e1e1e;
+border-radius:25px;
+border:1px solid;
+border-color:rgb(45, 45, 45);
+
+</string>
+      </property>
+      <property name="text">
+       <string>Check Verify Code</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton">
+      <property name="geometry">
+       <rect>
+        <x>580</x>
+        <y>450</y>
+        <width>121</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border-radius:1px;
+color:#1e1e1e;</string>
+      </property>
+      <property name="text">
+       <string>Send code Again</string>
+      </property>
+     </widget>
     </widget>
+    <widget class="QWidget" name="page_4"/>
    </widget>
   </widget>
  </widget>

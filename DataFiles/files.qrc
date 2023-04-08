@@ -8,4 +8,13 @@
         <file>alarmC_red.png</file>
         <file>alarmC_yello.png</file>
     </qresource>
+    <qresource prefix="/Eye">
+        <file>closedEye.png</file>
+        <file>openEye.png</file>
+        <file>noise1.png</file>
+        <file>noise2.png</file>
+        <file>noise3.png</file>
+        <file>noise4.png</file>
+        <file>noise5.png</file>
+    </qresource>
 </RCC>

@@ -5,16 +5,32 @@
 #include "libraries_BotGram/database/database_complex.h"
 #include "libraries_BotGram/Accont/Account.h"
 #include "libraries_BotGram/database/user_database.h"
+#include "botgrameenv.h"
+#include "libraries_BotGram/Connection/clientHost.h"
+#include "libraries_BotGram/Connection/serialize.h"
+#include"libraries_BotGram/Handlers/RecvANDconnectionHandler.h"
+#include "libraries_BotGram/capcha/capchacreator.h"
+#include <QThread>
+#define SERVER_PORT 6969
+clientHost c1;
 
 botgram::botgram(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::botgram)
 {
+
+   // c1=clientHost("127.0.0.1",SERVER_PORT,Connection,RecvHandler);
+
+
+
+
+
     ui->setupUi(this);
     ui->frame_alarm->setVisible(false);
     ui->frame_alarm_2->setVisible(false);
     ui->frame_alarm_3->setVisible(false);
     ui->txt_email->setVisible(false);
+
 
     ui->frame_Verify->setGeometry(ui->txt_email->geometry().x(),
                                   ui->txt_email->geometry().y(),
@@ -25,9 +41,11 @@ botgram::botgram(QWidget *parent)
     xml_node<>* node=root->first_node("app_vars");
     if(strcmp(node->first_node("first_entering")->value(),"1")==0)
     {
-        ui->stackedWidget->setCurrentIndex(2);
+        ui->stackedWidget->setCurrentIndex(3);
     }
     else ui->stackedWidget->setCurrentIndex(1);
+    db.save_modifies();
+
 }
 bool botgram::get_LoginVar()
 {
@@ -37,6 +55,23 @@ bool botgram::get_LoginVar()
 void botgram::set_LoginVar(bool v_Login)
 {
     IsInLogin=v_Login;
+}
+
+int botgram::get_CodeVar()
+{
+    return CodeVerify;
+}
+
+void botgram::set_CodeVar(int your_Code)
+{
+    CodeVerify=your_Code;
+}
+
+inline int botgram::BuildCodeVerify()
+{
+    srand(time(0));
+    return  (rand()%90000+10000);
+
 }
 
 void botgram::sendMessage(string str)
@@ -208,13 +243,13 @@ void botgram::on_btn_verify_clicked()
                 {
                     if(strcmp(MyUsernameNode->first_node("password")->value(),ui->txt_password->text().toStdString().c_str())==0)
                     {
+
                         MyUsernameNode->first_node("logined")->value("1");
                         //codes must be chenged
                         dataBase_complex Perso;
                         xml_node<>* rootPerso=Perso.connectToXml("BotGramData.xml");
                         rootPerso->first_node("app_vars")->first_node("first_entering")->value("1");
-                        ui->stackedWidget->setCurrentIndex(2);
-
+                        ui->stackedWidget->setCurrentIndex(3);
 
                         Perso.save_modifies();
                         Udb.save_modifies();
@@ -245,30 +280,24 @@ void botgram::on_btn_verify_clicked()
                 xml_node<>* MyUsernameNode=Udb.search(ui->txt_username->text().toStdString(),"username");
                 if(!MyUsernameNode)
                 {
-                    dataBase_complex Perso;
-                    xml_node<>* rootPerso=Perso.connectToXml("BotGramData.xml");
 
-                    string username_txt=ui->txt_username->text().toStdString();
-                    string password_txt=ui->txt_password->text().toStdString();
-                    string email_txt=ui->txt_email->text().toStdString();
-                    xml_node <>* newUser=Udb.addUser(username_txt,password_txt, email_txt);
-                    if(!newUser)
-                    {
-                        sendMessage("Error in Add new User");
-                        exit(1);
-                    }
 
-                    newUser->first_node("logined")->value("1");
-
-                    rootPerso->first_node("app_vars")->first_node("first_entering")->value("0");//must be 1
-
+                    account.setUsername(ui->txt_username->text().toStdString());
+                    account.setPassword(ui->txt_password->text().toStdString());
+                    account.setEmail(ui->txt_email->text().toStdString());
                     ui->stackedWidget->setCurrentIndex(2);
+
+                    int MyCode=BuildCodeVerify();
+                    set_CodeVar(MyCode);
+
+                    sendMessage("this is a verify code\n"
+                                "to youre Sign in BotGram:\n"+to_string(MyCode));
 
                     //                string fileMeStr;
                     //                print(back_inserter(fileMeStr),Udb.doc);
                     //                sendMessage(fileMeStr);
 
-                    Perso.save_modifies();
+                    //Perso.save_modifies();
                     Udb.save_modifies();
                 }
                 else
@@ -346,4 +375,82 @@ void botgram::on_btn_SignIn_clicked()
         ui->btn_verify->setText("Login");
         ui->btn_SignIn->setText("Sign In");
     }
+}
+void botgram::on_btn_checkVerifyCode_clicked()
+{
+    int CodeMe=get_CodeVar();
+    if(strcmp(ui->txt_CodeText->text().toStdString().c_str(),to_string(CodeMe).c_str())==0)
+    {
+        User_DataBase Udb;
+        Udb.connectToXml("sample.xml");
+
+        xml_node<>* newUser=Udb.addUser(account.getUsername(),account.getPassword(), account.getEmail());
+        if(!newUser)
+        {
+            sendMessage("Error in Add new User");
+            exit(1);
+        }
+
+
+
+        newUser->first_node("logined")->value("1");
+        Udb.save_modifies();
+
+        dataBase_complex Perso;
+        xml_node<>* rootPerso=Perso.connectToXml("BotGramData.xml");
+
+
+        if(!rootPerso)
+        {
+            sendMessage("Error in Add rootPerso");
+            exit(1);
+        }
+        rootPerso->first_node("app_vars")->first_node("first_entering")->value("1");
+        Perso.save_modifies();
+
+        // sendMessage(rootPerso->first_node("app_vars")->first_node("first_entering")->value());
+
+        ui->stackedWidget->setCurrentIndex(3);
+    }
+    else {
+        sendMessage("Your Code is not Correct!");
+    }
+}
+void botgram::on_pushButton_clicked()
+{
+    int Code=BuildCodeVerify();
+    sendMessage(to_string(Code));
+    set_CodeVar(Code);
+
+}
+
+void botgram::on_txt_password_textEdited(const QString &arg1)
+{
+    if(!switch_eye_btn_in_loginForm)
+        ui->txt_password->setEchoMode(QLineEdit::Password);
+    else
+    {
+        ui->txt_password->setEchoMode(QLineEdit::Normal);
+    }
+}
+
+void botgram::on_eye_btn_pressed()
+{
+    QString temp = "   background-color:#00000000 ;"
+                   " border: 0px solid;"
+                   " color:rgb(255, 255, 255);"
+                   " image: url(:/Eye/openEye.png);";
+    ui->eye_btn->setStyleSheet(temp);
+    ui->txt_password->setEchoMode(QLineEdit::Normal);
+}
+
+void botgram::on_eye_btn_released()
+{
+    QString temp = "   background-color:#00000000 ;"
+                   " border: 0px solid;"
+                   " color:rgb(255, 255, 255);"
+                   " image: url(:/Eye/closedEye.png);";
+    ui->eye_btn->setStyleSheet(temp);
+    ui->txt_password->setEchoMode(QLineEdit::Password);
+
 }

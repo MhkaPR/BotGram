@@ -43,7 +43,7 @@ bool dataBase_complex::createDataBase(string nameDataBase)
 }
 
 //root node must be :dataroot
-xml_node<>* dataBase_complex::connectToXml(string nameFile)
+xml_node<>* dataBase_complex::connectToXml(const string& nameFile)
 {
     //returns Root
     string tempAdd="C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\"+nameFile;
@@ -67,6 +67,7 @@ xml_node<>* dataBase_complex::connectToXml(string nameFile)
         name=nameFile;
         f.close();
         return  root;
+
 
     }
 

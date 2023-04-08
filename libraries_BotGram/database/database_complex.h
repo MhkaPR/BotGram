@@ -39,7 +39,7 @@ FIND_ROOT,FIND_BY_NAME,FIND_BY_VALUE
     //connection to dataBase
     //root node must be :dataroot
     bool createDataBase(string);
-    xml_node<>* connectToXml(string);
+    xml_node<>* connectToXml(const string&);
 
     //move on nodes
     string* intoNode();

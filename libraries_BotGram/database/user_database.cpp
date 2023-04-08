@@ -9,7 +9,9 @@ xml_node<>* User_DataBase::addUser(const string& nameUser,const string& password
 
         if(!root)
         {
-       root=connectToXml("sample.xml");
+
+            root=connectToXml("sample.xml");
+
             if(!root) exit(1);
         }
 
@@ -62,7 +64,9 @@ xml_node<> *User_DataBase::search(const string usernameTemp,string type)
 
     if(!root)
     {
+
         root=connectToXml("sample.xml");
+
         if(!root) exit(1);
     }
     xml_node<>* users=root->first_node("users");
