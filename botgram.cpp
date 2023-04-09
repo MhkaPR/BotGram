@@ -11,6 +11,7 @@
 #include"libraries_BotGram/Handlers/RecvANDconnectionHandler.h"
 #include "libraries_BotGram/capcha/capchacreator.h"
 #include <QThread>
+#include "capchabuilder.h"
 #define SERVER_PORT 6969
 clientHost c1;
 
@@ -45,11 +46,15 @@ botgram::botgram(QWidget *parent)
     }
     else ui->stackedWidget->setCurrentIndex(1);
     db.save_modifies();
+    sendMessage(codeCaptcha.toStdString());
 
 }
 bool botgram::get_LoginVar()
 {
+
+
     return IsInLogin;
+
 }
 
 void botgram::set_LoginVar(bool v_Login)
@@ -285,6 +290,8 @@ void botgram::on_btn_verify_clicked()
                     account.setUsername(ui->txt_username->text().toStdString());
                     account.setPassword(ui->txt_password->text().toStdString());
                     account.setEmail(ui->txt_email->text().toStdString());
+                    //if(ui->txt_captcha->text() == captchaPage.strCaptcha) sendMessage("Hoora");
+
                     ui->stackedWidget->setCurrentIndex(2);
 
                     int MyCode=BuildCodeVerify();

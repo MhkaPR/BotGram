@@ -7,9 +7,9 @@
 
 #include <string>
 #include <vector>
-#include "../BotGram/rapidxml/rapidxml/rapidxml.hpp"
-#include "../BotGram/rapidxml/rapidxml/rapidxml_ext.hpp"
-#include "../BotGram/rapidxml/rapidxml/rapidxml_utils.hpp"
+#include "rapidxml/rapidxml/rapidxml.hpp"
+#include "rapidxml/rapidxml/rapidxml_ext.hpp"
+#include "rapidxml/rapidxml/rapidxml_utils.hpp"
 #include <QFile>
 using namespace std;
 using namespace rapidxml;

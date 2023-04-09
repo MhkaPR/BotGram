@@ -22,7 +22,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
 #    accontvalidity.cpp \
+    DataFiles/checkingcaptcha/captcha.cpp \
+    DataFiles/checkingcaptcha/dialog.cpp \
     botgrameenv.cpp \
+    capchabuilder.cpp \
     libraries_BotGram/Accont/Account.cpp \
     libraries_BotGram/Connection/clientHost.cpp \
     libraries_BotGram/capcha/capchacreator.cpp \
@@ -35,8 +38,11 @@ SOURCES += \
 
 HEADERS += \
 #    accontvalidity.h \
+    DataFiles/checkingcaptcha/captcha.h \
+    DataFiles/checkingcaptcha/dialog.h \
     botgram.h \
     botgrameenv.h \
+    capchabuilder.h \
     libraries_BotGram/Accont/Account.h \
     libraries_BotGram/Connection/clientHost.h \
     libraries_BotGram/Connection/packet.h \
@@ -50,8 +56,10 @@ HEADERS += \
     libraries_BotGram/database/user_database.h
 
 FORMS += \
+    DataFiles/checkingcaptcha/dialog.ui \
     botgram.ui \
-    botgrameenv.ui
+    botgrameenv.ui \
+    capchabuilder.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -64,6 +72,10 @@ RESOURCES += \
 DISTFILES += \
     DataBases/BotGramData.xml \
     DataBases/sample.xml \
+    DataFiles/checkingcaptcha/Captcha.sln \
+    DataFiles/checkingcaptcha/Captcha.vcxproj \
+    DataFiles/checkingcaptcha/Generate VC Project.bat \
+    DataFiles/checkingcaptcha/LICENSE.txt \
     DataFiles/noise1.png \
     DataFiles/noise2.png \
     DataFiles/noise3.png \
