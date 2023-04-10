@@ -11,6 +11,7 @@
 #include"libraries_BotGram/Handlers/RecvANDconnectionHandler.h"
 #include "libraries_BotGram/capcha/capchacreator.h"
 #include <QThread>
+#include <QDir>
 #include "capchabuilder.h"
 #define SERVER_PORT 6969
 clientHost c1;
@@ -20,7 +21,7 @@ botgram::botgram(QWidget *parent)
     , ui(new Ui::botgram)
 {
 
-   // c1=clientHost("127.0.0.1",SERVER_PORT,Connection,RecvHandler);
+    // c1=clientHost("127.0.0.1",SERVER_PORT,Connection,RecvHandler);
 
 
 
@@ -37,16 +38,20 @@ botgram::botgram(QWidget *parent)
                                   ui->txt_email->geometry().y(),
                                   ui->frame_Verify->geometry().width(),
                                   ui->frame_Verify->geometry().height());
-    dataBase_complex db;
-    xml_node<>* root=db.connectToXml("BotGramData.xml");
-    xml_node<>* node=root->first_node("app_vars");
-    if(strcmp(node->first_node("first_entering")->value(),"1")==0)
+
+    QDir cur=QDir::current();
+    cur.cdUp();
+    cur.cd("botGram");
+    string tempAdd = cur.path().toStdString() + "/DataBases/data.btg";
+   ifstream Doc(tempAdd.c_str());
+   string check_firstEntering;
+   Doc >> check_firstEntering;
+    if(check_firstEntering == "1")
     {
         ui->stackedWidget->setCurrentIndex(3);
     }
     else ui->stackedWidget->setCurrentIndex(1);
-    db.save_modifies();
-    sendMessage(codeCaptcha.toStdString());
+    Doc.close();
 
 }
 bool botgram::get_LoginVar()
@@ -75,7 +80,7 @@ void botgram::set_CodeVar(int your_Code)
 inline int botgram::BuildCodeVerify()
 {
     srand(time(0));
-    return  (rand()%90000+10000);
+    return  (rand()%90000+9999);
 
 }
 
@@ -146,6 +151,11 @@ void botgram::fixErrorinAlarmLabel(int Error, int fixFor)
         ui->lbl_alarm3->setText(QString::fromStdString(TempStr));
         if(Error==Account::EMAIL_IS_NOT_EMAIL)
         {
+            ui->lbl_pic_alarm3->setStyleSheet("background-color:red;"
+                                              " border-radius:5px;");
+        }
+        else if (Error==Account::EMAIL_IS_REPETITIVE) {
+
             ui->lbl_pic_alarm3->setStyleSheet("background-color:red;"
                                               " border-radius:5px;");
         }
@@ -232,12 +242,10 @@ void botgram::on_btn_verify_clicked()
     if(!ErrorUsername && !ErrorPassword)
     {
         User_DataBase Udb;
+        xml_document<>* Doc=Udb.connectToXml("sample.xml");
         if(get_LoginVar()==true)
         {
-
-
-            xml_node<>* root=Udb.connectToXml("sample.xml");
-            if(root)
+            if(Doc)
             {
                 xml_node<>* MyUsernameNode=Udb.search(ui->txt_username->text().toStdString(),"username");
                 if(!MyUsernameNode)
@@ -251,12 +259,17 @@ void botgram::on_btn_verify_clicked()
 
                         MyUsernameNode->first_node("logined")->value("1");
                         //codes must be chenged
-                        dataBase_complex Perso;
-                        xml_node<>* rootPerso=Perso.connectToXml("BotGramData.xml");
-                        rootPerso->first_node("app_vars")->first_node("first_entering")->value("1");
+                        QDir cur=QDir::current();
+                        cur.cdUp();
+                        cur.cd("botGram");
+                        string tempAdd = cur.path().toStdString() + "/DataBases/data.btg";
+                        fstream DocPerso(tempAdd.c_str());
+                        DocPerso << "1";
+                        DocPerso.close();
+
                         ui->stackedWidget->setCurrentIndex(3);
 
-                        Perso.save_modifies();
+
                         Udb.save_modifies();
 
                     }
@@ -273,7 +286,7 @@ void botgram::on_btn_verify_clicked()
             }
             else
             {
-                sendMessage("not found root\n or   added new file\n or is a Error ");
+                sendMessage("not found Doc\n or   added new file\n or is a Error ");
             }
 
         }
@@ -282,30 +295,41 @@ void botgram::on_btn_verify_clicked()
             int ErrorEmail=mac.checkCorrect_Text(ui->txt_email->text().toStdString().c_str(),Account::EMAIL);
             if(!ErrorEmail)
             {
+                  //exit(0);
                 xml_node<>* MyUsernameNode=Udb.search(ui->txt_username->text().toStdString(),"username");
+
                 if(!MyUsernameNode)
                 {
 
+                    User_DataBase udb;
+                    udb.connectToXml("sample.xml");
 
-                    account.setUsername(ui->txt_username->text().toStdString());
-                    account.setPassword(ui->txt_password->text().toStdString());
-                    account.setEmail(ui->txt_email->text().toStdString());
-                    //if(ui->txt_captcha->text() == captchaPage.strCaptcha) sendMessage("Hoora");
+                    if(udb.search(ui->txt_email->text().toStdString(),"email"))
+                    {
+                        fixErrorinAlarmLabel(Account::EMAIL_IS_REPETITIVE,Account::EMAIL);
+                    }
+                    else
+                    {
 
-                    ui->stackedWidget->setCurrentIndex(2);
+                        account.setUsername(ui->txt_username->text().toStdString());
+                        account.setPassword(ui->txt_password->text().toStdString());
+                        account.setEmail(ui->txt_email->text().toStdString());
 
-                    int MyCode=BuildCodeVerify();
-                    set_CodeVar(MyCode);
+                        ui->stackedWidget->setCurrentIndex(2);
 
-                    sendMessage("this is a verify code\n"
-                                "to youre Sign in BotGram:\n"+to_string(MyCode));
+                        int MyCode=BuildCodeVerify();
+                        set_CodeVar(MyCode);
 
-                    //                string fileMeStr;
-                    //                print(back_inserter(fileMeStr),Udb.doc);
-                    //                sendMessage(fileMeStr);
+                        sendMessage("this is a verify code\n"
+                                    "to your Sign in BotGram:\n"+to_string(MyCode));
 
-                    //Perso.save_modifies();
-                    Udb.save_modifies();
+                        //                string fileMeStr;
+                        //                print(back_inserter(fileMeStr),Udb.doc);
+                        //                sendMessage(fileMeStr);
+
+                        //Perso.save_modifies();
+                        Udb.save_modifies();
+                    }
                 }
                 else
                 {
@@ -364,6 +388,7 @@ void botgram::on_btn_SignIn_clicked()
     {
         set_LoginVar(false);
         ui->txt_email->setVisible(true);
+        ui->frame_alarm_3->setVisible(true);
         ui->frame_Verify->setGeometry(ui->frame_Verify->geometry().x(),
                                       ui->frame_Verify->geometry().y()+2*ui->txt_email->geometry().height(),
                                       ui->frame_Verify->geometry().width(),
@@ -375,6 +400,7 @@ void botgram::on_btn_SignIn_clicked()
     {
         set_LoginVar(true);
         ui->txt_email->setVisible(false);
+        ui->frame_alarm_3->setVisible(false);
         ui->frame_Verify->setGeometry(ui->frame_Verify->geometry().x(),
                                       ui->frame_Verify->geometry().y()-2*ui->txt_email->geometry().height(),
                                       ui->frame_Verify->geometry().width(),
@@ -403,17 +429,19 @@ void botgram::on_btn_checkVerifyCode_clicked()
         newUser->first_node("logined")->value("1");
         Udb.save_modifies();
 
-        dataBase_complex Perso;
-        xml_node<>* rootPerso=Perso.connectToXml("BotGramData.xml");
 
-
-        if(!rootPerso)
+        QDir cur=QDir::current();
+        cur.cdUp();
+        cur.cd("botGram");
+        string tempAdd = cur.path().toStdString() + "/DataBases/data.btg";
+        fstream DocPerso(tempAdd.c_str());
+        if(!DocPerso.is_open())
         {
             sendMessage("Error in Add rootPerso");
             exit(1);
         }
-        rootPerso->first_node("app_vars")->first_node("first_entering")->value("1");
-        Perso.save_modifies();
+        DocPerso  << "1";
+        DocPerso.close();
 
         // sendMessage(rootPerso->first_node("app_vars")->first_node("first_entering")->value());
 
