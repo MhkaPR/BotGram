@@ -95,7 +95,7 @@ int Account::checkPassword(std::string password_temp)
 
 }
 
-int Account::checkEmail(std::string str)
+int Account:: checkEmail(std::string str)
 {
     if(!IsEndOfString(str,"@gmail.com"))
         if(!IsEndOfString(str,"@outlook.com"))
@@ -173,6 +173,7 @@ std::string Account::ErrorStr(int Error)
     case PASSWORD_IS_SHORT: return "your password is short yet";
     case PASSWORD_IS_NOT_STANDARD:return "you most not use from <,>,\\,\',\",/";
     case EMAIL_IS_NOT_EMAIL:return "email is not correct";
+    case EMAIL_IS_REPETITIVE:return "email is repetitive!";
     case IS_CORRECT:return "it's correct :)";
     default:return "undefined Error";
     }

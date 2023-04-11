@@ -69,10 +69,12 @@ xml_node<> *User_DataBase::search(const string usernameTemp,string type)
 
         if(!root) exit(1);
     }
+
     xml_node<>* users=root->first_node("users");
     for (xml_node<>* cur=users->first_node("user");cur;cur=cur->next_sibling()) {
         if(strcmp(cur->first_node(type.c_str())->value(),usernameTemp.c_str())==0)
         {
+
             return cur;
         }
     }

@@ -70,7 +70,8 @@ RESOURCES += \
     DataFiles/files.qrc
 
 DISTFILES += \
-    DataBases/BotGramData.xml \
+    DataBases/data.btg \
+    DataBases/dataMe.xml \
     DataBases/sample.xml \
     DataFiles/checkingcaptcha/Captcha.sln \
     DataFiles/checkingcaptcha/Captcha.vcxproj \

@@ -1,6 +1,6 @@
 #include "database_complex.h"
 #include <QMessageBox>
-
+#include <QDir>
 dataBase_complex::dataBase_complex()
 {
 
@@ -32,21 +32,27 @@ int dataBase_complex::Toint(string str)
 
 bool dataBase_complex::createDataBase(string nameDataBase)
 {
-        string temp="C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\"+nameDataBase;
-        QFile newFile;
-        newFile.setFileName(temp.c_str());
-        newFile.open(QIODevice::WriteOnly);
-        name=nameDataBase;
-        newFile.close();
-        return  true;
+
+    QDir cur=QDir::current();
+    cur.cdUp();
+    cur.cd("botGram");
+    string temp=cur.path().toStdString()+"/DataBases/"+nameDataBase;
+    QFile newFile;
+    newFile.setFileName(temp.c_str());
+    newFile.open(QIODevice::WriteOnly);
+    name=nameDataBase;
+    newFile.close();
+    return  true;
 
 }
 
 //root node must be :dataroot
-xml_node<>* dataBase_complex::connectToXml(const string& nameFile)
+xml_document<>* dataBase_complex::connectToXml(const string& nameFile)
 {
-    //returns Root
-    string tempAdd="C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\"+nameFile;
+    QDir cur=QDir::current();
+    cur.cdUp();
+    cur.cd("botGram");
+    string tempAdd=cur.path().toStdString()+"/DataBases/"+nameFile;
     QFile f;
     f.setFileName(tempAdd.c_str());
     if(!f.exists())
@@ -66,7 +72,7 @@ xml_node<>* dataBase_complex::connectToXml(const string& nameFile)
 
         name=nameFile;
         f.close();
-        return  root;
+        return &doc;
 
 
     }
@@ -236,17 +242,21 @@ xml_node<>* dataBase_complex::findNode(string str, int typeFind)
 
 bool dataBase_complex::save_modifies()
 {
-//    QFile Fm(("C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\"+name).c_str());
+    //    QFile Fm(("C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\"+name).c_str());
 
-//    if(!Fm.open(QIODevice::WriteOnly))
-//    {
-//        return  false;
-//    }
-//    string fileMeStr;
-//    print(back_inserter(fileMeStr),doc);
-//    Fm.write( fileMeStr.c_str());
-//    Fm.close();
-    ofstream f(("C:\\Users\\mhkap\\Documents\\botGram\\DataBases\\"+name).c_str());
+    //    if(!Fm.open(QIODevice::WriteOnly))
+    //    {
+    //        return  false;
+    //    }
+    //    string fileMeStr;
+    //    print(back_inserter(fileMeStr),doc);
+    //    Fm.write( fileMeStr.c_str());
+    //    Fm.close();
+    QDir cur=QDir::current();
+    cur.cdUp();
+    cur.cd("botGram");
+    string tempAdd=cur.path().toStdString()+"/DataBases/"+name;
+    ofstream f((tempAdd).c_str());
     f << doc;
     f.close();
     return true;
