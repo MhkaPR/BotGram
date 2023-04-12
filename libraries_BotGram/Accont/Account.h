@@ -28,6 +28,7 @@ public:
         PASSWORD_IS_NOT_STANDARD,
         EMAIL_IS_NOT_EMAIL,
         EMAIL_IS_REPETITIVE,
+        EMAIL_HAVE_BAD_CHARS,
         ERROR_IN_INPUT,
 
     };

@@ -12,20 +12,16 @@
 #include "libraries_BotGram/capcha/capchacreator.h"
 #include <QThread>
 #include <QDir>
-#include "capchabuilder.h"
+
 #define SERVER_PORT 6969
 clientHost c1;
 
 botgram::botgram(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::botgram)
+    ,bCaptcha(new BuilderCapcha)
+
 {
-
-    // c1=clientHost("127.0.0.1",SERVER_PORT,Connection,RecvHandler);
-
-
-
-
 
     ui->setupUi(this);
     ui->frame_alarm->setVisible(false);
@@ -43,21 +39,24 @@ botgram::botgram(QWidget *parent)
     cur.cdUp();
     cur.cd("botGram");
     string tempAdd = cur.path().toStdString() + "/DataBases/data.btg";
-   ifstream Doc(tempAdd.c_str());
-   string check_firstEntering;
-   Doc >> check_firstEntering;
+    ifstream Doc(tempAdd.c_str());
+    string check_firstEntering;
+    Doc >> check_firstEntering;
     if(check_firstEntering == "1")
     {
         ui->stackedWidget->setCurrentIndex(3);
     }
-    else ui->stackedWidget->setCurrentIndex(1);
+    else ui->stackedWidget->setCurrentIndex(0);
     Doc.close();
+
+    ui->wi_capcha->layout()->addWidget(bCaptcha);
+    ui->wi_capcha->setCurrentWidget(bCaptcha);
+
+    //connect(bCaptcha,&BuilderCapcha::on_btn_again_clicked,this,&botgram::txt_capcha_clean);
 
 }
 bool botgram::get_LoginVar()
 {
-
-
     return IsInLogin;
 
 }
@@ -155,6 +154,11 @@ void botgram::fixErrorinAlarmLabel(int Error, int fixFor)
                                               " border-radius:5px;");
         }
         else if (Error==Account::EMAIL_IS_REPETITIVE) {
+
+            ui->lbl_pic_alarm3->setStyleSheet("background-color:red;"
+                                              " border-radius:5px;");
+        }
+        else if (Error==Account::EMAIL_HAVE_BAD_CHARS) {
 
             ui->lbl_pic_alarm3->setStyleSheet("background-color:red;"
                                               " border-radius:5px;");
@@ -257,17 +261,31 @@ void botgram::on_btn_verify_clicked()
                     if(strcmp(MyUsernameNode->first_node("password")->value(),ui->txt_password->text().toStdString().c_str())==0)
                     {
 
-                        MyUsernameNode->first_node("logined")->value("1");
-                        //codes must be chenged
-                        QDir cur=QDir::current();
-                        cur.cdUp();
-                        cur.cd("botGram");
-                        string tempAdd = cur.path().toStdString() + "/DataBases/data.btg";
-                        fstream DocPerso(tempAdd.c_str());
-                        DocPerso << "1";
-                        DocPerso.close();
+                        if(bCaptcha->strCaptcha == ui->txt_captcha->text())
+                        {
+                            MyUsernameNode->first_node("logined")->value("1");
+                            //codes must be chenged
+                            QDir cur=QDir::current();
+                            cur.cdUp();
+                            cur.cd("botGram");
+                            string tempAdd = cur.path().toStdString() + "/DataBases/data.btg";
+                            fstream DocPerso(tempAdd.c_str());
+                            DocPerso << "1";
+                            DocPerso.close();
 
-                        ui->stackedWidget->setCurrentIndex(3);
+                            ui->stackedWidget->setCurrentIndex(3);
+                        }
+                        else
+                        {
+                            ui->txt_captcha->setStyleSheet("border-radius: 20px;"
+                                                           " background-color:#00000000 ;"
+                                                           " border: 1px solid;"
+                                                           "border-color: #dc0000;"
+                                                           "padding-left:10px;");
+                            ui->txt_captcha->setText("");
+                            ui->txt_captcha->setPlaceholderText("Enter correct captcha");
+                            bCaptcha->buildAgain();
+                        }
 
 
                         Udb.save_modifies();
@@ -295,7 +313,7 @@ void botgram::on_btn_verify_clicked()
             int ErrorEmail=mac.checkCorrect_Text(ui->txt_email->text().toStdString().c_str(),Account::EMAIL);
             if(!ErrorEmail)
             {
-                  //exit(0);
+                //exit(0);
                 xml_node<>* MyUsernameNode=Udb.search(ui->txt_username->text().toStdString(),"username");
 
                 if(!MyUsernameNode)
@@ -310,24 +328,32 @@ void botgram::on_btn_verify_clicked()
                     }
                     else
                     {
+                        if(bCaptcha->strCaptcha == ui->txt_captcha->text())
+                        {
 
-                        account.setUsername(ui->txt_username->text().toStdString());
-                        account.setPassword(ui->txt_password->text().toStdString());
-                        account.setEmail(ui->txt_email->text().toStdString());
+                            account.setUsername(ui->txt_username->text().toStdString());
+                            account.setPassword(ui->txt_password->text().toStdString());
+                            account.setEmail(ui->txt_email->text().toStdString());
 
-                        ui->stackedWidget->setCurrentIndex(2);
+                            ui->stackedWidget->setCurrentIndex(2);
 
-                        int MyCode=BuildCodeVerify();
-                        set_CodeVar(MyCode);
+                            int MyCode=BuildCodeVerify();
+                            set_CodeVar(MyCode);
 
-                        sendMessage("this is a verify code\n"
-                                    "to your Sign in BotGram:\n"+to_string(MyCode));
-
-                        //                string fileMeStr;
-                        //                print(back_inserter(fileMeStr),Udb.doc);
-                        //                sendMessage(fileMeStr);
-
-                        //Perso.save_modifies();
+                            sendMessage("this is a verify code\n"
+                                        "to your Sign in BotGram:\n"+to_string(MyCode));
+                        }
+                        else
+                        {
+                            ui->txt_captcha->setStyleSheet("border-radius: 20px;"
+                                                           " background-color:#00000000 ;"
+                                                           " border: 1px solid;"
+                                                           "border-color: #dc0000;"
+                                                           "padding-left:10px;");
+                            ui->txt_captcha->setText("");
+                            ui->txt_captcha->setPlaceholderText("Enter correct captcha");
+                            bCaptcha->buildAgain();
+                        }
                         Udb.save_modifies();
                     }
                 }
@@ -366,6 +392,8 @@ void botgram::on_btn_verify_clicked()
         }
     }
 
+bCaptcha->buildAgain();
+ui->txt_captcha->setText("");
 }
 
 
@@ -487,5 +515,9 @@ void botgram::on_eye_btn_released()
                    " image: url(:/Eye/closedEye.png);";
     ui->eye_btn->setStyleSheet(temp);
     ui->txt_password->setEchoMode(QLineEdit::Password);
+}
 
+void botgram::txt_capcha_clean()
+{
+    ui->txt_captcha->setText("");
 }

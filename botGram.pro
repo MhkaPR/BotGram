@@ -24,8 +24,9 @@ SOURCES += \
 #    accontvalidity.cpp \
     DataFiles/checkingcaptcha/captcha.cpp \
     DataFiles/checkingcaptcha/dialog.cpp \
+    Forms/buildercapcha.cpp \
     botgrameenv.cpp \
-    capchabuilder.cpp \
+#    capchabuilder.cpp \
     libraries_BotGram/Accont/Account.cpp \
     libraries_BotGram/Connection/clientHost.cpp \
     libraries_BotGram/capcha/capchacreator.cpp \
@@ -40,9 +41,10 @@ HEADERS += \
 #    accontvalidity.h \
     DataFiles/checkingcaptcha/captcha.h \
     DataFiles/checkingcaptcha/dialog.h \
+    Forms/buildercapcha.h \
     botgram.h \
     botgrameenv.h \
-    capchabuilder.h \
+#    capchabuilder.h \
     libraries_BotGram/Accont/Account.h \
     libraries_BotGram/Connection/clientHost.h \
     libraries_BotGram/Connection/packet.h \
@@ -57,9 +59,10 @@ HEADERS += \
 
 FORMS += \
     DataFiles/checkingcaptcha/dialog.ui \
+    Forms/buildercapcha.ui \
     botgram.ui \
     botgrameenv.ui \
-    capchabuilder.ui
+#    capchabuilder.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

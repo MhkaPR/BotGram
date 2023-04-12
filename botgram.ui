@@ -769,15 +769,17 @@ padding-left:10px;</string>
          <string>Enter capcha Code</string>
         </property>
        </widget>
-       <widget class="capchaBuilder" name="widget" native="true">
+       <widget class="QStackedWidget" name="wi_capcha">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
           <width>381</width>
-          <height>80</height>
+          <height>81</height>
          </rect>
         </property>
+        <widget class="QWidget" name="page_5"/>
+        <widget class="QWidget" name="page_6"/>
        </widget>
       </widget>
       <zorder>txt_email</zorder>
@@ -893,14 +895,6 @@ color:#1e1e1e;</string>
    </widget>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>capchaBuilder</class>
-   <extends>QWidget</extends>
-   <header>capchabuilder.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="DataFiles/files.qrc"/>
  </resources>
