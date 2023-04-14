@@ -5,6 +5,9 @@
 #include <iostream>
 #include <QMessageBox>
 #include "libraries_BotGram/Accont/Account.h"
+#include "Forms/buildercapcha.h"
+
+
 using std::string;
 QT_BEGIN_NAMESPACE
 namespace Ui { class botgram; }
@@ -22,6 +25,7 @@ public slots:
 
     inline int BuildCodeVerify();
 public:
+     QString codeCaptcha;
     botgram(QWidget *parent = nullptr);
     void sendMessage(string);
     void fixErrorinAlarmLabel(int,/*ERROR Type*/int);
@@ -64,11 +68,16 @@ private slots:
 
     void on_eye_btn_released();
 
+    void txt_capcha_clean();
+
 private:
     Ui::botgram *ui;
     bool IsInLogin=true;
     int CodeVerify=0;
     Account account;
     bool switch_eye_btn_in_loginForm=false;
+    BuilderCapcha *bCaptcha=nullptr;
+
+
 };
 #endif // BOTGRAM_H

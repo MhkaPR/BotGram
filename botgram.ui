@@ -387,7 +387,7 @@ padding-left:10px;</string>
        <property name="geometry">
         <rect>
          <x>90</x>
-         <y>450</y>
+         <y>610</y>
          <width>381</width>
          <height>81</height>
         </rect>
@@ -571,7 +571,7 @@ height:20px;</string>
        <property name="geometry">
         <rect>
          <x>90</x>
-         <y>530</y>
+         <y>690</y>
          <width>381</width>
          <height>41</height>
         </rect>
@@ -734,25 +734,53 @@ image: url(:/Eye/closedEye.png);</string>
         <string>l</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="lineEdit">
+      <widget class="QFrame" name="frame">
        <property name="geometry">
         <rect>
          <x>90</x>
-         <y>690</y>
+         <y>450</y>
          <width>381</width>
-         <height>41</height>
+         <height>131</height>
         </rect>
        </property>
-       <property name="styleSheet">
-        <string notr="true">border-radius: 20px;
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QLineEdit" name="txt_captcha">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>90</y>
+          <width>381</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border-radius: 20px;
     background-color:#00000000 ;
  border: 1px solid;
 border-color: rgb(131, 155, 151);
 padding-left:10px;</string>
-       </property>
-       <property name="placeholderText">
-        <string>Enter capcha Code</string>
-       </property>
+        </property>
+        <property name="placeholderText">
+         <string>Enter capcha Code</string>
+        </property>
+       </widget>
+       <widget class="QStackedWidget" name="wi_capcha">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>381</width>
+          <height>81</height>
+         </rect>
+        </property>
+        <widget class="QWidget" name="page_5"/>
+        <widget class="QWidget" name="page_6"/>
+       </widget>
       </widget>
       <zorder>txt_email</zorder>
       <zorder>txt_username</zorder>
@@ -762,7 +790,7 @@ padding-left:10px;</string>
       <zorder>frame_alarm_3</zorder>
       <zorder>frame_Verify</zorder>
       <zorder>eye_btn</zorder>
-      <zorder>lineEdit</zorder>
+      <zorder>frame</zorder>
      </widget>
     </widget>
     <widget class="QWidget" name="page_3">

@@ -89,13 +89,13 @@ int Account::checkUsername(std::string username_temp)
 int Account::checkPassword(std::string password_temp)
 {
     if(password_temp.length()<PASSWORD_LENGHT)return  PASSWORD_IS_SHORT;
-    //if(!IsWeakPassword(password_temp)) return PASSWORD_IS_WEAK;
+    if(!IsWeakPassword(password_temp)) return PASSWORD_IS_WEAK;
     if(!IsStandardPassword(password_temp)) return  PASSWORD_IS_NOT_STANDARD;
     else return IS_CORRECT;
 
 }
 
-int Account::checkEmail(std::string str)
+int Account:: checkEmail(std::string str)
 {
     if(!IsEndOfString(str,"@gmail.com"))
         if(!IsEndOfString(str,"@outlook.com"))
@@ -104,6 +104,17 @@ int Account::checkEmail(std::string str)
                 {
                     return EMAIL_IS_NOT_EMAIL;
                 }
+    int i=0;
+    std::string temp;
+    for(i = str.length()-1; i>= 0 ; i--)
+    {
+        if(str[i] == '@')
+        {
+            for(int j =0;j<i;j++) temp.append(1,str[j]);
+            break;
+        }
+    }
+    if(!IsStandardUsername(temp))return EMAIL_HAVE_BAD_CHARS;
     return IS_CORRECT;
 
 }
@@ -173,6 +184,8 @@ std::string Account::ErrorStr(int Error)
     case PASSWORD_IS_SHORT: return "your password is short yet";
     case PASSWORD_IS_NOT_STANDARD:return "you most not use from <,>,\\,\',\",/";
     case EMAIL_IS_NOT_EMAIL:return "email is not correct";
+    case EMAIL_IS_REPETITIVE:return "email is repetitive!";
+    case EMAIL_HAVE_BAD_CHARS:return "you should use EN characters and numbers just!";
     case IS_CORRECT:return "it's correct :)";
     default:return "undefined Error";
     }
