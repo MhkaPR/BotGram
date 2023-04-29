@@ -12,6 +12,7 @@
 #include "libraries_BotGram/capcha/capchacreator.h"
 #include <QThread>
 #include <QDir>
+#include "chat.h"
 
 #define SERVER_PORT 6969
 clientHost c1;
@@ -521,3 +522,21 @@ void botgram::txt_capcha_clean()
 {
     ui->txt_captcha->setText("");
 }
+
+void botgram::on_checkname_clicked()
+{
+    QString namechat;
+    if(ui->name->text()=="")
+    {
+        sendMessage("Please enter a name for yourself");
+    }
+    else
+    {
+        namechat = ui->name->text();
+        chat *w3 = new chat;
+        w3->setWindowTitle("chat page");
+        w3->resize(1310,810);
+        w3->show();
+    }
+}
+

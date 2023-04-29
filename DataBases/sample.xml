@@ -30,6 +30,12 @@
 			<email>sadff@gmail.com</email>
 			<logined>1</logined>
 		</user>
+		<user token="1" id="@">
+			<username>amirreza</username>
+			<password>1234amir##</password>
+			<email>amirreza@gmail.com</email>
+			<logined>1</logined>
+		</user>
 	</users>
 </dataroot>
 

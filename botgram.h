@@ -70,6 +70,8 @@ private slots:
 
     void txt_capcha_clean();
 
+    void on_checkname_clicked();
+
 private:
     Ui::botgram *ui;
     bool IsInLogin=true;

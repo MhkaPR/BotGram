@@ -48,7 +48,7 @@
      <enum>QFrame::NoFrame</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="page">
      <widget class="QLabel" name="label">
@@ -891,7 +891,53 @@ color:#1e1e1e;</string>
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="page_4"/>
+    <widget class="QWidget" name="page_4">
+     <widget class="QLineEdit" name="name">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>161</y>
+        <width>271</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">text-align:center;
+border-radius: 20px;
+    background-color:#00000000 ;
+
+ border: 1px solid;
+border-color:rgb(45, 45, 45);
+
+padding-left:10px;
+color:#1e1e1e;</string>
+      </property>
+      <property name="placeholderText">
+       <string>Enter Your Name Please</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="checkname">
+      <property name="geometry">
+       <rect>
+        <x>550</x>
+        <y>270</y>
+        <width>111</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+color:#1e1e1e;
+border-radius:25px;
+border:1px solid;
+border-color:rgb(45, 45, 45);
+</string>
+      </property>
+      <property name="text">
+       <string>Check</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
  </widget>
