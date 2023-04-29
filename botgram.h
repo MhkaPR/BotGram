@@ -6,7 +6,12 @@
 #include <QMessageBox>
 #include "libraries_BotGram/Accont/Account.h"
 #include "Forms/buildercapcha.h"
+#include "libraries_BotGram/server/packages.h"
 
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QtNetwork>
 
 using std::string;
 QT_BEGIN_NAMESPACE
@@ -79,6 +84,7 @@ private:
     Account account;
     bool switch_eye_btn_in_loginForm=false;
     BuilderCapcha *bCaptcha=nullptr;
+    QTcpSocket me;
 
 
 };

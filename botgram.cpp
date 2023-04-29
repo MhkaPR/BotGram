@@ -14,8 +14,7 @@
 #include <QDir>
 #include "chat.h"
 
-#define SERVER_PORT 6969
-clientHost c1;
+#define SERVER_PORT 9999
 
 botgram::botgram(QWidget *parent)
     : QMainWindow(parent)
@@ -25,6 +24,7 @@ botgram::botgram(QWidget *parent)
 {
 
     ui->setupUi(this);
+     me.connectToHost(QHostAddress::LocalHost,SERVER_PORT);
     ui->frame_alarm->setVisible(false);
     ui->frame_alarm_2->setVisible(false);
     ui->frame_alarm_3->setVisible(false);
@@ -246,11 +246,47 @@ void botgram::on_btn_verify_clicked()
 
     if(!ErrorUsername && !ErrorPassword)
     {
-        User_DataBase Udb;
-        xml_document<>* Doc=Udb.connectToXml("sample.xml");
+       // User_DataBase Udb;
+       // xml_document<>* Doc=Udb.connectToXml("sample.xml");
         if(get_LoginVar()==true)
         {
-            if(Doc)
+                  loginPacket p;
+
+
+                    QJsonDocument doc;
+                    QJsonObject obj;
+                    obj.insert("header",p.header);
+                    obj.insert("username",ui->txt_username->text());
+                    obj.insert("password",ui->txt_password->text());
+                    obj.insert("islogin",true);
+                    doc.setObject(obj);
+                    p.JsonInformation = doc.toJson();
+                    QByteArray buf;
+                    QDataStream out(&buf,QIODevice::WriteOnly);
+                    out.setVersion(QDataStream::Qt_4_0);
+
+                    out << p;
+
+                    me.write(buf);
+                    me.waitForReadyRead();
+
+
+                    QByteArray answerBuf;
+                    QDataStream in(&answerBuf,QIODevice::ReadOnly);
+                    in.setVersion(QDataStream::Qt_4_0);
+
+                    answerBuf = me.readAll();
+                    systemMessagePacket sys;
+
+                    in >>sys;
+                    if(sys.msg  == login_confrimed)
+                    {
+                        ui->stackedWidget->setCurrentIndex(3);
+
+                    }
+                   //sendMessage(QString::number(sys.msg).toStdString());
+                  // me.connectToHost(QHostAddress::LocalHost,SERVER_PORT);
+           /* if(Doc)
             {
                 xml_node<>* MyUsernameNode=Udb.search(ui->txt_username->text().toStdString(),"username");
                 if(!MyUsernameNode)
@@ -306,12 +342,12 @@ void botgram::on_btn_verify_clicked()
             else
             {
                 sendMessage("not found Doc\n or   added new file\n or is a Error ");
-            }
+            }*/
 
         }
         else//Sign in
         {
-            int ErrorEmail=mac.checkCorrect_Text(ui->txt_email->text().toStdString().c_str(),Account::EMAIL);
+            /*int ErrorEmail=mac.checkCorrect_Text(ui->txt_email->text().toStdString().c_str(),Account::EMAIL);
             if(!ErrorEmail)
             {
                 //exit(0);
@@ -363,7 +399,7 @@ void botgram::on_btn_verify_clicked()
                     fixErrorinAlarmLabel(Account::USERNAME_IS_REPETITIVE,Account::USERNAME);
                 }
 
-            } else fixErrorinAlarmLabel(ErrorEmail,Account::EMAIL);
+            } else fixErrorinAlarmLabel(ErrorEmail,Account::EMAIL);*/
         }
 
     }

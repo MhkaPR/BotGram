@@ -54,10 +54,13 @@ HEADERS += \
     libraries_BotGram/Handlers/RecvANDconnectionHandler.h \
     libraries_BotGram/capcha/api2captcha.hpp \
     libraries_BotGram/capcha/capchacreator.h \
+    libraries_BotGram/database/Packages.h \
     libraries_BotGram/database/database_complex.h \
  \#    libraries_BotGram/database_complex.h
  \#    user_database.h
-    libraries_BotGram/database/user_database.h
+    libraries_BotGram/database/user_database.h \
+    libraries_BotGram/server/Packages.h \
+    libraries_BotGram/server/packages.h
 
 FORMS += \
     DataFiles/checkingcaptcha/dialog.ui \
