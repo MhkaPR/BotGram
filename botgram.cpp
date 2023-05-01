@@ -57,6 +57,10 @@ botgram::botgram(QWidget *parent)
 
 }
 bool botgram::get_LoginVar()
+
+
+
+
 {
     return IsInLogin;
 
@@ -67,20 +71,20 @@ void botgram::set_LoginVar(bool v_Login)
     IsInLogin=v_Login;
 }
 
-int botgram::get_CodeVar()
+QString botgram::get_CodeVar()
 {
     return CodeVerify;
 }
 
-void botgram::set_CodeVar(int your_Code)
+void botgram::set_CodeVar(QString your_Code)
 {
     CodeVerify=your_Code;
 }
 
-inline int botgram::BuildCodeVerify()
+ int botgram::BuildCodeVerify()
 {
-    srand(time(0));
-    return  (rand()%90000+9999);
+   /* srand(time(0));
+    return  (rand()%90000+9999);*/
 
 }
 
@@ -279,8 +283,16 @@ void botgram::on_btn_verify_clicked()
                     systemMessagePacket sys;
 
                     in >>sys;
+
                     if(sys.msg  == login_confrimed)
                     {
+                        QDir cur=QDir::current();
+                        cur.cdUp();
+                        cur.cd("botGram");
+                        string tempAdd = cur.path().toStdString() + "/DataBases/data.btg";
+                        fstream DocPerso(tempAdd.c_str());
+                        DocPerso << "1";
+                        DocPerso.close();
                         ui->stackedWidget->setCurrentIndex(3);
 
                     }
@@ -347,6 +359,71 @@ void botgram::on_btn_verify_clicked()
         }
         else//Sign in
         {
+
+                loginPacket SignInPacket;
+                QJsonDocument SignInDoc;
+                QJsonObject ObjSign;
+                ObjSign.insert("username",ui->txt_username->text());
+                ObjSign.insert("password","");
+                ObjSign.insert("email",ui->txt_email->text());
+                ObjSign.insert("islogin",0);
+                SignInDoc.setObject(ObjSign);
+                QByteArray bufJ;
+                QDataStream out(&bufJ,QIODevice::WriteOnly);
+                out.setVersion(QDataStream::Qt_4_0);
+
+                SignInPacket.JsonInformation = SignInDoc.toJson();
+
+                out << SignInPacket ;
+
+                me.write(bufJ);
+                me.waitForReadyRead();
+
+
+                QByteArray ansBuf;
+                QDataStream in(&ansBuf,QIODevice::ReadOnly);
+                in.setVersion(QDataStream::Qt_4_0);
+
+
+                ansBuf = me.readAll();
+
+                systemMessagePacket sysAns;
+
+                in >> sysAns;
+
+                //sendmessage(QString::number(sysAns.msg));
+
+                if(sysAns.msg == s_send_apply_For_Link)
+                {
+                    sysAns.msg = Send_VerifyCode;
+                    QByteArray CodeBuf;
+                    QDataStream out2(&CodeBuf,QIODevice::WriteOnly);
+                    out2.setVersion(QDataStream::Qt_4_0);
+
+                    out2 << sysAns;
+
+                    me.write(CodeBuf);
+                    //    sendmessage("wait for link...");
+                    me.waitForReadyRead();
+
+                    QByteArray ansBuf2;
+                    QDataStream in2(&ansBuf2,QIODevice::ReadOnly);
+                    in2.setVersion(QDataStream::Qt_4_0);
+
+                    ansBuf2 = me.readAll();
+
+                    CheckVerifySafePacket VerifyAns;
+                    in2 >> VerifyAns;
+                     set_CodeVar(VerifyAns.Link);
+
+
+                     ui->stackedWidget->setCurrentIndex(2);
+                      //  sendMessage(VerifyAns.Link.toStdString());
+                     sendMessage((get_CodeVar()).toStdString());
+
+
+
+           //-----------------------------------------------
             /*int ErrorEmail=mac.checkCorrect_Text(ui->txt_email->text().toStdString().c_str(),Account::EMAIL);
             if(!ErrorEmail)
             {
@@ -401,8 +478,8 @@ void botgram::on_btn_verify_clicked()
 
             } else fixErrorinAlarmLabel(ErrorEmail,Account::EMAIL);*/
         }
-
-    }
+        }
+        }
     else
     {
         ui->frame_alarm->setVisible(true);
@@ -476,7 +553,78 @@ void botgram::on_btn_SignIn_clicked()
 }
 void botgram::on_btn_checkVerifyCode_clicked()
 {
-    int CodeMe=get_CodeVar();
+    QByteArray sendAnsAutho;
+    QDataStream out3(&sendAnsAutho,QIODevice::WriteOnly);
+    out3.setVersion(QDataStream::Qt_4_0);
+
+    if(ui->txt_CodeText->text() == (get_CodeVar()))
+    {
+        QJsonDocument SignInDoc;
+        QJsonObject ObjSign;
+        ObjSign.insert("username",ui->txt_username->text());
+        ObjSign.insert("password",ui->txt_password->text());
+        ObjSign.insert("email",ui->txt_email->text());
+        ObjSign.insert("islogin",0);
+        SignInDoc.setObject(ObjSign);
+
+        AddUser_SPacket user;
+        user.data = SignInDoc.toJson();
+
+        out3 << user;
+
+        me.write(sendAnsAutho);
+        me.waitForReadyRead();
+
+        QByteArray TokenBuf;
+        QDataStream in(&TokenBuf,QIODevice::ReadOnly);
+        in.setVersion(QDataStream::Qt_4_0);
+
+        TokenBuf = me. readAll();
+        TokenPacket Tpac;
+        in >> Tpac;
+
+
+        QDir cur=QDir::current();
+        cur.cdUp();
+        cur.cd("botGram");
+        string tokenname = cur.path().toStdString() + "/DataBases/Token.btg";
+        fstream Doctoken(tokenname);
+        Doctoken << Tpac.Token.toStdString().c_str();
+        Doctoken.close();
+
+       /* QFile TokenFile;
+        TokenFile.setFileName("Token.btg");  //format is according to the name of our project
+      if(!TokenFile.open(QIODevice::WriteOnly))
+      {
+          sendMessage("ERROR IN OPENING FILE");
+          exit(1);
+
+      }*/
+    /*  QDir cur=QDir::current();
+      cur.cdUp();
+      cur.cd("botGram");*/
+      string tempAdd = cur.path().toStdString() + "/DataBases/data.btg";
+      fstream DocPerso(tempAdd.c_str());
+      DocPerso << "1";
+      DocPerso.close();
+      ui->stackedWidget->setCurrentIndex(3);
+      /*TokenFile.write((get_CodeVar()).toStdString().c_str());
+      TokenFile.close();*/
+
+
+       // sendMessage(Tpac.Token.toStdString());
+
+      }
+
+    else
+
+    {
+        sendMessage("your code is not correct");
+    }
+
+
+
+   /* int CodeMe=get_CodeVar();
     if(strcmp(ui->txt_CodeText->text().toStdString().c_str(),to_string(CodeMe).c_str())==0)
     {
         User_DataBase Udb;
@@ -514,13 +662,13 @@ void botgram::on_btn_checkVerifyCode_clicked()
     }
     else {
         sendMessage("Your Code is not Correct!");
-    }
+    }*/
 }
 void botgram::on_pushButton_clicked()
 {
-    int Code=BuildCodeVerify();
+    /*int Code=BuildCodeVerify();
     sendMessage(to_string(Code));
-    set_CodeVar(Code);
+    set_CodeVar(Code);*/
 
 }
 

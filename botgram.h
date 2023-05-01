@@ -25,10 +25,10 @@ public slots:
     bool get_LoginVar();
     void set_LoginVar(bool);
 
-    int get_CodeVar();
-    void set_CodeVar(int);
+    QString get_CodeVar();
+    void set_CodeVar(QString);
 
-    inline int BuildCodeVerify();
+     int BuildCodeVerify();
 public:
      QString codeCaptcha;
     botgram(QWidget *parent = nullptr);
@@ -80,7 +80,7 @@ private slots:
 private:
     Ui::botgram *ui;
     bool IsInLogin=true;
-    int CodeVerify=0;
+    QString CodeVerify= "0";
     Account account;
     bool switch_eye_btn_in_loginForm=false;
     BuilderCapcha *bCaptcha=nullptr;
