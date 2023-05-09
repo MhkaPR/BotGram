@@ -232,6 +232,36 @@ border-color: rgb(131, 155, 151);</string>
       <string/>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
@@ -252,6 +282,19 @@ border-color: rgb(131, 155, 151);</string>
     </property>
     <property name="text">
      <string>      select a chat</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="photo_button">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>570</y>
+      <width>21</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
