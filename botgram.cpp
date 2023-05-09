@@ -13,6 +13,7 @@
 #include <QThread>
 #include <QDir>
 #include "chat.h"
+#include<QApplication>
 
 #define SERVER_PORT 9999
 
@@ -717,10 +718,27 @@ void botgram::on_checkname_clicked()
     else
     {
         namechat = ui->name->text();
-        chat *w3 = new chat;
-        w3->setWindowTitle("chat page");
-        w3->resize(1310,810);
-        w3->show();
+        QDir cur = QDir::current();
+        cur.cdUp();
+        cur.cd("BotGram");
+        cur.cd("DataBases");
+        QFile savenamechat;
+        QString temp = cur.path()+"/savenamechat.btg";
+        savenamechat.setFileName(temp);
+       if(!savenamechat.open(QIODevice::WriteOnly))
+       {
+           sendMessage(savenamechat.errorString().toStdString());
+       }
+       else
+       {
+           savenamechat.write(namechat.toStdString().c_str());
+           savenamechat.close();
+           chat *w3 = new chat;
+           w3->setWindowTitle("chat page");
+           w3->resize(1310,810);
+           w3->show();
+       }
+
     }
 }
 

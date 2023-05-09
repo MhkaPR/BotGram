@@ -21,6 +21,7 @@ QT_END_NAMESPACE
 class botgram : public QMainWindow
 {
     Q_OBJECT
+
 public slots:
     bool get_LoginVar();
     void set_LoginVar(bool);

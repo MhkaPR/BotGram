@@ -15,6 +15,12 @@ class chat : public QWidget
 public:
     explicit chat(QWidget *parent = nullptr);
     ~chat();
+   // QString namechat;
+
+private slots:
+    void on_listWidget_itemClicked(QListWidgetItem *item);
+
+    void on_pushButton_send_message_clicked();
 
 private:
     Ui::chat *ui;

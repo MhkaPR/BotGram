@@ -13,15 +13,247 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QListWidget" name="listWidget">
+  <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>20</y>
-     <width>1201</width>
-     <height>561</height>
+     <x>10</x>
+     <y>10</y>
+     <width>541</width>
+     <height>601</height>
     </rect>
    </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="label_headerbotgram">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>541</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 85, 255);</string>
+    </property>
+    <property name="text">
+     <string>                                         Bot Gram</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="listWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>20</y>
+      <width>541</width>
+      <height>581</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QFrame" name="frame_2">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>10</y>
+     <width>731</width>
+     <height>601</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="label_selectchat">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>731</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 0);</string>
+    </property>
+    <property name="text">
+     <string>                                                           Messages</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="message_text">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>540</y>
+      <width>731</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(85, 255, 127);
+</string>
+    </property>
+    <property name="placeholderText">
+     <string>write your message</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_send_message">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>550</y>
+      <width>51</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 127);
+
+color: rgb(131, 155, 151);;
+border-radius:25px;
+border:1px solid;
+border-color: rgb(131, 155, 151);</string>
+    </property>
+    <property name="text">
+     <string>send</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="listWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>20</y>
+      <width>731</width>
+      <height>521</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>240</y>
+      <width>121</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">
+
+color: rgb(131, 155, 151);;
+border-radius:25px;
+border:1px solid;
+border-color: rgb(131, 155, 151);</string>
+    </property>
+    <property name="text">
+     <string>      select a chat</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
