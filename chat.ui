@@ -97,7 +97,7 @@
      <string notr="true">background-color: rgb(255, 255, 0);</string>
     </property>
     <property name="text">
-     <string>                                                           Messages</string>
+     <string>                                                          </string>
     </property>
    </widget>
    <widget class="QTextEdit" name="message_text">
@@ -295,6 +295,22 @@ border-color: rgb(131, 155, 151);</string>
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_onoroff">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>0</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(85, 170, 255);</string>
+    </property>
+    <property name="text">
+     <string>     offline</string>
     </property>
    </widget>
   </widget>

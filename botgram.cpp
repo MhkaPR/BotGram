@@ -736,6 +736,7 @@ void botgram::on_checkname_clicked()
            chat *w3 = new chat;
            w3->setWindowTitle("chat page");
            w3->resize(1310,810);
+           this->hide();
            w3->show();
        }
 
