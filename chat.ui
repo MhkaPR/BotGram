@@ -97,7 +97,7 @@
      <string notr="true">background-color: rgb(255, 255, 0);</string>
     </property>
     <property name="text">
-     <string>                                                          </string>
+     <string/>
     </property>
    </widget>
    <widget class="QTextEdit" name="message_text">
@@ -310,7 +310,7 @@ border-color: rgb(131, 155, 151);</string>
      <string notr="true">background-color: rgb(85, 170, 255);</string>
     </property>
     <property name="text">
-     <string>     offline</string>
+     <string>     online</string>
     </property>
    </widget>
   </widget>

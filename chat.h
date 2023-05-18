@@ -25,7 +25,10 @@ private slots:
     void on_photo_button_clicked();
 
     void on_listWidget_2_itemClicked(QListWidgetItem *item);
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 
+    //void on_message_text_textChanged();
 
 private:
     Ui::chat *ui;

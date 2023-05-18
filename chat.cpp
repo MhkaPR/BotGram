@@ -75,6 +75,10 @@ chat::chat(QWidget *parent) :
 
 
 
+  /* QListWidgetItem* item = new QListWidgetItem("typing...");
+      item->setHidden(true);
+      ui->listWidget_2->addItem(item);*/
+
 }
 
 chat::~chat()
@@ -313,3 +317,37 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
         msgBox.exec();
     }
 }*/
+
+
+/*void chat::on_message_text_textChanged()
+{
+    // Check if the message text box is empty
+    QString message = ui->message_text->toPlainText().trimmed();
+    if (message.isEmpty()) {
+        // If the message text box is empty, clear the "typing..." message from the label
+        ui->label_selectchat->setText(name);
+    } else {
+        // If the message text box is not empty, set the "typing..." message in the label
+        ui->label_selectchat->setText("typing...              " +  name);
+    }
+}*/
+void chat::keyPressEvent(QKeyEvent *event)
+{
+    // Call the base class implementation to handle the event normally
+    QWidget::keyPressEvent(event);
+
+    // Start showing "typing..." in the label when a key is pressed
+    ui->label_selectchat->setText("typing...     " + name);
+}
+
+void chat::keyReleaseEvent(QKeyEvent *event)
+{
+    // Call the base class implementation to handle the event normally
+    QWidget::keyReleaseEvent(event);
+
+    // Stop showing "typing..." in the label when all keys are released
+    QString message = ui->message_text->toPlainText().trimmed();
+    if (message.isEmpty()) {
+        ui->label_selectchat->setText(name);
+    }
+}
