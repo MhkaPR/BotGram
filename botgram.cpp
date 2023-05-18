@@ -14,6 +14,10 @@
 #include <QDir>
 #include "chat.h"
 #include<QApplication>
+#include"libraries_BotGram/systemmessagepacket.h"
+#include"libraries_BotGram/checkverifysafepacket.h"
+#include"libraries_BotGram/adduser_spacket.h"
+#include"libraries_BotGram/tokenpacket.h"
 
 #define SERVER_PORT 9999
 
@@ -260,17 +264,19 @@ void botgram::on_btn_verify_clicked()
 
                     QJsonDocument doc;
                     QJsonObject obj;
-                    obj.insert("header",p.header);
+                    obj.insert("header",static_cast<short>(p.getheader()));
                     obj.insert("username",ui->txt_username->text());
                     obj.insert("password",ui->txt_password->text());
                     obj.insert("islogin",true);
                     doc.setObject(obj);
-                    p.JsonInformation = doc.toJson();
+                  //  p.JsonInformation = doc.toJson();
+                    p.deserialize(doc.toJson());
+
                     QByteArray buf;
                     QDataStream out(&buf,QIODevice::WriteOnly);
                     out.setVersion(QDataStream::Qt_4_0);
 
-                    out << p;
+                    out << package::Packeting(p.getheader(),p.serialize());
 
                     me.write(buf);
                     me.waitForReadyRead();
@@ -282,10 +288,11 @@ void botgram::on_btn_verify_clicked()
 
                     answerBuf = me.readAll();
                     systemMessagePacket sys;
+                    sys.deserialize(answerBuf);
 
-                    in >>sys;
+                    //in >>sys;
 
-                    if(sys.msg  == login_confrimed)
+                    if(sys.getSysmsg()  == package::login_confrimed)
                     {
                         QDir cur=QDir::current();
                         cur.cdUp();
@@ -373,9 +380,10 @@ void botgram::on_btn_verify_clicked()
                 QDataStream out(&bufJ,QIODevice::WriteOnly);
                 out.setVersion(QDataStream::Qt_4_0);
 
-                SignInPacket.JsonInformation = SignInDoc.toJson();
+                SignInPacket.deserialize(SignInDoc.toJson());
 
-                out << SignInPacket ;
+                out << package::Packeting(SignInPacket.getheader(),SignInPacket.serialize());
+
 
                 me.write(bufJ);
                 me.waitForReadyRead();
@@ -389,19 +397,19 @@ void botgram::on_btn_verify_clicked()
                 ansBuf = me.readAll();
 
                 systemMessagePacket sysAns;
-
-                in >> sysAns;
+                  sysAns.deserialize(ansBuf);
+               // in >> sysAns;
 
                 //sendmessage(QString::number(sysAns.msg));
 
-                if(sysAns.msg == s_send_apply_For_Link)
+                if(sysAns.getSysmsg() == package::s_send_apply_For_Link)
                 {
-                    sysAns.msg = Send_VerifyCode;
+                    sysAns.setSysmsg(package::Send_VerifyCode);
                     QByteArray CodeBuf;
                     QDataStream out2(&CodeBuf,QIODevice::WriteOnly);
                     out2.setVersion(QDataStream::Qt_4_0);
 
-                    out2 << sysAns;
+                    out2 <<  package::Packeting(sysAns.getheader(),sysAns.serialize());
 
                     me.write(CodeBuf);
                     //    sendmessage("wait for link...");
@@ -414,8 +422,9 @@ void botgram::on_btn_verify_clicked()
                     ansBuf2 = me.readAll();
 
                     CheckVerifySafePacket VerifyAns;
-                    in2 >> VerifyAns;
-                     set_CodeVar(VerifyAns.Link);
+                    VerifyAns.deserialize(ansBuf);
+                    //in2 >> VerifyAns;
+                     set_CodeVar(VerifyAns.getLink());
 
 
                      ui->stackedWidget->setCurrentIndex(2);
@@ -569,9 +578,10 @@ void botgram::on_btn_checkVerifyCode_clicked()
         SignInDoc.setObject(ObjSign);
 
         AddUser_SPacket user;
-        user.data = SignInDoc.toJson();
+        user.deserialize(SignInDoc.toJson());
 
-        out3 << user;
+        out3 <<package::Packeting(user.getheader(),user.serialize());
+
 
         me.write(sendAnsAutho);
         me.waitForReadyRead();
@@ -581,8 +591,10 @@ void botgram::on_btn_checkVerifyCode_clicked()
         in.setVersion(QDataStream::Qt_4_0);
 
         TokenBuf = me. readAll();
+
         TokenPacket Tpac;
-        in >> Tpac;
+        Tpac.deserialize(TokenBuf);
+        //in >> Tpac;
 
 
         QDir cur=QDir::current();
@@ -590,7 +602,7 @@ void botgram::on_btn_checkVerifyCode_clicked()
         cur.cd("botGram");
         string tokenname = cur.path().toStdString() + "/DataBases/Token.btg";
         fstream Doctoken(tokenname);
-        Doctoken << Tpac.Token.toStdString().c_str();
+        Doctoken << Tpac.getToken().toStdString().c_str();
         Doctoken.close();
 
        /* QFile TokenFile;

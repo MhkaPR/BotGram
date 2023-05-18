@@ -1,7 +1,7 @@
 QT       += core gui
 
 QT += network
-
+QT += sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -30,10 +30,30 @@ SOURCES += \
     chat.cpp \
     libraries_BotGram/Accont/Account.cpp \
     libraries_BotGram/Connection/clientHost.cpp \
+   # libraries_BotGram/adduser_spacket.cpp \
+    #libraries_BotGram/authentication.cpp \
+    libraries_BotGram/adduser_spacket.cpp \
     libraries_BotGram/capcha/capchacreator.cpp \
+    #libraries_BotGram/checkverifysafepacket.cpp \
+    libraries_BotGram/checkverifysafepacket.cpp \
+    libraries_BotGram/client.cpp \
+   # libraries_BotGram/client_mssages.cpp \
+    libraries_BotGram/connectverify.cpp \
+    libraries_BotGram/database.cpp \
     libraries_BotGram/database/database_complex.cpp \
 #    libraries_BotGram/database_complex.cpp \
     libraries_BotGram/database/user_database.cpp \
+    libraries_BotGram/loginpacket.cpp \
+    libraries_BotGram/package.cpp \
+    libraries_BotGram/pvroom.cpp \
+    libraries_BotGram/queriespacket.cpp \
+    libraries_BotGram/room.cpp \
+    libraries_BotGram/roompacket.cpp \
+    libraries_BotGram/systemmessagepacket.cpp \
+    libraries_BotGram/textmessage.cpp \
+    #libraries_BotGram/tokenbuilder.cpp \
+    libraries_BotGram/tokenpacket.cpp \
+    libraries_BotGram/verify.cpp \
     main.cpp \
     botgram.cpp \
 #    user_database.cpp
@@ -52,15 +72,36 @@ HEADERS += \
     libraries_BotGram/Connection/packet.h \
     libraries_BotGram/Connection/serialize.h \
     libraries_BotGram/Handlers/RecvANDconnectionHandler.h \
+    #libraries_BotGram/Packages.h \
+    #libraries_BotGram/adduser_spacket.h \
+    #libraries_BotGram/authentication.h \
+    libraries_BotGram/adduser_spacket.h \
     libraries_BotGram/capcha/api2captcha.hpp \
     libraries_BotGram/capcha/capchacreator.h \
-    libraries_BotGram/database/Packages.h \
+    #libraries_BotGram/checkverifysafepacket.h \
+    libraries_BotGram/checkverifysafepacket.h \
+    libraries_BotGram/client.h \
+   # libraries_BotGram/client_mssages.h \
+    libraries_BotGram/connectverify.h \
+    libraries_BotGram/database.h \
+    #libraries_BotGram/database/Packages.h \
     libraries_BotGram/database/database_complex.h \
  \#    libraries_BotGram/database_complex.h
  \#    user_database.h
     libraries_BotGram/database/user_database.h \
-    libraries_BotGram/server/Packages.h \
-    libraries_BotGram/server/packages.h
+    libraries_BotGram/loginpacket.h \
+    libraries_BotGram/package.h \
+    libraries_BotGram/pvroom.h \
+    libraries_BotGram/queriespacket.h \
+    libraries_BotGram/room.h \
+    libraries_BotGram/roompacket.h \
+    #libraries_BotGram/server/Packages.h \
+    #libraries_BotGram/server/packages.h \
+    libraries_BotGram/systemmessagepacket.h \
+    libraries_BotGram/textmessage.h \
+    #libraries_BotGram/tokenbuilder.h \
+    libraries_BotGram/tokenpacket.h \
+    libraries_BotGram/verify.h
 
 FORMS += \
     DataFiles/checkingcaptcha/dialog.ui \

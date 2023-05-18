@@ -7,6 +7,15 @@
 #include<QFileDialog>
 #include<QDesktopServices>
 #include<QHBoxLayout>
+#include"libraries_BotGram/connectverify.h"
+#include<QtNetwork>
+#include<QHostAddress>
+#include<QThread>
+#include"libraries_BotGram/textmessage.h"
+const int SERVER_PO= 9999;
+const QString TokenME = "pAWmUPKB";
+
+
 
 
 chat::chat(QWidget *parent) :
@@ -75,12 +84,76 @@ chat::chat(QWidget *parent) :
 
 
 
-  /* QListWidgetItem* item = new QListWidgetItem("typing...");
-      item->setHidden(true);
-      ui->listWidget_2->addItem(item);*/
+  socket = new QTcpSocket(this);
+      connect(socket, &QTcpSocket::connected, this, &chat::onConnected);
+      connect(socket, &QTcpSocket::disconnected, this, &chat::onDisconnected);
+      connect(socket, &QTcpSocket::readyRead, this, &chat::onReadyRead);
+
+      connectToServer();
 
 }
 
+ void chat::connectToServer()
+{
+    // Connect to the server on localhost
+    socket->connectToHost("192.168.122.133", SERVER_PO);
+    connectVerify conn;
+    conn.Token = TokenME;
+    QByteArray buf;
+    QDataStream out(&buf,QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out<<static_cast<short>(conn.getheader())<<conn.serialize();
+    socket->write(buf);
+
+}
+
+void chat::onConnected()
+{
+    // Handle the connection to the server
+    ui->label_selectchat->setText("Connected to server");
+}
+
+void chat::onDisconnected()
+{
+    // Handle the disconnection from the server
+    ui->label_selectchat->setText("wait for connecting...");
+    QTcpSocket *socket1 = qobject_cast<QTcpSocket*>(sender());
+    if(socket1->error()==QAbstractSocket::RemoteHostClosedError)
+    {
+        socket1->disconnectFromHost();
+    }
+    else
+    {
+        QMessageBox::information(this,"error","socket error:"+socket1->errorString());
+    }
+    QThread::sleep(0.5);
+    connectToServer();
+}
+
+void chat::onReadyRead()
+{
+    TextMessage msg;
+
+    // Handle incoming data from the server
+    QByteArray data = socket->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    QJsonObject obj;
+    obj = doc.object();
+    QStringList list;
+    list  = obj.keys();
+    msg.sender = list[0];
+
+    QJsonArray arr = obj[msg.sender].toArray();
+    msg.Message = arr[0].toString();
+    msg.timeSend = QDateTime::fromString(arr[1].toString());
+    mesg = msg;
+    ui->listWidget_2->addItem(mesg.sender+":"+mesg.Message+" // "+arr[1].toString());
+    ui->listWidget_2->scrollToBottom();
+
+
+
+    // Process the data
+}
 chat::~chat()
 {
     delete ui;
@@ -137,7 +210,7 @@ void chat::on_pushButton_send_message_clicked()
 
        QListWidgetItem* item = new QListWidgetItem(messageWithTime);
        ui->message_text->setStyleSheet("background-color: rgb(85, 255, 127);");
-       ui->message_text->clear();
+
 
        // Set the background color based on the length of the message
        if (messageLength < 10) {
@@ -147,6 +220,20 @@ void chat::on_pushButton_send_message_clicked()
        }
 
        // Add the item to listWidget2
+       TextMessage messages;
+       messages.setSender(TokenME);
+       messages.setReceiver("pv_testUser_mhka1382");
+       messages.Message = ui->message_text->toPlainText();
+       messages.timeSend = messages.gettimeSend().currentDateTime();
+       messages.stateMessage = package::sendMode;
+       QByteArray buff2;
+       QDataStream out2(&buff2,QIODevice::WriteOnly);
+       out2.setVersion(QDataStream::Qt_4_0);
+        out2<<static_cast<short>(messages.getheader())<<messages.serialize();
+        socket->write(buff2);
+        socket->waitForBytesWritten();
+
+        ui->message_text->clear();
        ui->listWidget_2->addItem(item);
        ui->listWidget_2->scrollToBottom();
 
@@ -319,7 +406,7 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
 }*/
 
 
-/*void chat::on_message_text_textChanged()
+void chat::on_message_text_textChanged()
 {
     // Check if the message text box is empty
     QString message = ui->message_text->toPlainText().trimmed();
@@ -329,25 +416,5 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
     } else {
         // If the message text box is not empty, set the "typing..." message in the label
         ui->label_selectchat->setText("typing...              " +  name);
-    }
-}*/
-void chat::keyPressEvent(QKeyEvent *event)
-{
-    // Call the base class implementation to handle the event normally
-    QWidget::keyPressEvent(event);
-
-    // Start showing "typing..." in the label when a key is pressed
-    ui->label_selectchat->setText("typing...     " + name);
-}
-
-void chat::keyReleaseEvent(QKeyEvent *event)
-{
-    // Call the base class implementation to handle the event normally
-    QWidget::keyReleaseEvent(event);
-
-    // Stop showing "typing..." in the label when all keys are released
-    QString message = ui->message_text->toPlainText().trimmed();
-    if (message.isEmpty()) {
-        ui->label_selectchat->setText(name);
     }
 }

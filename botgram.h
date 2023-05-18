@@ -6,7 +6,9 @@
 #include <QMessageBox>
 #include "libraries_BotGram/Accont/Account.h"
 #include "Forms/buildercapcha.h"
-#include "libraries_BotGram/server/packages.h"
+//#include "libraries_BotGram/server/packages.h"
+#include"libraries_BotGram/loginpacket.h"
+#include"libraries_BotGram/package.h"
 
 #include <QJsonDocument>
 #include <QJsonObject>
