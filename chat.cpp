@@ -96,7 +96,7 @@ chat::chat(QWidget *parent) :
  void chat::connectToServer()
 {
     // Connect to the server on localhost
-    socket->connectToHost("192.168.122.133", SERVER_PO);
+    socket->connectToHost(QHostAddress::LocalHost, SERVER_PO);
     connectVerify conn;
     conn.Token = TokenME;
     QByteArray buf;
@@ -132,6 +132,8 @@ void chat::onDisconnected()
 
 void chat::onReadyRead()
 {
+
+    socket->waitForReadyRead(1000);
     TextMessage msg;
 
     // Handle incoming data from the server
