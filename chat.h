@@ -49,6 +49,8 @@ private:
     Ui::chat *ui;
      QByteArray name;
   QTcpSocket *socket;
+
+  QString pathImgg;
 };
 
 #endif // CHAT_H

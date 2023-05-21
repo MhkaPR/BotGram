@@ -290,25 +290,34 @@ void chat::on_photo_button_clicked()
 
 
     // Open a file dialog to let the user choose an image file
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Choose an image file"), QDir::homePath(), tr("Images (*.png *.xpm *.jpg)"));
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Choose an image file"), QDir::homePath(), tr("All Files (*.*)"));
     if (filePath.isEmpty()) {
         // If the user cancels the file dialog, return without doing anything
         return;
     }
 
     // Load the image from the file
-    QImage image(filePath);
-    if (image.isNull()) {
+
+
+
+
+    QFile file(filePath);
+
+
+//    QImage image(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
         // If the image cannot be loaded, show an error message and return
         QMessageBox::critical(this, tr("Error"), tr("Cannot load image file: %1").arg(filePath));
         return;
     }
 
-
+pathImgg = filePath;
     // Create a new QListWidgetItem with the image and time, and add it to listWidget_2
     QTime time = QTime::currentTime();
     QString timeString = time.toString("hh:mm:ss"); // or any other time format you prefer
-    QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(image)), QString("[%1] ").arg(timeString), ui->listWidget_2);
+    QImage f(64, 64, QImage::Format_RGB32);
+    f.fill(Qt::gray);
+    QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1] ").arg(timeString), ui->listWidget_2);
     item->setBackgroundColor(Qt::white);
 
     ui->listWidget_2->scrollToBottom();
@@ -319,7 +328,7 @@ void chat::on_photo_button_clicked()
     }
 
     // Create a new QListWidgetItem with the text "photo" and the time, and add it to listWidget
-    QListWidgetItem* newItem = new QListWidgetItem(QString("[%1] photo").arg(timeString), ui->listWidget);
+    QListWidgetItem* newItem = new QListWidgetItem(QString("[%1] file").arg(timeString), ui->listWidget);
     newItem->setBackgroundColor(Qt::white);
 
     ui->listWidget->scrollToBottom();
@@ -335,79 +344,6 @@ void chat::on_photo_button_clicked()
 
 
 
-
-
-
-/*void chat::on_photo_button_clicked()
-{
-    // Open a file dialog to let the user choose an image or video file
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Choose a file"), QDir::homePath(), tr("Images and Videos (*.png *.xpm *.jpg *.mp4)"));
-    if (filePath.isEmpty()) {
-        // If the user cancels the file dialog, return without doing anything
-        return;
-    }
-
-    // Check if the file is an image or a video
-    QString extension = QFileInfo(filePath).suffix();
-    if (extension == "png" || extension == "xpm" || extension == "jpg") {
-        // If the file is an image, load it and create a new QListWidgetItem with the image and time
-        QImage image(filePath);
-        if (image.isNull()) {
-            // If the image cannot be loaded, show an error message and return
-            QMessageBox::critical(this, tr("Error"), tr("Cannot load image file: %1").arg(filePath));
-            return;
-        }
-
-        QTime time = QTime::currentTime();
-        QString timeString = time.toString("hh:mm:ss"); // or any other time format you prefer
-        QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(image)), QString("[%1] photo ").arg(timeString), ui->listWidget_2);
-        item->setBackgroundColor(Qt::white);
-    } else if (extension == "mp4") {
-        // If the file is a video, create a new QListWidgetItem with the video file path and time
-        QTime time = QTime::currentTime();
-        QString timeString = time.toString("hh:mm:ss"); // or any other time format you prefer
-        QListWidgetItem* item = new QListWidgetItem(QString("[%1] video: %2").arg(timeString).arg(filePath), ui->listWidget_2);
-        item->setBackgroundColor(Qt::white);
-    } else {
-        // If the file is not an image or a video, show an error message and return
-        QMessageBox::critical(this, tr("Error"), tr("Invalid file type: %1").arg(filePath));
-        return;
-    }
-
-    // Scroll to the bottom of listWidget2
-    ui->listWidget_2->scrollToBottom();
-}*/
-
-
-
-
-
-
-
-/*void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
-{
-    // Check if the clicked item contains a photo or a video
-    if (item->icon().isNull()) {
-        // If the clicked item does not contain a photo, check if it contains a video
-        QString text = item->text();
-        if (text.startsWith("[") && text.contains("] video: ")) {
-            // If the clicked item contains a video, get the file path from its text
-            QString filePath = text.mid(text.indexOf(": ") + 2);
-
-            // Open the video file using the default application associated with the file type
-            QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
-        }
-    } else {
-        // If the clicked item contains a photo, display it in a message box
-        QPixmap photo = item->icon().pixmap(item->icon().availableSizes().first());
-        QMessageBox msgBox;
-        msgBox.setIconPixmap(photo);
-        msgBox.setWindowTitle("Photo");
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.setDefaultButton(QMessageBox::Ok);
-        msgBox.exec();
-    }
-}*/
 
 
 void chat::on_message_text_textChanged()
@@ -445,14 +381,9 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
         return;
     }
 
-    // If the clicked item contains an icon, it may contain an image
-    QPixmap photo = item->icon().pixmap(item->icon().availableSizes().first());
-    if (!photo.isNull()) {
-        // If the item contains an image, save it to a temporary file and open it with the default application
-        QString fileName = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/" + QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()) + ".png";
-        photo.save(fileName);
-        QDesktopServices::openUrl(QUrl::fromLocalFile(fileName));
-    }
+
+        QDesktopServices::openUrl(QUrl::fromLocalFile(pathImgg));
+
 }
 
 void chat::on_listWidget_2_customContextMenuRequested(const QPoint &pos)
