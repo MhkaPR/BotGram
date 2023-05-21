@@ -127,12 +127,18 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 127);
-
-color: rgb(131, 155, 151);;
-border-radius:25px;
-border:1px solid;
-border-color: rgb(131, 155, 151);</string>
+     <string notr="true">  background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);</string>
     </property>
     <property name="text">
      <string>send</string>
@@ -311,6 +317,19 @@ border-color: rgb(131, 155, 151);</string>
     </property>
     <property name="text">
      <string>     online</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_camera">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>570</y>
+      <width>21</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>

@@ -12,8 +12,19 @@
 #include<QHostAddress>
 #include<QThread>
 #include"libraries_BotGram/textmessage.h"
+#include<QApplication>
+#include<QClipboard>
+#include<QMenu>
+#include<QAction>
+#include<QString>
+#include<QContextMenuEvent>
+#include<QtMultimedia/QCameraImageCapture>
+#include<QtMultimediaWidgets/QCameraViewfinder>
+#include<QtMultimedia/QCamera>
+
 const int SERVER_PO= 9999;
-const QString TokenME = "pAWmUPKB";
+//const QString TokenME = "pAWmUPKB";
+const QString TokenME = "mhka1382";
 
 
 
@@ -25,6 +36,8 @@ chat::chat(QWidget *parent) :
 
    // QString message;
     ui->setupUi(this);
+
+
     QDir cur = QDir::current();
     cur.cdUp();
     cur.cd("BotGram");
@@ -48,6 +61,7 @@ chat::chat(QWidget *parent) :
        ui->listWidget_2->hide();
        ui->label_selectchat->hide();
        ui->photo_button->hide();
+       ui->pushButton_camera->hide();
        //ui->listWidget_2->hide();
        QListWidget *listWidget = ui->listWidget;
        QListWidgetItem* item = new QListWidgetItem(name);
@@ -80,6 +94,17 @@ chat::chat(QWidget *parent) :
                                    "QPushButton:hover {"
                                    "background-color: #E6E6E6;"
                                    "}");
+   ui->pushButton_camera->setStyleSheet("QPushButton {"
+                                        "border: none;"
+                                        "background-image: url(:/icons/pin.png);"
+                                        "background-position: center;"
+                                        "background-color: #4D98E8;"
+                                        "padding: 0px 10px 0px 10px;"
+                                        "}"
+                                        "QPushButton:hover {"
+                                        "background-color: #E6E6E6;"
+                                        "}");
+
 
 
 
@@ -96,7 +121,7 @@ chat::chat(QWidget *parent) :
  void chat::connectToServer()
 {
     // Connect to the server on localhost
-    socket->connectToHost("192.168.122.133", SERVER_PO);
+    socket->connectToHost(QHostAddress::LocalHost, SERVER_PO);
     connectVerify conn;
     conn.Token = TokenME;
     QByteArray buf;
@@ -169,6 +194,7 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
    ui->listWidget_2->show();
    ui->label_selectchat->show();
    ui->photo_button->show();
+   ui->pushButton_camera->show();
 
    ui->label_onoroff->show();
 
@@ -261,6 +287,8 @@ void chat::on_pushButton_send_message_clicked()
 
 void chat::on_photo_button_clicked()
 {
+
+
     // Open a file dialog to let the user choose an image file
     QString filePath = QFileDialog::getOpenFileName(this, tr("Choose an image file"), QDir::homePath(), tr("Images (*.png *.xpm *.jpg)"));
     if (filePath.isEmpty()) {
@@ -275,6 +303,7 @@ void chat::on_photo_button_clicked()
         QMessageBox::critical(this, tr("Error"), tr("Cannot load image file: %1").arg(filePath));
         return;
     }
+
 
     // Create a new QListWidgetItem with the image and time, and add it to listWidget_2
     QTime time = QTime::currentTime();
@@ -294,6 +323,8 @@ void chat::on_photo_button_clicked()
     newItem->setBackgroundColor(Qt::white);
 
     ui->listWidget->scrollToBottom();
+
+
 }
 
 
@@ -351,33 +382,6 @@ void chat::on_photo_button_clicked()
 
 
 
-void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
-{
-
-        // Check if the clicked item has an icon (i.e., contains a photo)
-        if (item->icon().isNull()) {
-            // If the clicked item does not contain a photo, return without doing anything
-            return;
-        }
-
-        // Get the photo from the item's icon
-        QPixmap photo = item->icon().pixmap(item->icon().availableSizes().first());
-
-        // Create a message box to display the photo
-        QMessageBox msgBox;
-        msgBox.setIconPixmap(photo);
-        msgBox.setWindowTitle("Photo");
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.setDefaultButton(QMessageBox::Ok);
-        msgBox.exec();
-
-}
-
-
-
-
-
-
 
 
 /*void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
@@ -417,4 +421,111 @@ void chat::on_message_text_textChanged()
         // If the message text box is not empty, set the "typing..." message in the label
         ui->label_selectchat->setText("typing...              " +  name);
     }
+}
+
+
+void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
+{
+    if (item->icon().isNull()) {
+        // If the clicked item does not contain an icon, it may contain text
+        QString text = item->text();
+        if (!text.isEmpty()) {
+            // Remove the timestamp from the text if it exists
+            text.remove(QRegularExpression("^\\[\\d{2}:\\d{2}:\\d{2}\\] "));
+
+            // If the item contains text, open a context menu to copy the text
+            QMenu menu(this);
+            QAction *copyAction = menu.addAction("Copy");
+            connect(copyAction, &QAction::triggered, [=]() {
+                QClipboard *clipboard = QGuiApplication::clipboard();
+                clipboard->setText(text);
+            });
+            menu.exec(QCursor::pos());
+        }
+        return;
+    }
+
+    // If the clicked item contains an icon, it may contain an image
+    QPixmap photo = item->icon().pixmap(item->icon().availableSizes().first());
+    if (!photo.isNull()) {
+        // If the item contains an image, save it to a temporary file and open it with the default application
+        QString fileName = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/" + QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()) + ".png";
+        photo.save(fileName);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(fileName));
+    }
+}
+
+void chat::on_listWidget_2_customContextMenuRequested(const QPoint &pos)
+{
+    QListWidgetItem *item = ui->listWidget_2->itemAt(pos);
+    if (item) {
+        QMenu menu(this);
+        QAction *copyAction = menu.addAction("Copy");
+        connect(copyAction, &QAction::triggered, [=]() {
+            QString text = item->text();
+            if (!text.isEmpty()) {
+                QClipboard *clipboard = QGuiApplication::clipboard();
+                clipboard->setText(text);
+            }
+        });
+        if (!item->icon().isNull()) {
+            QAction *saveAction = menu.addAction("Save Image");
+            connect(saveAction, &QAction::triggered, [=]() {
+                QPixmap photo = item->icon().pixmap(item->icon().availableSizes().first());
+                if (!photo.isNull()) {
+                    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"), "", tr("Images (*.png *.xpm *.jpg)"));
+                    if (!fileName.isEmpty()) {
+                        photo.save(fileName);
+                    }
+                }
+            });
+        }
+        menu.exec(ui->listWidget_2->mapToGlobal(pos));
+    }
+}
+
+
+void chat::on_pushButton_camera_clicked()
+{
+    QCamera *camera = new QCamera(this);  // create a new camera instance
+    camera->setCaptureMode(QCamera::CaptureStillImage);  // set the capture mode to still image
+    camera->start();  // start the camera
+
+    // create a new viewfinder widget to display the camera's output
+    QCameraViewfinder *viewfinder = new QCameraViewfinder(this);
+    viewfinder->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    viewfinder->setFixedSize(1280, 720);
+
+    // create a new image capture instance
+    QCameraImageCapture *imageCapture = new QCameraImageCapture(camera, this);
+
+    // connect the image captured signal to a slot that saves the image and adds it to the list widget
+    connect(imageCapture, &QCameraImageCapture::imageCaptured, this, [=](int id, QImage image) {
+        // save the image to a file
+        QString fileName = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss_zzz") + ".jpg";
+        imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToFile);
+        imageCapture->capture(fileName);
+
+        // create a new QListWidgetItem and add it to listwidget2
+        QListWidgetItem *item = new QListWidgetItem(QIcon(QPixmap::fromImage(image)), fileName, ui->listWidget_2);
+        item->setSizeHint(QSize(400, 300));
+
+    });
+
+    // set the camera's viewfinder to the viewfinder widget
+    camera->setViewfinder(viewfinder);
+
+    // show the viewfinder widget in a new window
+    QDialog *dialog = new QDialog(this);
+    QVBoxLayout *layout = new QVBoxLayout(dialog);
+    layout->addWidget(viewfinder);
+    dialog->setLayout(layout);
+    dialog->show();
+
+    // connect the capture button to a slot that captures the image
+    QPushButton *captureButton = new QPushButton(tr("Capture"), dialog);
+    layout->addWidget(captureButton);
+    connect(captureButton, &QPushButton::clicked, this, [=]() {
+        imageCapture->capture();
+    });
 }

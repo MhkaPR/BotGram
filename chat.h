@@ -5,6 +5,7 @@
 #include <QListWidget>
 #include<QtNetwork>
 #include<QHostAddress>
+#include<QContextMenuEvent>
 #include"libraries_BotGram/textmessage.h"
 
 namespace Ui {
@@ -29,6 +30,7 @@ private slots:
 
     void on_photo_button_clicked();
 
+
     void on_listWidget_2_itemClicked(QListWidgetItem *item);
    // void keyPressEvent(QKeyEvent *event);
    // void keyReleaseEvent(QKeyEvent *event);
@@ -38,6 +40,10 @@ private slots:
     void onConnected();
     void onDisconnected();
     void onReadyRead();
+
+    void on_listWidget_2_customContextMenuRequested(const QPoint &pos);
+
+    void on_pushButton_camera_clicked();
 
 private:
     Ui::chat *ui;
