@@ -21,6 +21,10 @@
 #include<QtMultimedia/QCameraImageCapture>
 #include<QtMultimediaWidgets/QCameraViewfinder>
 #include<QtMultimedia/QCamera>
+#include<QAudioRecorder>
+#include<QDir>
+#include<QAudioEncoderSettings>
+#include"libraries_BotGram/filemessage.h"
 
 const int SERVER_PO= 9999;
 //const QString TokenME = "pAWmUPKB";
@@ -121,7 +125,7 @@ chat::chat(QWidget *parent) :
  void chat::connectToServer()
 {
     // Connect to the server on localhost
-    socket->connectToHost(QHostAddress::LocalHost, SERVER_PO);
+    socket->connectToHost("192.168.137.1", SERVER_PO);
     connectVerify conn;
     conn.Token = TokenME;
     QByteArray buf;
@@ -320,6 +324,12 @@ pathImgg = filePath;
     QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1] ").arg(timeString), ui->listWidget_2);
     item->setBackgroundColor(Qt::white);
 
+
+
+
+
+
+
     ui->listWidget_2->scrollToBottom();
 
     // Clear all items in listWidget except the first item
@@ -460,3 +470,24 @@ void chat::on_pushButton_camera_clicked()
         imageCapture->capture();
     });
 }
+
+
+
+
+
+    void chat::on_pushButton_clicked()
+    {
+        QAudioRecorder *recorder = new QAudioRecorder(this);
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Recording"), "untitled", tr("Audio Files (*.mp3)"));
+
+        if (!fileName.isEmpty()) {
+            QAudioEncoderSettings settings;
+            settings.setCodec("audio/mpeg");
+            settings.setQuality(QMultimedia::HighQuality);
+            recorder->setEncodingSettings(settings);
+            recorder->setOutputLocation(QUrl::fromLocalFile(fileName));
+            recorder->record();
+        }
+    }
+
+

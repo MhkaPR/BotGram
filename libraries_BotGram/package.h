@@ -19,6 +19,8 @@ public:
         TOKENUSER,
         TEXTMESSAGE,
         ROOMS,
+        UPDATE_CLIENT,
+        FILEMESSAGE,
 
     };
     enum SEND_STATE : short

@@ -23,6 +23,8 @@ public:
       QString getMessage();
        QDateTime gettimeSend();
        SEND_STATE getstateMessage();
+       QByteArray buf;
+       bool IsFile;
 
        void setSender(QString value);
         void setReceiver(QString value);
