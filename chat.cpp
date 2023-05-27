@@ -324,6 +324,32 @@ pathImgg = filePath;
     QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1] ").arg(timeString), ui->listWidget_2);
     item->setBackgroundColor(Qt::white);
 
+    fileMessage fmsg(TokenME);
+    QFileInfo fileInfo(filePath);
+    QString mimeType = fileInfo.suffix();
+   int count =0;
+   fmsg.setFileName(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")+mimeType);
+   fmsg.setroom("pv_testUser_mhka1382");
+   fmsg.settimeSend(QDateTime::currentDateTime());
+    while (!file.atEnd()) {
+        count++;
+
+
+        fmsg.setData(file.read(50*1024));
+
+        if(file.size()/count<1)
+        {
+            fmsg.setcount_size("!");
+
+        }
+        QByteArray buf5;
+        QDataStream out5(&buf5,QIODevice::WriteOnly);
+        out5.setVersion(QDataStream::Qt_4_0);
+        out5<<static_cast<short>(fmsg.getheader())<<fmsg.serialize();
+        socket->write(buf5);
+        socket->waitForBytesWritten();
+
+    }
 
 
 
