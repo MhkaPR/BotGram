@@ -45,7 +45,8 @@ private slots:
 
     void on_pushButton_camera_clicked();
 
-    void on_pushButton_clicked();
+
+    void on_pushButton_voice_clicked();
 
 private:
     Ui::chat *ui;

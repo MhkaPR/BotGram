@@ -332,17 +332,17 @@ border-color: rgb(131, 155, 151);</string>
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="pushButton_voice">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>610</x>
       <y>570</y>
-      <width>93</width>
+      <width>20</width>
       <height>28</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string/>
     </property>
    </widget>
   </widget>
