@@ -307,11 +307,11 @@ void chat::on_photo_button_clicked()
     // Load the image from the file
 
 
-    QFile file(filePath);
+    QFile *file=new QFile(filePath);
 
 
     //    QImage image(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
+    if (!file->open(QIODevice::ReadOnly)) {
         // If the image cannot be loaded, show an error message and return
         QMessageBox::critical(this, tr("Error"), tr("Cannot load image file: %1").arg(filePath));
         return;
@@ -335,72 +335,18 @@ void chat::on_photo_button_clicked()
     fmsg.settimeSend(QDateTime::currentDateTime());
     fmsg.setSender(TokenME);
 
-    quint64 fileSize = static_cast<quint64>(file.size());
+    quint64 fileSize = static_cast<quint64>(file->size());
     // quint64 bufsize=0;
 
     fmsg.setcount_size("0");
 
     // qDebug() << file.size();
 
-    while (!file.atEnd() /*&& (fmsg.getcount_size() != "!")*/) {
 
-        count++;
+    fmsg.sendFile(file,socket);
 
-        //fmsg.setcount_size(QString::number(count));
-        if(count == 304)
-        {
-            qDebug() << "hello";
-        }
-        if(fileSize < 50* 1024 )
-        {
-
-            fmsg.setData(file.read(static_cast<qint64>(fileSize)));
-            fmsg.setcount_size("!");
-
-              fileSize -= fileSize;
-
-            //bufsize += static_cast<quint64>(fmsg.getData().size());
-
-        }
-        else
-        {
-
-            fmsg.setData(file.read(50*1024));
-            // bufsize += 50*1024;
-              fileSize -= 50*1024;
-
-        }
-
-
-        QByteArray buf5;
-        QDataStream out5(&buf5,QIODevice::WriteOnly);
-        out5.setVersion(QDataStream::Qt_4_0);
-
-
-
-        out5<<static_cast<short>(fmsg.getheader())<<fmsg.serialize();
-
-
-
-
-        socket->write(buf5);
-        // QMessageBox::information(this,"e",QString::number(buf5.length())+" "+fmsg.getcount_size());
-
-
-        ui->listWidget_2->addItem(QString::number(fileSize));
-
-
-
-
-
-        socket->waitForBytesWritten();
-        socket->flush();
-        qDebug() << count;
-
-        socket->waitForReadyRead();
-
-    }
-
+    file->close();
+    delete file;
 
 
 

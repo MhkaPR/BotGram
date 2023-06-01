@@ -44,31 +44,31 @@ bool fileMessage::IsEndFile()
 }
 
 void fileMessage::setroom(QString value){
-room = value;
+    room = value;
 }
 QString fileMessage::getroom(){
- return room;
+    return room;
 }
 
 
 void fileMessage::setFileName(QString value){
-FileName = value;
+    FileName = value;
 }
 QString fileMessage::getFileName(){
- return FileName;
+    return FileName;
 }
 
 
 void fileMessage::setcount_size(QString value){
-count_size = value;
+    count_size = value;
 }
 QString fileMessage::getcount_size(){
- return count_size;
+    return count_size;
 }
 
 
 void fileMessage::setData(QByteArray value){
-Data = value;
+    Data = value;
 }
 QByteArray fileMessage::getData(){
     return Data;
@@ -94,21 +94,62 @@ QDateTime fileMessage::gettimeSend()
     return timeSend;
 }
 
+void fileMessage::sendFile(QFile *file, QTcpSocket *socket)
+{
+    quint64 fileSize = static_cast<quint64>(file->size());
+    while (!file->atEnd() /*&& (fmsg.getcount_size() != "!")*/) {
+
+        if(fileSize < 50* 1024 )
+        {
+
+            Data = file->read(static_cast<qint64>(fileSize));
+            count_size = "!";
+            fileSize -= fileSize;
+        }
+        else
+        {
+
+            Data = file->read(50*1024);
+            fileSize -= 50*1024;
+
+        }
+
+
+        QByteArray buf5;
+        QDataStream out5(&buf5,QIODevice::WriteOnly);
+        out5.setVersion(QDataStream::Qt_4_0);
+
+
+
+        out5<<static_cast<short>(header)<<serialize();
+
+
+
+       //send pack
+        socket->write(buf5);
+        socket->waitForBytesWritten();
+        socket->flush();
+        socket->waitForReadyRead();
+
+    }
+}
+
 fileMessage::operator TextMessage()
 {
     TextMessage msg;
 
-//    msg.setSender(Sender);
-//    msg.setReceiver(room);
-//    msg.setbuf(Data);
-//    msg.setmessage(FileName);
-//    msg.setIsFile(true);
+    //    msg.setSender(Sender);
+    //    msg.setReceiver(room);
+    //    msg.setbuf(Data);
+    //    msg.setmessage(FileName);
+    //    msg.setIsFile(true);
 
     msg.sender = Sender;
     msg.Reciever = room;
     msg.buf = Data;
     msg.Message=FileName;
     msg.IsFile=true;
+    msg.timeSend = timeSend;
 
 
     return msg;

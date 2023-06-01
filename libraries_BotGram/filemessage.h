@@ -2,7 +2,7 @@
 #define FILEMESSAGE_H
 
 #include <QObject>
-
+#include <QFile>
 #include "package.h"
 
 
@@ -37,6 +37,9 @@ public:
 
     void settimeSend(QDateTime value);
     QDateTime gettimeSend();
+
+
+    void sendFile(QFile* file , QTcpSocket* socket);
 
     operator TextMessage();
 
