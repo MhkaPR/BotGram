@@ -42,8 +42,8 @@ botgram::botgram(QWidget *parent)
                                   ui->frame_Verify->geometry().height());
 
     QDir cur=QDir::current();
-    cur.cdUp();
-    cur.cd("botGram");
+//    cur.cdUp();
+//    cur.cd("botGram");
     string tempAdd = cur.path().toStdString() + "/DataBases/data.btg";
     ifstream Doc(tempAdd.c_str());
     string check_firstEntering;
@@ -295,8 +295,8 @@ void botgram::on_btn_verify_clicked()
                     if(sys.getSysmsg()  == package::login_confrimed)
                     {
                         QDir cur=QDir::current();
-                        cur.cdUp();
-                        cur.cd("botGram");
+//                        cur.cdUp();
+//                        cur.cd("botGram");
                         string tempAdd = cur.path().toStdString() + "/DataBases/data.btg";
                         fstream DocPerso(tempAdd.c_str());
                         DocPerso << "1";
@@ -598,8 +598,8 @@ void botgram::on_btn_checkVerifyCode_clicked()
 
 
         QDir cur=QDir::current();
-        cur.cdUp();
-        cur.cd("botGram");
+//        cur.cdUp();
+//        cur.cd("botGram");
         string tokenname = cur.path().toStdString() + "/DataBases/Token.btg";
         fstream Doctoken(tokenname);
         Doctoken << Tpac.getToken().toStdString().c_str();
@@ -731,8 +731,8 @@ void botgram::on_checkname_clicked()
     {
         namechat = ui->name->text();
         QDir cur = QDir::current();
-        cur.cdUp();
-        cur.cd("BotGram");
+//        cur.cdUp();
+//        cur.cd("BotGram");
         cur.cd("DataBases");
         QFile savenamechat;
         QString temp = cur.path()+"/savenamechat.btg";

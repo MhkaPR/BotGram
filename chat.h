@@ -54,6 +54,8 @@ private:
     Ui::chat *ui;
      QByteArray name;
   QTcpSocket *socket;
+  QSqlDatabase db;
+  QString selectedpvname;
 
   QString pathImgg;
 };

@@ -40,6 +40,7 @@ chat::chat(QWidget *parent) :
     ui(new Ui::chat)
 {
 
+
     // QString message;
     ui->setupUi(this);
     ui->message_text->hide();
@@ -50,6 +51,32 @@ chat::chat(QWidget *parent) :
     ui->photo_button->hide();
     ui->pushButton_camera->hide();
     ui->pushButton_voice->hide();
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+
+    db.setDatabaseName("botgramdatabase.db");
+
+    // Open the database
+    if (!db.open()) {
+        qDebug() << "Failed to open database!";
+        return;
+    }
+    QSqlQuery query;
+    query.prepare("SELECT * FROM userinformation ");
+
+
+    // Execute the query
+    if (!query.exec()) {
+        qDebug() << "Failed to execute query!";
+        return;
+    }
+
+    // Process the results
+    while (query.next()) {
+        QString name = query.value("name").toString();
+
+        ui->listWidget->addItem(name);
+    }
+    query.finish();
 
 
     /*QDir cur = QDir::current();
@@ -196,6 +223,29 @@ void chat::onReadyRead()
         if(searching.getemail()!="")
         {
             ui->listWidget->addItem(searching.name);
+            QSqlQuery query(db);
+            query.prepare("INSERT INTO userinformation (username, name,email) VALUES (:username, :name,:email)");
+            query.bindValue(":username", searching.username);
+            query.bindValue(":name", searching.name);
+            query.bindValue(":email",searching.getemail());
+
+
+
+            // Execute the query
+            if (!query.exec()) {
+                QMessageBox::information(this,"warning","Execute the query","ok");
+
+                return;
+            }
+            query.clear();
+
+            query.prepare("CREATE TABLE "+searching.name+" (message TEXT , time TEXT,sender INTEGER,isfile INTEGER)");
+            if(!query.exec())
+            {
+                qDebug() << "Failed to create table: " << query.lastError().text();
+                return;
+            }
+
         }
         else
         {
@@ -218,6 +268,20 @@ void chat::onReadyRead()
         mesg = msg;
         ui->listWidget_2->addItem(mesg.sender+":"+mesg.Message+" // "+arr[1].toString());
         ui->listWidget_2->scrollToBottom();
+        QSqlQuery query(db);
+        query.prepare("INSERT INTO "+selectedpvname+" (username, name,email) VALUES (:username, :name,:email)");
+        query.bindValue(":message",msg.Message );
+        query.bindValue(":time",msg.timeSend.toString() );
+        query.bindValue(":sender",0);
+        query.bindValue(":isfile",msg.IsFile);
+
+        // Execute the query
+        if (!query.exec()) {
+            QMessageBox::information(this,"warning","Execute the query","ok");
+
+            return;
+        }
+        query.finish();
 
         break;
     }
@@ -238,6 +302,41 @@ chat::~chat()
 
 void chat::on_listWidget_itemClicked(QListWidgetItem *item)
 {
+
+    ui->listWidget_2->clear();
+    for (int i=0;i<20 ;i++ ) {
+        ui->listWidget_2->addItem("");
+    }
+   QString itemname = item->text();
+    selectedpvname=itemname;
+   //QMessageBox::information(this,"sff",itemname);
+   QSqlDatabase DB =db;
+   QSqlQuery query(DB);
+   query.prepare("SELECT * FROM  "+itemname);
+
+   // Execute the query
+   if (!query.exec()) {
+       qDebug() << "Failed to execute query!";
+       return;
+   }
+
+   // Process the results
+   while (query.next()) {
+       QString message = query.value("message").toString();
+       QString time = query.value("time").toString();
+       QString temp = QString("[%1]").arg(time)+message;
+       bool isMe = query.value("sender").toBool();
+       QListWidgetItem* item = new QListWidgetItem(temp);
+       if(isMe)
+       {
+            item->setBackgroundColor(Qt::green);
+       }
+
+
+       ui->listWidget_2->addItem(temp);
+       ui->listWidget_2->scrollToBottom();
+   }
+
     ui->message_text->show();
     ui->pushButton_send_message->show();
     //ui->label_selectchat->hide();
@@ -261,6 +360,17 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
 
 void chat::on_pushButton_send_message_clicked()
 {
+
+
+
+
+
+
+
+
+
+
+
     QString message = ui->message_text->toPlainText();
     if(message.isEmpty())
     {
@@ -331,6 +441,24 @@ void chat::on_pushButton_send_message_clicked()
         // Scroll to the bottom of the list widgets
         ui->listWidget->scrollToBottom();
         ui->listWidget_2->scrollToBottom();
+
+
+
+
+        QSqlQuery query(db);
+        query.prepare("INSERT INTO "+selectedpvname+" (username, name,email) VALUES (:username, :name,:email)");
+        query.bindValue(":message",messages.Message );
+        query.bindValue(":time",messages.timeSend.toString() );
+        query.bindValue(":sender",1);
+        query.bindValue(":isfile",0);
+
+        // Execute the query
+        if (!query.exec()) {
+            QMessageBox::information(this,"warning","Execute the query","ok");
+
+            return;
+        }
+        query.finish();
     }
 }
 
