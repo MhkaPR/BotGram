@@ -29,6 +29,7 @@ SOURCES += \
     botgrameenv.cpp \
 #    capchabuilder.cpp \
     chat.cpp \
+    email_search.cpp \
     libraries_BotGram/Accont/Account.cpp \
     libraries_BotGram/Connection/clientHost.cpp \
    # libraries_BotGram/adduser_spacket.cpp \
@@ -51,6 +52,7 @@ SOURCES += \
     libraries_BotGram/queriespacket.cpp \
     libraries_BotGram/room.cpp \
     libraries_BotGram/roompacket.cpp \
+    libraries_BotGram/searchuser.cpp \
     libraries_BotGram/systemmessagepacket.cpp \
     libraries_BotGram/textmessage.cpp \
     #libraries_BotGram/tokenbuilder.cpp \
@@ -69,6 +71,7 @@ HEADERS += \
     botgrameenv.h \
 #    capchabuilder.h \
     chat.h \
+    email_search.h \
     libraries_BotGram/Accont/Account.h \
     libraries_BotGram/Connection/clientHost.h \
     libraries_BotGram/Connection/packet.h \
@@ -100,6 +103,7 @@ HEADERS += \
     libraries_BotGram/roompacket.h \
     #libraries_BotGram/server/Packages.h \
     #libraries_BotGram/server/packages.h \
+    libraries_BotGram/searchuser.h \
     libraries_BotGram/systemmessagepacket.h \
     libraries_BotGram/textmessage.h \
     #libraries_BotGram/tokenbuilder.h \
@@ -112,7 +116,8 @@ FORMS += \
     botgram.ui \
     botgrameenv.ui \
  \#    capchabuilder.ui
-    chat.ui
+    chat.ui \
+    email_search.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

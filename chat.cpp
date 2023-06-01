@@ -25,6 +25,8 @@
 #include<QDir>
 #include<QAudioEncoderSettings>
 #include"libraries_BotGram/filemessage.h"
+#include "email_search.h"
+#include"libraries_BotGram/searchuser.h"
 
 const int SERVER_PO= 9999;
 //const QString TokenME = "pAWmUPKB";
@@ -50,7 +52,7 @@ chat::chat(QWidget *parent) :
     ui->pushButton_voice->hide();
 
 
-    QDir cur = QDir::current();
+    /*QDir cur = QDir::current();
     cur.cdUp();
     cur.cd("BotGram");
     cur.cd("DataBases");
@@ -78,7 +80,7 @@ chat::chat(QWidget *parent) :
         item->setBackgroundColor(Qt::blue);
         ui->listWidget->addItem(item);
         //listWidget->addItem(name);
-    }
+    }*/
     ui->pushButton_send_message->setStyleSheet("QPushButton {"
                                                "background-color: #54A8FF;"
                                                "border: none;"
@@ -174,26 +176,55 @@ void chat::onDisconnected()
 void chat::onReadyRead()
 {
     TextMessage msg;
-
-    // Handle incoming data from the server
     QByteArray data = socket->readAll();
+    QDataStream in(&data,QIODevice::ReadOnly);
+    in.setVersion(QDataStream::Qt_4_0);
+    // Handle incoming data from the server
+
+
     if(data[0] == '~')
     {
         return;
     }
-    QJsonDocument doc = QJsonDocument::fromJson(data);
-    QJsonObject obj;
-    obj = doc.object();
-    QStringList list;
-    list  = obj.keys();
-    msg.sender = list[0];
+    short header;
+    in>>header;
+    switch (header) {
+    case package::SEARCHUSER:
+    {
+        searchUserPackat searching;
+        searching.deserialize(data);
+        if(searching.getemail()!="")
+        {
+            ui->listWidget->addItem(searching.name);
+        }
+        else
+        {
+            QMessageBox::information(this,"warning!","no user with this email found","ok");
+        }
+        break;
+    }
+    default:
+    {
+        QJsonDocument doc = QJsonDocument::fromJson(data);
+        QJsonObject obj;
+        obj = doc.object();
+        QStringList list;
+        list  = obj.keys();
+        msg.sender = list[0];
 
-    QJsonArray arr = obj[msg.sender].toArray();
-    msg.Message = arr[0].toString();
-    msg.timeSend = QDateTime::fromString(arr[1].toString());
-    mesg = msg;
-    ui->listWidget_2->addItem(mesg.sender+":"+mesg.Message+" // "+arr[1].toString());
-    ui->listWidget_2->scrollToBottom();
+        QJsonArray arr = obj[msg.sender].toArray();
+        msg.Message = arr[0].toString();
+        msg.timeSend = QDateTime::fromString(arr[1].toString());
+        mesg = msg;
+        ui->listWidget_2->addItem(mesg.sender+":"+mesg.Message+" // "+arr[1].toString());
+        ui->listWidget_2->scrollToBottom();
+
+        break;
+    }
+    }
+
+
+
 
 
 
@@ -619,4 +650,14 @@ void chat::on_pushButton_voice_clicked()
 
 }
 
+
+
+void chat::on_pushButton_clicked()
+{
+    email_search *w3 = new email_search(socket);
+    w3->setWindowTitle("search page");
+    w3->resize(1310,810);
+    //this->hide();
+    w3->show();
+}
 

@@ -48,6 +48,8 @@ private slots:
 
     void on_pushButton_voice_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::chat *ui;
      QByteArray name;

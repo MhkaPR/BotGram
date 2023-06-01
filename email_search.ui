@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>email_search</class>
+ <widget class="QWidget" name="email_search">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1322</width>
+    <height>549</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLineEdit" name="lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>50</y>
+     <width>511</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">/*text-align:center;
+border-radius: 20px;
+    background-color:#00000000 ;
+
+ border: 1px solid;
+border-color:rgb(45, 45, 45);
+
+padding-left:10px;
+color:#1e1e1e;*/
+    background-color: #f2f2f2; /* Light gray background */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 8px 16px; /* Padding */
+    font-size: 16px; /* Font size */
+    color: #444444; /* Dark gray text */</string>
+   </property>
+   <property name="placeholderText">
+    <string>please enter the email that you want to chat with</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>570</x>
+     <y>140</y>
+     <width>111</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">    background-color: #e67e22; /* Orange background */
+    color: white; /* White text */
+    border-radius: 5px; /* Rounded corners */
+    border: none; /* Remove border */
+    padding: 8px 16px; /* Padding */
+    font-size: 16px; /* Font size *</string>
+   </property>
+   <property name="text">
+    <string>search</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
