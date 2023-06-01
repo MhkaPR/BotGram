@@ -111,15 +111,15 @@ chat::chat(QWidget *parent) :
                                          "background-color: #E6E6E6;"
                                          "}");
     ui->pushButton_voice->setStyleSheet("QPushButton {"
-                                           "border: none;"
-                                           "background-image: url(:/icons/pin.png);"
-                                           "background-position: center;"
-                                           "background-color: rgb(255, 85, 255);"
-                                           "padding: 0px 10px 0px 10px;"
-                                           "}"
-                                           "QPushButton:hover {"
-                                           "background-color: #E6E6E6;"
-                                           "}");
+                                        "border: none;"
+                                        "background-image: url(:/icons/pin.png);"
+                                        "background-position: center;"
+                                        "background-color: rgb(255, 85, 255);"
+                                        "padding: 0px 10px 0px 10px;"
+                                        "}"
+                                        "QPushButton:hover {"
+                                        "background-color: #E6E6E6;"
+                                        "}");
 
 
 
@@ -427,13 +427,13 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
 
     QString voiceFile = item->data(Qt::UserRole).toString();
 
-       // Check if the file exists
-       if(QFile::exists(voiceFile)){
-           // Create a new instance of QDesktopServices and open the file with the default application
-           QDesktopServices::openUrl(QUrl::fromLocalFile(voiceFile));
-       }else{
-           QMessageBox::warning(this, "Error", "Voice file not found!");
-       }
+    // Check if the file exists
+    if(QFile::exists(voiceFile)){
+        // Create a new instance of QDesktopServices and open the file with the default application
+        QDesktopServices::openUrl(QUrl::fromLocalFile(voiceFile));
+    }else{
+        QMessageBox::warning(this, "Error", "Voice file not found!");
+    }
     QDesktopServices::openUrl(QUrl::fromLocalFile(pathImgg));
 
 }
@@ -524,68 +524,99 @@ void chat::on_pushButton_camera_clicked()
 void chat::on_pushButton_voice_clicked()
 {
 
-        // Create a new instance of QAudioRecorder
-        QAudioRecorder *recorder = new QAudioRecorder(this);
 
-        // Create a new instance of QPushButton and set it as the record button for the recorder
-        QPushButton *recordButton = new QPushButton("Record", this);
-        connect(recordButton, &QPushButton::clicked, recorder, &QAudioRecorder::record);
+    QFile *voiceDataFile =new QFile;
+    // Create a new instance of QAudioRecorder
+    QAudioRecorder *recorder = new QAudioRecorder(this);
 
-        // Create a new instance of QPushButton and set it as the stop button for the recorder
-        QPushButton *stopButton = new QPushButton("Stop", this);
-        connect(stopButton, &QPushButton::clicked, recorder, &QAudioRecorder::stop);
+    // Create a new instance of QPushButton and set it as the record button for the recorder
+    QPushButton *recordButton = new QPushButton("Record", this);
+    connect(recordButton, &QPushButton::clicked, recorder, &QAudioRecorder::record);
 
-        // Create a new instance of QHBoxLayout and add the record and stop buttons to it
-        QHBoxLayout *buttonLayout = new QHBoxLayout();
-        buttonLayout->addWidget(recordButton);
-        buttonLayout->addWidget(stopButton);
+    // Create a new instance of QPushButton and set it as the stop button for the recorder
+    QPushButton *stopButton = new QPushButton("Stop", this);
+    connect(stopButton, &QPushButton::clicked, recorder, &QAudioRecorder::stop);
 
-        // Create a new instance of QWidget and set the layout for it
-        QWidget *widget = new QWidget(this);
-        widget->setLayout(buttonLayout);
+    // Create a new instance of QHBoxLayout and add the record and stop buttons to it
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    buttonLayout->addWidget(recordButton);
+    buttonLayout->addWidget(stopButton);
 
-        // Create a new instance of QVBoxLayout and add the widget to it
-        QVBoxLayout *layout = new QVBoxLayout();
-        layout->addWidget(widget);
+    // Create a new instance of QWidget and set the layout for it
+    QWidget *widget = new QWidget(this);
+    widget->setLayout(buttonLayout);
 
-        // Create a new instance of QDialog and set the layout for it
-        QDialog *dialog = new QDialog(this);
-        dialog->setLayout(layout);
+    // Create a new instance of QVBoxLayout and add the widget to it
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addWidget(widget);
 
-        // Connect the stateChanged signal of the recorder to a lambda function that adds the recorded voice file to the list widget and saves it to a file
-        connect(recorder, &QAudioRecorder::stateChanged, this, [=](QAudioRecorder::State state){
-            if(state == QAudioRecorder::StoppedState){
-                // Create a new instance of QListWidgetItem and set the icon and text for it
-                QListWidgetItem *item = new QListWidgetItem(QIcon(":/icons/voice_icon.png"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    // Create a new instance of QDialog and set the layout for it
+    QDialog *dialog = new QDialog(this);
+    dialog->setLayout(layout);
 
-                // Set the data for the item to the path of the recorded voice file
-                QString voiceFile = recorder->outputLocation().toLocalFile();
-                item->setData(Qt::UserRole, voiceFile);
+    // Connect the stateChanged signal of the recorder to a lambda function that adds the recorded voice file to the list widget and saves it to a file
+    connect(recorder, &QAudioRecorder::stateChanged, this, [=](QAudioRecorder::State state){
+        if(state == QAudioRecorder::StoppedState){
+            // Create a new instance of QListWidgetItem and set the icon and text for it
+            QListWidgetItem *item = new QListWidgetItem(QIcon(":/icons/voice_icon.png"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
 
-                // Add the item to the list widget
-                ui->listWidget_2->addItem(item);
+            // Set the data for the item to the path of the recorded voice file
+            QString voiceFile = recorder->outputLocation().toLocalFile();
 
-                // Copy the recorded voice file to a new location
-                QString newPath = QFileDialog::getSaveFileName(this, "Save Voice", "", "WAV Files (*.wav)");
-                if(!newPath.isEmpty()){
-                    if(QFile::copy(voiceFile, newPath)){
-                        QMessageBox::information(this, "Success", "Voice saved successfully!");
-                    }else{
-                        QMessageBox::warning(this, "Error", "Failed to save voice!");
+
+            item->setData(Qt::UserRole, voiceFile);
+
+            // Add the item to the list widget
+            ui->listWidget_2->addItem(item);
+
+            // Copy the recorded voice file to a new location
+            QString newPath = QFileDialog::getSaveFileName(this, "Save Voice", "", "WAV Files (*.wav)");
+            if(!newPath.isEmpty()){
+                if(QFile::copy(voiceFile, newPath)){
+                    voiceDataFile->setFileName(newPath);
+                    if(voiceDataFile->open(QIODevice::ReadOnly))
+                    {
+                        fileMessage fmsg(TokenME);
+                        QFileInfo fileInfo(voiceDataFile->fileName());
+                        QString mimeType = fileInfo.suffix();
+                        fmsg.setFileName(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")+"."+mimeType);
+                        fmsg.setroom("pv_testUser_mhka1382");
+                        fmsg.settimeSend(QDateTime::currentDateTime());
+                        fmsg.setSender(TokenME);
+
+                        // quint64 bufsize=0;
+
+                        fmsg.setcount_size("0");
+
+                        // qDebug() << file.size();
+
+                        fmsg.sendFile(voiceDataFile,socket);
                     }
+                    else
+                    {
+                        QMessageBox::information(this,"sdfg",voiceDataFile->errorString());
+                    }
+                    QMessageBox::information(this, "Success", "Voice saved successfully!");
+                }else{
+                    QMessageBox::warning(this, "Error", "Failed to save voice!");
                 }
             }
-        });
+        }
+    });
 
-        // Set up the recorder and show the dialog
-        QString filename = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
-        filename = QDir::tempPath() + "/" + filename + ".wav";
-        recorder->setOutputLocation(QUrl::fromLocalFile(filename));
-       // recorder->setAudioSettings(QAudioEncoderSettings(), QAudioFormat::wavformat);
-        recorder->setAudioInput("Default");
-        recorder->record();
+    // Set up the recorder and show the dialog
+    QString filename = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+    filename = QDir::tempPath() + "/" + filename + ".wav";
+    recorder->setOutputLocation(QUrl::fromLocalFile(filename));
+    // recorder->setAudioSettings(QAudioEncoderSettings(), QAudioFormat::wavformat);
+    recorder->setAudioInput("Default");
+    recorder->record();
 
-        dialog->show();
+    dialog->show();
+
+
+
 
 }
+
 
