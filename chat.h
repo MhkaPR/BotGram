@@ -50,6 +50,13 @@ private slots:
 
     void on_pushButton_clicked();
 
+   QString getTweLine(QString data,int lengthOfeachLine);
+
+
+
+
+   void sendmessage(QString message);
+
 private:
     Ui::chat *ui;
      QByteArray name;

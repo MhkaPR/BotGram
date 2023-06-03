@@ -43,6 +43,7 @@ chat::chat(QWidget *parent) :
 
     // QString message;
     ui->setupUi(this);
+
     ui->message_text->hide();
     ui->label_onoroff->hide();
     ui->pushButton_send_message->hide();
@@ -51,8 +52,9 @@ chat::chat(QWidget *parent) :
     ui->photo_button->hide();
     ui->pushButton_camera->hide();
     ui->pushButton_voice->hide();
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
 
+
+    db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("botgramdatabase.db");
 
     // Open the database
@@ -63,51 +65,51 @@ chat::chat(QWidget *parent) :
     QSqlQuery query;
     query.prepare("SELECT * FROM userinformation ");
 
-
     // Execute the query
     if (!query.exec()) {
         qDebug() << "Failed to execute query!";
+        query.finish();
+
         return;
     }
 
     // Process the results
     while (query.next()) {
         QString name = query.value("name").toString();
+        QString temp;
 
-        ui->listWidget->addItem(name);
+        //get last update message
+        QSqlQuery lastUpdateQuery(db);
+        lastUpdateQuery.prepare("SELECT max(time),message FROM "+name);
+
+        if(!lastUpdateQuery.exec())
+        {
+            qDebug() << "Failed to execute query!";
+            lastUpdateQuery.finish();
+
+            return;
+        }
+        if(lastUpdateQuery.next())
+        {
+            QString time = lastUpdateQuery.value("max(time)").toString();
+            time.remove(0,9);
+            QString messageTweLine =getTweLine(lastUpdateQuery.value("message").toString(),50);
+            //            QString line1 = messageTweLine.remove(0,50);
+            //            QString line2 = messageTweLine.remove(0,qMin(50,messageTweLine.length()));
+            //            line1.remove("\n");
+
+
+
+            temp = QString("%1\n%2").arg(messageTweLine).arg(time);
+            temp = "\n" + temp;
+        }
+
+        ui->listWidget->addItem(name+temp);
     }
     query.finish();
 
 
-    /*QDir cur = QDir::current();
-    cur.cdUp();
-    cur.cd("BotGram");
-    cur.cd("DataBases");
-    QFile savenamechat;
-    QString temp = cur.path()+"/savenamechat.btg";
-    savenamechat.setFileName(temp);
-    if(!savenamechat.open(QIODevice::ReadOnly))
-    {
-        QMessageBox::information(this,"warning",savenamechat.errorString(),"ok");
-    }
-    else
-    {
 
-
-        name=savenamechat.readAll();
-        savenamechat.close();
-
-        //ui->listWidget_2->hide();
-        QListWidget *listWidget = ui->listWidget;
-        QListWidgetItem* item = new QListWidgetItem(name);
-        QFont font = item->font();
-        font.setBold(true); // set font to bold
-        item->setFont(font);
-        item->setTextColor(Qt::white);
-        item->setBackgroundColor(Qt::blue);
-        ui->listWidget->addItem(item);
-        //listWidget->addItem(name);
-    }*/
     ui->pushButton_send_message->setStyleSheet("QPushButton {"
                                                "background-color: #54A8FF;"
                                                "border: none;"
@@ -220,7 +222,7 @@ void chat::onReadyRead()
     {
         searchUserPackat searching;
         searching.deserialize(data);
-        if(searching.getemail()!="")
+        if(searching.name != "")
         {
             ui->listWidget->addItem(searching.name);
             QSqlQuery query(db);
@@ -271,7 +273,7 @@ void chat::onReadyRead()
         QSqlQuery query(db);
         query.prepare("INSERT INTO "+selectedpvname+" (username, name,email) VALUES (:username, :name,:email)");
         query.bindValue(":message",msg.Message );
-        query.bindValue(":time",msg.timeSend.toString() );
+        query.bindValue(":time",msg.timeSend.toString("yyyyMMdd hh:mm:ss") );
         query.bindValue(":sender",0);
         query.bindValue(":isfile",msg.IsFile);
 
@@ -304,38 +306,40 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
 {
 
     ui->listWidget_2->clear();
-    for (int i=0;i<20 ;i++ ) {
+
+    for (int i = 0;i < 23;i++) {
         ui->listWidget_2->addItem("");
     }
-   QString itemname = item->text();
-    selectedpvname=itemname;
-   //QMessageBox::information(this,"sff",itemname);
-   QSqlDatabase DB =db;
-   QSqlQuery query(DB);
-   query.prepare("SELECT * FROM  "+itemname);
+    selectedpvname = item->text().split("\n")[0];
 
-   // Execute the query
-   if (!query.exec()) {
-       qDebug() << "Failed to execute query!";
-       return;
-   }
+    //QMessageBox::information(this,"sff",itemname);
 
-   // Process the results
-   while (query.next()) {
-       QString message = query.value("message").toString();
-       QString time = query.value("time").toString();
-       QString temp = QString("[%1]").arg(time)+message;
-       bool isMe = query.value("sender").toBool();
-       QListWidgetItem* item = new QListWidgetItem(temp);
-       if(isMe)
-       {
-            item->setBackgroundColor(Qt::green);
-       }
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM  "+selectedpvname);
 
+    // Execute the query
+    if (!query.exec()) {
+        qDebug() << "Failed to execute query!";
+        return;
+    }
 
-       ui->listWidget_2->addItem(temp);
-       ui->listWidget_2->scrollToBottom();
-   }
+    // Process the results
+    while (query.next()) {
+        QString message = query.value("message").toString();
+        QString time = query.value("time").toString();
+        time = time.remove(0,9);
+        QString temp = QString("[%1]").arg(time)+message;
+        bool isMe = query.value("sender").toBool();
+        QListWidgetItem* item_Room = new QListWidgetItem(temp);
+        if(isMe)
+        {
+            item_Room->setBackgroundColor(Qt::green);
+        }
+
+        ui->listWidget_2->addItem(item_Room);
+        ui->listWidget_2->scrollToBottom();
+        //delete  item;
+    }
 
     ui->message_text->show();
     ui->pushButton_send_message->show();
@@ -362,51 +366,26 @@ void chat::on_pushButton_send_message_clicked()
 {
 
 
-
-
-
-
-
-
-
-
-
-    QString message = ui->message_text->toPlainText();
-    if(message.isEmpty())
+    QString messageText = ui->message_text->toPlainText();
+    if(messageText.isEmpty())
     {
         ui->message_text->setStyleSheet("background-color: rgb(255, 0, 0);");
     }
     else
     {
-        // Create a new QListWidgetItem with the message and time
-        QTime time = QTime::currentTime();
+
+
+        //// Create a new QListWidgetItem with the message and time
+        QDateTime time = QDateTime::currentDateTime();
         QString timeString = time.toString("hh:mm:ss"); // or any other time format you prefer
-        QString messageWithTime = QString("[%1] ").arg(timeString);
-
-        // Split the message into chunks of 50 characters
-        QStringList messageChunks;
-        int messageLength = message.length();
-        for (int i = 0; i < messageLength; i += 50) {
-            QString chunk = message.mid(i, 50);
-            messageChunks.append(chunk);
-            messageWithTime += chunk;
-            if (i + 50 < messageLength) {
-                messageWithTime += "\n       ";
-            }
-        }
-
-        QListWidgetItem* item = new QListWidgetItem(messageWithTime);
-        ui->message_text->setStyleSheet("background-color: rgb(85, 255, 127);");
 
 
-        // Set the background color based on the length of the message
-        if (messageLength < 10) {
-            item->setBackgroundColor(Qt::green);
-        } else {
-            item->setBackgroundColor(Qt::green);
-        }
+        // QListWidgetItem* item = new QListWidgetItem(messageWithTime);
 
-        // Add the item to listWidget2
+
+
+
+        // send to server, message
         TextMessage messages;
         messages.setSender(TokenME);
         messages.setReceiver("pv_testUser_mhka1382");
@@ -418,47 +397,67 @@ void chat::on_pushButton_send_message_clicked()
         out2.setVersion(QDataStream::Qt_4_0);
         out2<<static_cast<short>(messages.getheader())<<messages.serialize();
         socket->write(buff2);
-        socket->waitForBytesWritten();
+        if(socket->waitForBytesWritten())
+        {
 
-        ui->message_text->clear();
-        ui->listWidget_2->addItem(item);
-        ui->listWidget_2->scrollToBottom();
+            // Add the item to listWidget2
+            ui->message_text->clear();
 
-        // Delete the second and subsequent items in listWidget1 and create a new item with the new time
-        while (ui->listWidget->count() > 1) {
-            QListWidgetItem* previousItem = ui->listWidget->takeItem(1);
-            delete previousItem;
+
+
+            ui->listWidget_2->addItem(QString("[%1]:\n%2").arg(timeString,messageText));
+
+
+
+            // ui->listWidget_2->addItem(item);
+            ui->listWidget_2->scrollToBottom();
+
+
+            QString messageTweLine = getTweLine(messages.Message,50);
+
+            QListWidgetItem *newListWidget = new QListWidgetItem;
+            QLabel *lbl_message = new QLabel;
+            lbl_message->setFixedWidth(300);
+            lbl_message->setText(messages.Message);
+
+            QString button_message = QString("%1\n%2").arg(messageTweLine,timeString);
+            // QListWidgetItem* newItem = new QListWidgetItem();
+            // newItem->setTextColor(Qt::black); // set text color to black
+            //ui->listWidget->addItem(newItem);
+            ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+button_message);
+
+            // Scroll to the bottom of the list widget_2
+            ui->listWidget_2->scrollToBottom();
+
+
+            //save in database
+
+            QSqlQuery query(db);
+            query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
+            query.bindValue(":message",messages.Message );
+            query.bindValue(":time",messages.timeSend.toString("yyyyMMdd hh:mm:ss") );
+            query.bindValue(":sender",1);
+            query.bindValue(":isfile",0);
+
+            // Execute the query
+            if (!query.exec()) {
+                QMessageBox::information(this,"warning",query.lastError().text(),"ok");
+
+                return;
+            }
+            query.finish();
+            db.commit();
+
+//            ui->listWidget_2->addItem(newListWidget);
+//            ui->listWidget_2->setItemWidget(newListWidget,lbl_message);
+
+        }
+        else
+        {
+            ui->label_selectchat->setText("wait for connecting...");
         }
 
-        // Create a new item with the first two lines of the message and add it to listWidget1
-        QStringList firstTwoLines = messageChunks.mid(0, 2);
-        QString firstTwoLinesString = firstTwoLines.join("\n");
-        messageWithTime = QString("[%1] ").arg(timeString);
-        QListWidgetItem* newItem = new QListWidgetItem(QString("[%1] %2").arg(timeString,firstTwoLinesString));
-        newItem->setTextColor(Qt::black); // set text color to black
-        ui->listWidget->addItem(newItem);
 
-        // Scroll to the bottom of the list widgets
-        ui->listWidget->scrollToBottom();
-        ui->listWidget_2->scrollToBottom();
-
-
-
-
-        QSqlQuery query(db);
-        query.prepare("INSERT INTO "+selectedpvname+" (username, name,email) VALUES (:username, :name,:email)");
-        query.bindValue(":message",messages.Message );
-        query.bindValue(":time",messages.timeSend.toString() );
-        query.bindValue(":sender",1);
-        query.bindValue(":isfile",0);
-
-        // Execute the query
-        if (!query.exec()) {
-            QMessageBox::information(this,"warning","Execute the query","ok");
-
-            return;
-        }
-        query.finish();
     }
 }
 
@@ -538,16 +537,6 @@ void chat::on_photo_button_clicked()
 
 
 }
-
-
-
-
-
-
-
-
-
-
 
 void chat::on_message_text_textChanged()
 {
@@ -787,5 +776,48 @@ void chat::on_pushButton_clicked()
     w3->resize(1310,810);
     //this->hide();
     w3->show();
+}
+
+QString chat::getTweLine(QString data,int lengthOfeachLine)
+{
+
+    int lenData = data.length();
+
+    QString ansString;
+    QString line1 = data.left(qMin(lengthOfeachLine,lenData));
+    data.remove(0,qMin(lengthOfeachLine,lenData));
+    QStringList answer = line1.split("\n");
+    // first part of lines
+    if(answer.length() > 1)
+    {
+
+        return answer[0]+"\n"+answer[1];
+    }
+    else
+    {
+        ansString = answer[0];
+    }
+
+    // secend line
+    QString line2 = data.left(qMin(lengthOfeachLine,lenData));
+    data.remove(0,qMin(lengthOfeachLine,lenData));
+    answer = line2.split("\n");
+    if(answer.length() > 1)
+    {
+
+        return answer[0]+"\n"+answer[1];
+    }
+    else
+    {
+
+        ansString += ("\n"  + answer[0]);
+    }
+
+    return ansString;
+}
+
+void chat::sendmessage(QString message)
+{
+    QMessageBox::information(this,"info",message);
 }
 
