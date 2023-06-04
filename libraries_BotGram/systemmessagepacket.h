@@ -18,8 +18,12 @@ public:
     SysCodes getSysmsg();
     void setSysmsg(SysCodes value);
 
+    QByteArray getinformation();
+    void setinformation(QByteArray value);
+
 private:
     SysCodes Sysmsg;
+    QByteArray information;
 };
 
 #endif // SYSTEMMESSAGEPACKET_H

@@ -27,6 +27,7 @@
 #include"libraries_BotGram/filemessage.h"
 #include "email_search.h"
 #include"libraries_BotGram/searchuser.h"
+#include "libraries_BotGram/systemmessagepacket.h"
 
 const int SERVER_PO= 9999;
 //const QString TokenME = "pAWmUPKB";
@@ -163,6 +164,30 @@ chat::chat(QWidget *parent) :
 
     connectToServer();
 
+//    systemMessagePacket sysmsg;
+//    sysmsg.setSysmsg(package::SysCodes::send_file);
+
+//    QJsonObject obj;
+
+//    obj.insert("room","pv_testUser_mhka1382");
+//    obj.insert("FileName","20230603174457740.jpg");
+
+//    QJsonDocument doc;
+//    doc.setObject(obj);
+
+//    sysmsg.setinformation(doc.toJson());
+
+//    QByteArray buf123;
+//    QDataStream out123(&buf123,QIODevice::WriteOnly);
+//    out123.setVersion(QDataStream::Qt_4_0);
+
+//    out123 << static_cast<short>(sysmsg.getheader()) << sysmsg.serialize();
+
+//    sendmessage("sff");
+//    socket->write(buf123);
+//    socket->waitForBytesWritten();
+//    socket->waitForReadyRead();
+
 }
 
 void chat::connectToServer()
@@ -198,7 +223,7 @@ void chat::onDisconnected()
     {
         QMessageBox::information(this,"error","socket error:"+socket1->errorString());
     }
-    QThread::sleep(0.5);
+    //QThread::sleep(0.5);
     connectToServer();
 }
 
@@ -206,8 +231,7 @@ void chat::onReadyRead()
 {
     TextMessage msg;
     QByteArray data = socket->readAll();
-    QDataStream in(&data,QIODevice::ReadOnly);
-    in.setVersion(QDataStream::Qt_4_0);
+
     // Handle incoming data from the server
 
 
@@ -215,6 +239,11 @@ void chat::onReadyRead()
     {
         return;
     }
+
+
+    QDataStream in(&data,QIODevice::ReadOnly);
+    in.setVersion(QDataStream::Qt_4_0);
+
     short header;
     in>>header;
     switch (header) {
@@ -254,7 +283,69 @@ void chat::onReadyRead()
             QMessageBox::information(this,"warning!","no user with this email found","ok");
         }
         break;
+
+        //send apply ??
+        //receive part 1 ??
+        //send ok answer ??
+        //while receive part i
+        // send ok answer
+
+
+
+
+
     }
+    case package::FILEMESSAGE :
+    {
+
+        //deserialize
+
+        fileMessage fmsg("");
+
+        fmsg.deserialize(data);
+
+        static quint64 bufsize=0;
+        bufsize += static_cast<quint64>(data.size());
+
+
+
+        QDir cur(QDir::current());
+        cur.cd("files");
+
+
+        //send file, part i in hard
+        QFile fileReceiive(cur.path()+"/"+fmsg.getFileName());
+
+        sendmessage(cur.path()+"/"+fmsg.getFileName());
+
+        if(!fileReceiive.open(QIODevice::Append | QIODevice::WriteOnly))
+        {
+            sendmessage("receive file:"+fileReceiive.errorString());
+            exit(1);
+        }
+        fileReceiive.write(fmsg.getData());
+        fileReceiive.close();
+
+
+        //check if end of file
+        if(fmsg.IsEndFile())
+        {
+            bufsize = 0;
+        }
+
+
+        socket->write("~");
+        socket->waitForBytesWritten();
+        //sendmessage("hello filemessage");
+
+        //print how much data received
+        //fmsg.getFileName().remove(fmsg.getroom()+"---");
+        //(ui->listWidget_2->findItems(fmsg.getFileName(),Qt::MatchContains))[0]->setText(QString("received %1 MB").arg(bufsize/1024/1024));
+
+
+        break;
+    }
+
     default:
     {
         QJsonDocument doc = QJsonDocument::fromJson(data);
@@ -448,8 +539,8 @@ void chat::on_pushButton_send_message_clicked()
             query.finish();
             db.commit();
 
-//            ui->listWidget_2->addItem(newListWidget);
-//            ui->listWidget_2->setItemWidget(newListWidget,lbl_message);
+            //            ui->listWidget_2->addItem(newListWidget);
+            //            ui->listWidget_2->setItemWidget(newListWidget,lbl_message);
 
         }
         else
@@ -515,8 +606,9 @@ void chat::on_photo_button_clicked()
 
     fmsg.sendFile(file,socket);
 
-    file->close();
     delete file;
+
+
 
 
 

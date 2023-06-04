@@ -128,10 +128,12 @@ void fileMessage::sendFile(QFile *file, QTcpSocket *socket)
        //send pack
         socket->write(buf5);
         socket->waitForBytesWritten();
+        qDebug() << "error in read...";
         socket->flush();
         socket->waitForReadyRead();
 
     }
+    file->close();
 }
 
 fileMessage::operator TextMessage()
