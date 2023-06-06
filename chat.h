@@ -19,7 +19,7 @@ class chat : public QWidget
 public:
     explicit chat(QWidget *parent = nullptr);
     TextMessage mesg;
-
+      QStringList downloadedFiles;
     ~chat();
    // QString namechat;
 
@@ -29,7 +29,7 @@ private slots:
     void on_pushButton_send_message_clicked();
 
     void on_photo_button_clicked();
-
+     //void on_receiveButton_clicked();
 
     void on_listWidget_2_itemClicked(QListWidgetItem *item);
    // void keyPressEvent(QKeyEvent *event);

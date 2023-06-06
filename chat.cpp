@@ -28,7 +28,9 @@
 #include "email_search.h"
 #include"libraries_BotGram/searchuser.h"
 #include "libraries_BotGram/systemmessagepacket.h"
-
+#include<QJsonDocument>
+#include<QJsonObject>
+#include<QFile>
 const int SERVER_PO= 9999;
 //const QString TokenME = "pAWmUPKB";
 const QString TokenME = "mhka1382";
@@ -318,7 +320,7 @@ void chat::onReadyRead()
         //send file, part i in hard
         QFile fileReceiive(cur.path()+"/"+fmsg.getFileName());
 
-        sendmessage(cur.path()+"/"+fmsg.getFileName());
+        //sendmessage(cur.path()+"/"+fmsg.getFileName());
 
         if(!fileReceiive.open(QIODevice::Append | QIODevice::WriteOnly))
         {
@@ -428,9 +430,26 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
         {
             item_Room->setBackgroundColor(Qt::green);
         }
+        if(query.value("isfile").toBool()==1)
+        {
 
-        ui->listWidget_2->addItem(item_Room);
-        ui->listWidget_2->scrollToBottom();
+            QImage f(64, 64, QImage::Format_RGB32);
+            f.fill(Qt::gray);
+
+
+
+            QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(time,message), ui->listWidget_2);
+            item->setBackgroundColor(Qt::gray);
+            ui->listWidget_2->addItem(item);
+            ui->listWidget_2->scrollToBottom();
+        }
+        else
+
+        {
+            ui->listWidget_2->addItem(item_Room);
+            ui->listWidget_2->scrollToBottom();
+        }
+
         //delete  item;
     }
 
@@ -593,20 +612,24 @@ void chat::on_photo_button_clicked()
     f.fill(Qt::gray);
 
 
-    QFileInfo fileInfo(filePath);
-    QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(timeString,fileInfo.fileName()), ui->listWidget_2);
-    item->setBackgroundColor(Qt::gray);
 
 
 
     fileMessage fmsg(TokenME);
 
+    QFileInfo fileInfo(filePath);
     QString mimeType = fileInfo.suffix();
     int count =0;
     fmsg.setFileName(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")+"."+mimeType);
     fmsg.setroom("pv_testUser_mhka1382");
     fmsg.settimeSend(QDateTime::currentDateTime());
     fmsg.setSender(TokenME);
+
+
+
+    QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(timeString,fmsg.gettimeSend().toString("yyyyMMddhhmmsszzz")+"."+fileInfo.suffix()), ui->listWidget_2);
+    item->setBackgroundColor(Qt::gray);
+
 
     quint64 fileSize = static_cast<quint64>(file->size());
     // quint64 bufsize=0;
@@ -622,6 +645,23 @@ void chat::on_photo_button_clicked()
 
 
 
+    //save in database
+
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
+    query.bindValue(":message",fmsg.getFileName());
+    query.bindValue(":time",fmsg.gettimeSend().toString("yyyyMMdd hh:mm:ss") );
+    query.bindValue(":sender",1);
+    query.bindValue(":isfile",1);
+
+    // Execute the query
+    if (!query.exec()) {
+        QMessageBox::information(this,"warning",query.lastError().text(),"ok");
+
+        return;
+    }
+    query.finish();
+    db.commit();
 
 
 
@@ -656,7 +696,7 @@ void chat::on_message_text_textChanged()
 }
 
 
-void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
+/*void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
 {
     if (item->icon().isNull()) {
         // If the clicked item does not contain an icon, it may contain text
@@ -694,12 +734,224 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
         QString filename = item->text();
 
         filename.remove(0,11);
+        systemMessagePacket msgpacket;
+        msgpacket.setSysmsg(package::SysCodes::send_file);
+        QJsonObject data;
+         data["sender"] = TokenME;
+         data["FileName"] = filename;
+         data["room"]= "pv_testUser_mhka1382";
+
+
+         // Convert the JSON object to a JSON document
+         QJsonDocument json_doc;
+         json_doc.setObject(data);
+
+         // Convert the JSON document to a QByteArray and send it as a message
+         QByteArray msgbytearray;
+         msgbytearray = json_doc.toJson();
+         msgpacket.setinformation(msgbytearray);
+
+         QDataStream out2(&msgbytearray,QIODevice::WriteOnly);
+         out2.setVersion(QDataStream::Qt_4_0);
+         out2<<static_cast<short>(msgpacket.getheader())<<msgpacket.serialize();
+         socket->write(msgbytearray);
+         socket->waitForBytesWritten();
 
        QDesktopServices::openUrl(QUrl::fromLocalFile(pathImgg));
 
 
+
+
     }
+}*/
+
+
+
+
+
+
+
+void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
+{
+    if (item->icon().isNull()) {
+        // If the clicked item does not contain an icon, it may contain text
+        QString text = item->text();
+        if (!text.isEmpty()) {
+            // Remove the timestamp from the text if it exists
+            text.remove(QRegularExpression("^\\[\\d{2}:\\d{2}:\\d{2}\\] "));
+
+            // If the item contains text, open a context menu to copy the text
+            QMenu menu(this);
+            QAction *copyAction = menu.addAction("Copy");
+            connect(copyAction, &QAction::triggered, [=]() {
+                QClipboard *clipboard = QGuiApplication::clipboard();
+                clipboard->setText(text);
+            });
+            menu.exec(QCursor::pos());
+        }
+        return;
+    }
+
+    // Get the filename from the clicked item
+    QString filename = item->text();
+    filename.remove(0,11);
+
+    // Check if the file has already been downloaded
+    bool downloaded = downloadedFiles.contains(filename);
+
+    // Create a button to download or open the file, depending on the download status
+    QPushButton *fileButton = new QPushButton(downloaded ? "Open" : "Download", this);
+    connect(fileButton, &QPushButton::clicked, [=]() {
+        if (downloaded) {
+            // Open the downloaded file
+            QString filePath = "files/" + filename;
+            QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+        } else {
+            // Send a request to the server to receive the file
+            systemMessagePacket msgpacket;
+            msgpacket.setSysmsg(package::SysCodes::send_file);
+            QJsonObject data;
+            data["sender"] = TokenME;
+            data["FileName"] = filename;
+            data["room"] = "pv_testUser_mhka1382";
+            msgpacket.setinformation(QJsonDocument(data).toJson());
+
+            QByteArray msgbytearray;
+            QDataStream out2(&msgbytearray, QIODevice::WriteOnly);
+            out2.setVersion(QDataStream::Qt_4_0);
+            out2 << static_cast<short>(msgpacket.getheader()) << msgpacket.serialize();
+            socket->write(msgbytearray);
+            socket->waitForBytesWritten();
+
+            // Wait for the file to be received
+           // socket->waitForReadyRead();
+
+            // Save the received file to the "files" directory
+            QByteArray dataReceived = socket->readAll();
+            QString filePath = "files/" + filename;
+            QFile file(filePath);
+            if (file.open(QIODevice::WriteOnly)) {
+                file.write(dataReceived);
+                file.close();
+                // Add the filename to the list of downloaded files
+                downloadedFiles.append(filename);
+                // Update the button text to "Open"
+                fileButton->setText("Open");
+            } else {
+                qDebug() << "Failed to save file:" << filePath;
+            }
+            QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+
+        }
+    });
+
+    // Add the button to the item in the list
+    QWidget *widget = new QWidget;
+    QHBoxLayout *layout = new QHBoxLayout(widget);
+    layout->addWidget(fileButton);
+    layout->addStretch();
+    item->setSizeHint(widget->sizeHint());
+    ui->listWidget_2->setItemWidget(item, widget);
 }
+/*void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
+{
+    if (item->icon().isNull()) {
+        // If the clicked item does not contain an icon, it may contain text
+        QString text = item->text();
+        if (!text.isEmpty()) {
+            // Remove the timestamp from the text if it exists
+            text.remove(QRegularExpression("^\\[\\d{2}:\\d{2}:\\d{2}\\] "));
+
+            // If the item contains text, open a context menu to copy the text
+            QMenu menu(this);
+            QAction *copyAction = menu.addAction("Copy");
+            connect(copyAction, &QAction::triggered, [=]() {
+                QClipboard *clipboard = QGuiApplication::clipboard();
+                clipboard->setText(text);
+            });
+            menu.exec(QCursor::pos());
+        }
+        return;
+    }
+
+    // Get the filename from the clicked item
+    QString filename = item->text();
+    filename.remove(0,11);
+
+    // Check if the file has already been downloaded
+    bool downloaded = downloadedFiles.contains(filename);
+
+    // Create a button to download or open the file, depending on the download status
+    QPushButton *fileButton = new QPushButton(downloaded ? "Open" : "Download", this);
+    connect(fileButton, &QPushButton::clicked, [=]() {
+        if (downloaded) {
+            // Open the downloaded file
+            QString filePath = "files/" + filename;
+            QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+        } else {
+            // Send a request to the server to receive the file
+            systemMessagePacket msgpacket;
+            msgpacket.setSysmsg(package::SysCodes::send_file);
+            QJsonObject data;
+            data["sender"] = TokenME;
+            data["FileName"] = filename;
+            data["room"] = "pv_testUser_mhka1382";
+            msgpacket.setinformation(QJsonDocument(data).toJson());
+
+            QByteArray msgbytearray;
+            QDataStream out2(&msgbytearray, QIODevice::WriteOnly);
+            out2.setVersion(QDataStream::Qt_4_0);
+            out2 << static_cast<short>(msgpacket.getheader()) << msgpacket.serialize();
+            socket->write(msgbytearray);
+            socket->waitForBytesWritten();
+
+            // Wait for the file to be received
+           // socket->waitForReadyRead();
+
+            // Save the received file to the "files" directory
+            QByteArray dataReceived = socket->readAll();
+            QString filePath = "files/" + filename;
+            QFile file(filePath);
+            if (file.open(QIODevice::WriteOnly)) {
+                file.write(dataReceived);
+                file.close();
+                // Add the filename to the list of downloaded files
+                downloadedFiles.append(filename);
+                // Update the button text to "Open"
+                fileButton->setText("Open");
+
+                // Open the downloaded file
+                QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+            } else {
+                qDebug() << "Failed to save file:" << filePath;
+            }
+        }
+    });
+
+    // Add the button to the item in the list
+    QWidget *widget = new QWidget;
+    QHBoxLayout *layout = new QHBoxLayout(widget);
+    layout->addWidget(fileButton);
+    layout->addStretch();
+    item->setSizeHint(widget->sizeHint());
+    ui->listWidget_2->setItemWidget(item, widget);
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void chat::on_listWidget_2_customContextMenuRequested(const QPoint &pos)
 {
