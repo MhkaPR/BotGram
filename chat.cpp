@@ -164,29 +164,29 @@ chat::chat(QWidget *parent) :
 
     connectToServer();
 
-//    systemMessagePacket sysmsg;
-//    sysmsg.setSysmsg(package::SysCodes::send_file);
+    //    systemMessagePacket sysmsg;
+    //    sysmsg.setSysmsg(package::SysCodes::send_file);
 
-//    QJsonObject obj;
+    //    QJsonObject obj;
 
-//    obj.insert("room","pv_testUser_mhka1382");
-//    obj.insert("FileName","20230603174457740.jpg");
+    //    obj.insert("room","pv_testUser_mhka1382");
+    //    obj.insert("FileName","20230603174457740.jpg");
 
-//    QJsonDocument doc;
-//    doc.setObject(obj);
+    //    QJsonDocument doc;
+    //    doc.setObject(obj);
 
-//    sysmsg.setinformation(doc.toJson());
+    //    sysmsg.setinformation(doc.toJson());
 
-//    QByteArray buf123;
-//    QDataStream out123(&buf123,QIODevice::WriteOnly);
-//    out123.setVersion(QDataStream::Qt_4_0);
+    //    QByteArray buf123;
+    //    QDataStream out123(&buf123,QIODevice::WriteOnly);
+    //    out123.setVersion(QDataStream::Qt_4_0);
 
-//    out123 << static_cast<short>(sysmsg.getheader()) << sysmsg.serialize();
+    //    out123 << static_cast<short>(sysmsg.getheader()) << sysmsg.serialize();
 
-//    sendmessage("sff");
-//    socket->write(buf123);
-//    socket->waitForBytesWritten();
-//    socket->waitForReadyRead();
+    //    sendmessage("sff");
+    //    socket->write(buf123);
+    //    socket->waitForBytesWritten();
+    //    socket->waitForReadyRead();
 
 }
 
@@ -311,6 +311,8 @@ void chat::onReadyRead()
 
         QDir cur(QDir::current());
         cur.cd("files");
+
+
 
 
         //send file, part i in hard
@@ -560,6 +562,9 @@ void chat::on_photo_button_clicked()
 
     // Open a file dialog to let the user choose an image file
     QString filePath = QFileDialog::getOpenFileName(this, tr("Choose an image file"), QDir::homePath(), tr("All Files (*.*)"));
+
+
+
     if (filePath.isEmpty()) {
         // If the user cancels the file dialog, return without doing anything
         return;
@@ -569,6 +574,8 @@ void chat::on_photo_button_clicked()
 
 
     QFile *file=new QFile(filePath);
+
+
 
 
     //    QImage image(filePath);
@@ -584,11 +591,16 @@ void chat::on_photo_button_clicked()
     QString timeString = time.toString("hh:mm:ss"); // or any other time format you prefer
     QImage f(64, 64, QImage::Format_RGB32);
     f.fill(Qt::gray);
-    QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1] ").arg(timeString), ui->listWidget_2);
-    item->setBackgroundColor(Qt::white);
+
+
+    QFileInfo fileInfo(filePath);
+    QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(timeString,fileInfo.fileName()), ui->listWidget_2);
+    item->setBackgroundColor(Qt::gray);
+
+
 
     fileMessage fmsg(TokenME);
-    QFileInfo fileInfo(filePath);
+
     QString mimeType = fileInfo.suffix();
     int count =0;
     fmsg.setFileName(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")+"."+mimeType);
@@ -664,18 +676,29 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
         }
         return;
     }
+    else{
+        //        QString voiceFile = item->data(Qt::UserRole).toString();
 
-    QString voiceFile = item->data(Qt::UserRole).toString();
+        //        // Check if the file exists
+        //        if(QFile::exists(voiceFile)){
+        //            // Create a new instance of QDesktopServices and open the file with the default application
+        //            QDesktopServices::openUrl(QUrl::fromLocalFile(voiceFile));
+        //        }else{
+        //            QMessageBox::warning(this, "Error", "Voice file not found!");
+        //        }
 
-    // Check if the file exists
-    if(QFile::exists(voiceFile)){
-        // Create a new instance of QDesktopServices and open the file with the default application
-        QDesktopServices::openUrl(QUrl::fromLocalFile(voiceFile));
-    }else{
-        QMessageBox::warning(this, "Error", "Voice file not found!");
+        QDir cur = QDir::current();
+        cur.cd("files");
+
+
+        QString filename = item->text();
+
+        filename.remove(0,11);
+
+       QDesktopServices::openUrl(QUrl::fromLocalFile(pathImgg));
+
+
     }
-    QDesktopServices::openUrl(QUrl::fromLocalFile(pathImgg));
-
 }
 
 void chat::on_listWidget_2_customContextMenuRequested(const QPoint &pos)

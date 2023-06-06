@@ -13,7 +13,6 @@ email_search::email_search(QTcpSocket *so,QWidget *parent) :
 email_search::~email_search()
 {
     delete ui;
-
 }
 
 void email_search::on_pushButton_clicked()
@@ -27,7 +26,6 @@ void email_search::on_pushButton_clicked()
     socket->write(buff2);
     socket->waitForBytesWritten();
     this->hide();
-
 
 }
 
