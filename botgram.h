@@ -14,6 +14,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QtNetwork>
+#include<QSql>
+#include<QSqlDatabase>
+#include<QSqlQuery>
 
 using std::string;
 QT_BEGIN_NAMESPACE
@@ -88,7 +91,7 @@ private:
     bool switch_eye_btn_in_loginForm=false;
     BuilderCapcha *bCaptcha=nullptr;
     QTcpSocket me;
-
+    QSqlDatabase db;
 
 };
 #endif // BOTGRAM_H

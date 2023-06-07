@@ -798,14 +798,18 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
 
     // Check if the file has already been downloaded
     bool downloaded = downloadedFiles.contains(filename);
-
+    //QMessageBox::information(this,"dff",QString::number(downloaded),"sdd");
     // Create a button to download or open the file, depending on the download status
     QPushButton *fileButton = new QPushButton(downloaded ? "Open" : "Download", this);
     connect(fileButton, &QPushButton::clicked, [=]() {
+        ui->listWidget_2->setCurrentItem(item);
         if (downloaded) {
-            // Open the downloaded file
+            // Check that the file exists before attempting to open it
+
+          //  Open the downloaded file
             QString filePath = "files/" + filename;
-            QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+             //QProcess::startDetached("xdg-open", QStringList() << filePath);
+           QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
         } else {
             // Send a request to the server to receive the file
             systemMessagePacket msgpacket;
@@ -827,22 +831,24 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
            // socket->waitForReadyRead();
 
             // Save the received file to the "files" directory
-            QByteArray dataReceived = socket->readAll();
-            QString filePath = "files/" + filename;
-            QFile file(filePath);
-            if (file.open(QIODevice::WriteOnly)) {
-                file.write(dataReceived);
-                file.close();
+            //QByteArray dataReceived = socket->readAll();
+          //  QString filePath = "files/" + filename;
+            //QFile file(filePath);
+            //if (file.open(QIODevice::WriteOnly)) {
+              //  file.write(dataReceived);
+                //file.close();
                 // Add the filename to the list of downloaded files
                 downloadedFiles.append(filename);
                 // Update the button text to "Open"
                 fileButton->setText("Open");
-            } else {
-                qDebug() << "Failed to save file:" << filePath;
-            }
-            QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+            //} else {
+              //  qDebug() << "Failed to save file:" << filePath;
+            //}
+           // QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
 
         }
+
+
     });
 
     // Add the button to the item in the list
@@ -852,104 +858,11 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
     layout->addStretch();
     item->setSizeHint(widget->sizeHint());
     ui->listWidget_2->setItemWidget(item, widget);
+   // QDesktopServices::openUrl()
+
 }
-/*void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
-{
-    if (item->icon().isNull()) {
-        // If the clicked item does not contain an icon, it may contain text
-        QString text = item->text();
-        if (!text.isEmpty()) {
-            // Remove the timestamp from the text if it exists
-            text.remove(QRegularExpression("^\\[\\d{2}:\\d{2}:\\d{2}\\] "));
-
-            // If the item contains text, open a context menu to copy the text
-            QMenu menu(this);
-            QAction *copyAction = menu.addAction("Copy");
-            connect(copyAction, &QAction::triggered, [=]() {
-                QClipboard *clipboard = QGuiApplication::clipboard();
-                clipboard->setText(text);
-            });
-            menu.exec(QCursor::pos());
-        }
-        return;
-    }
-
-    // Get the filename from the clicked item
-    QString filename = item->text();
-    filename.remove(0,11);
-
-    // Check if the file has already been downloaded
-    bool downloaded = downloadedFiles.contains(filename);
-
-    // Create a button to download or open the file, depending on the download status
-    QPushButton *fileButton = new QPushButton(downloaded ? "Open" : "Download", this);
-    connect(fileButton, &QPushButton::clicked, [=]() {
-        if (downloaded) {
-            // Open the downloaded file
-            QString filePath = "files/" + filename;
-            QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
-        } else {
-            // Send a request to the server to receive the file
-            systemMessagePacket msgpacket;
-            msgpacket.setSysmsg(package::SysCodes::send_file);
-            QJsonObject data;
-            data["sender"] = TokenME;
-            data["FileName"] = filename;
-            data["room"] = "pv_testUser_mhka1382";
-            msgpacket.setinformation(QJsonDocument(data).toJson());
-
-            QByteArray msgbytearray;
-            QDataStream out2(&msgbytearray, QIODevice::WriteOnly);
-            out2.setVersion(QDataStream::Qt_4_0);
-            out2 << static_cast<short>(msgpacket.getheader()) << msgpacket.serialize();
-            socket->write(msgbytearray);
-            socket->waitForBytesWritten();
-
-            // Wait for the file to be received
-           // socket->waitForReadyRead();
-
-            // Save the received file to the "files" directory
-            QByteArray dataReceived = socket->readAll();
-            QString filePath = "files/" + filename;
-            QFile file(filePath);
-            if (file.open(QIODevice::WriteOnly)) {
-                file.write(dataReceived);
-                file.close();
-                // Add the filename to the list of downloaded files
-                downloadedFiles.append(filename);
-                // Update the button text to "Open"
-                fileButton->setText("Open");
-
-                // Open the downloaded file
-                QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
-            } else {
-                qDebug() << "Failed to save file:" << filePath;
-            }
-        }
-    });
-
-    // Add the button to the item in the list
-    QWidget *widget = new QWidget;
-    QHBoxLayout *layout = new QHBoxLayout(widget);
-    layout->addWidget(fileButton);
-    layout->addStretch();
-    item->setSizeHint(widget->sizeHint());
-    ui->listWidget_2->setItemWidget(item, widget);
-}*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Declare a member variable to store the file button
+QPushButton *fileButton;
 
 
 
