@@ -33,3 +33,9 @@ QByteArray AddUser_SPacket::getdata()
     return data;
 
 }
+
+void AddUser_SPacket::setdata(QByteArray value)
+{
+    data=value;
+
+}

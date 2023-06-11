@@ -15,6 +15,7 @@ public:
     virtual QByteArray serialize();
 
     QByteArray getdata();
+    void setdata(QByteArray value);
 private:
  QByteArray data;
 };

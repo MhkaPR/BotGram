@@ -278,13 +278,13 @@ void botgram::on_btn_verify_clicked()
             obj.insert("islogin",true);
             doc.setObject(obj);
             //  p.JsonInformation = doc.toJson();
-            p.deserialize(doc.toJson());
+            p.setJsonLoginData(doc.toJson());
 
             QByteArray buf;
             QDataStream out(&buf,QIODevice::WriteOnly);
             out.setVersion(QDataStream::Qt_4_0);
 
-            out << package::Packeting(p.getheader(),p.serialize());
+            out << static_cast<short>(p.getheader())<<p.serialize();
 
             me.write(buf);
             me.waitForReadyRead();
@@ -299,7 +299,7 @@ void botgram::on_btn_verify_clicked()
             sys.deserialize(answerBuf);
 
             //in >>sys;
-
+             //QMessageBox::information(this,"wd",QString::number(static_cast<short>(sys.getSysmsg())));
             if(sys.getSysmsg()  == package::login_confrimed)
             {
                 QDir cur=QDir::current();
@@ -377,21 +377,22 @@ void botgram::on_btn_verify_clicked()
         {
 
             loginPacket SignInPacket;
+
             QJsonDocument SignInDoc;
             QJsonObject ObjSign;
             ObjSign.insert("username",ui->txt_username->text());
             ObjSign.insert("password","");
             ObjSign.insert("email",ui->txt_email->text());
-            ObjSign.insert("islogin",0);
+            ObjSign.insert("islogin",false);
             SignInDoc.setObject(ObjSign);
             QByteArray bufJ;
             QDataStream out(&bufJ,QIODevice::WriteOnly);
             out.setVersion(QDataStream::Qt_4_0);
 
-            SignInPacket.deserialize(SignInDoc.toJson());
+            SignInPacket.setJsonLoginData(SignInDoc.toJson());
 
-            out << package::Packeting(SignInPacket.getheader(),SignInPacket.serialize());
-
+           // out << package::Packeting(SignInPacket.getheader(),SignInPacket.serialize());
+             out << static_cast<short>(SignInPacket.getheader())<<SignInPacket.serialize();
 
             me.write(bufJ);
             me.waitForReadyRead();
@@ -408,9 +409,9 @@ void botgram::on_btn_verify_clicked()
             sysAns.deserialize(ansBuf);
             // in >> sysAns;
 
-           short ans = static_cast<short>(sysAns.getSysmsg());
+
          //   sendmessage(QString::number(ans).toStdString());
-    QMessageBox::information(this,"efe",QString::number(ans),"Egr");
+    //QMessageBox::information(this,"efe",QString::number(ans),"Egr");
 
             if(sysAns.getSysmsg() == package::s_send_apply_For_Link)
             {
@@ -419,7 +420,7 @@ void botgram::on_btn_verify_clicked()
                 QDataStream out2(&CodeBuf,QIODevice::WriteOnly);
                 out2.setVersion(QDataStream::Qt_4_0);
 
-                out2 <<  package::Packeting(sysAns.getheader(),sysAns.serialize());
+                out2 <<  static_cast<short>(sysAns.getheader())<<sysAns.serialize();
 
                 me.write(CodeBuf);
                 //    sendmessage("wait for link...");
@@ -432,15 +433,15 @@ void botgram::on_btn_verify_clicked()
                 ansBuf2 = me.readAll();
 
                 CheckVerifySafePacket VerifyAns;
-                VerifyAns.deserialize(ansBuf);
+                VerifyAns.deserialize(ansBuf2);
                 //in2 >> VerifyAns;
                 set_CodeVar(VerifyAns.getLink());
 
 
                 ui->stackedWidget->setCurrentIndex(2);
                 //  sendMessage(VerifyAns.Link.toStdString());
-                sendMessage((get_CodeVar()).toStdString());
-
+             //   sendMessage((get_CodeVar()).toStdString());
+                QMessageBox::information(this,"DW",get_CodeVar(),"sf");
 
 
                 //-----------------------------------------------
@@ -588,9 +589,9 @@ void botgram::on_btn_checkVerifyCode_clicked()
         SignInDoc.setObject(ObjSign);
 
         AddUser_SPacket user;
-        user.deserialize(SignInDoc.toJson());
+        user.setdata(SignInDoc.toJson());
 
-        out3 <<package::Packeting(user.getheader(),user.serialize());
+        out3 <<static_cast<short>( user.getheader())<<user.serialize();
 
 
         me.write(sendAnsAutho);
@@ -604,12 +605,21 @@ void botgram::on_btn_checkVerifyCode_clicked()
 
         TokenPacket Tpac;
         Tpac.deserialize(TokenBuf);
-        //in >> Tpac;
+        //in >> Tpac
+        db.close();
+        db = QSqlDatabase::addDatabase("QSQLITE");
+        db.setDatabaseName("botgramdatabase.db");
+
+        // Open the database
+        if (!db.open()) {
+            qDebug() << "Failed to open database!";
+            return;
+        }
 
 
         QDir cur=QDir::current();
         QSqlQuery query(db);
-        query.prepare("INSERT INTO myinformation (username, password,email,name) VALUES (:u, :p,:e,NULL)");
+        query.prepare("INSERT INTO myinformation (username, password,email,name) VALUES(:u,:p,:e,'')");
         query.bindValue(":u",ui->txt_username->text() );
         query.bindValue(":p",ui->txt_password->text() );
         query.bindValue(":e",ui->txt_email->text());
@@ -752,6 +762,15 @@ void botgram::on_checkname_clicked()
     }
     else
     {
+        db.close();
+        db = QSqlDatabase::addDatabase("QSQLITE");
+        db.setDatabaseName("botgramdatabase.db");
+
+        // Open the database
+        if (!db.open()) {
+            qDebug() << "Failed to open database!";
+            return;
+        }
         namechat = ui->name->text();
         QDir cur = QDir::current();
         //        cur.cdUp();
