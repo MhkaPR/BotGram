@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     QSqlQuery query(db);
-    query.prepare("SELECT username,name FROM myinformation WHERE username != NULL AND name != NULL");
+    query.prepare("SELECT username,name FROM myinformation WHERE name != '' ;");
     if (!query.exec()) {
         qDebug() << query.lastError().text();
         return 1;
