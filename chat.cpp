@@ -394,6 +394,7 @@ void chat::onReadyRead()
 chat::~chat()
 {
     delete ui;
+    delete this;
 }
 
 

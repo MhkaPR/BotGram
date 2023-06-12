@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-     chat c;
-     botgram w;
+    chat *c=nullptr;
+    botgram *w=nullptr;
 
 
     QSqlDatabase db;
@@ -34,7 +34,8 @@ int main(int argc, char *argv[])
         query.finish();
         db.close();
 
-     c.show();
+        c= new chat;
+        c->show();
     }
     else
     {
@@ -42,8 +43,8 @@ int main(int argc, char *argv[])
         db.close();
 
 
-
-        w.show();
+         w= new botgram;
+        w->show();
     }
 
     return a.exec();

@@ -70,13 +70,8 @@ botgram::botgram(QWidget *parent)
     }
 }
 bool botgram::get_LoginVar()
-
-
-
-
 {
     return IsInLogin;
-
 }
 
 void botgram::set_LoginVar(bool v_Login)
@@ -194,7 +189,9 @@ void botgram::fixErrorinAlarmLabel(int Error, int fixFor)
 
 botgram::~botgram()
 {
+
     delete ui;
+    delete this;
 }
 
 
@@ -260,15 +257,15 @@ void botgram::on_btn_verify_clicked()
     Account mac;
     int ErrorUsername=mac.checkCorrect_Text(ui->txt_username->text().toStdString().c_str(),Account::USERNAME);
     int ErrorPassword=mac.checkCorrect_Text(ui->txt_password->text().toStdString().c_str(),Account::PASSWORD);
+    int Errorcaptcha = (ui->txt_captcha->text() == codeCaptcha) ? 0 : 1 ;
 
-    if(!ErrorUsername && !ErrorPassword)
+    if(!ErrorUsername && !ErrorPassword && !Errorcaptcha)
     {
         // User_DataBase Udb;
         // xml_document<>* Doc=Udb.connectToXml("sample.xml");
         if(get_LoginVar()==true)
         {
             loginPacket p;
-
 
             QJsonDocument doc;
             QJsonObject obj;
@@ -299,7 +296,7 @@ void botgram::on_btn_verify_clicked()
             sys.deserialize(answerBuf);
 
             //in >>sys;
-             //QMessageBox::information(this,"wd",QString::number(static_cast<short>(sys.getSysmsg())));
+            //QMessageBox::information(this,"wd",QString::number(static_cast<short>(sys.getSysmsg())));
             if(sys.getSysmsg()  == package::login_confrimed)
             {
                 QDir cur=QDir::current();
@@ -376,76 +373,80 @@ void botgram::on_btn_verify_clicked()
         else//Sign in
         {
 
-            loginPacket SignInPacket;
+            int ErrorEmail =mac.checkCorrect_Text(ui->txt_email->text().toStdString().c_str(),Account::EMAIL);
 
-            QJsonDocument SignInDoc;
-            QJsonObject ObjSign;
-            ObjSign.insert("username",ui->txt_username->text());
-            ObjSign.insert("password","");
-            ObjSign.insert("email",ui->txt_email->text());
-            ObjSign.insert("islogin",false);
-            SignInDoc.setObject(ObjSign);
-            QByteArray bufJ;
-            QDataStream out(&bufJ,QIODevice::WriteOnly);
-            out.setVersion(QDataStream::Qt_4_0);
-
-            SignInPacket.setJsonLoginData(SignInDoc.toJson());
-
-           // out << package::Packeting(SignInPacket.getheader(),SignInPacket.serialize());
-             out << static_cast<short>(SignInPacket.getheader())<<SignInPacket.serialize();
-
-            me.write(bufJ);
-            me.waitForReadyRead();
-
-
-            QByteArray ansBuf;
-            QDataStream in(&ansBuf,QIODevice::ReadOnly);
-            in.setVersion(QDataStream::Qt_4_0);
-
-
-            ansBuf = me.readAll();
-
-            systemMessagePacket sysAns;
-            sysAns.deserialize(ansBuf);
-            // in >> sysAns;
-
-
-         //   sendmessage(QString::number(ans).toStdString());
-    //QMessageBox::information(this,"efe",QString::number(ans),"Egr");
-
-            if(sysAns.getSysmsg() == package::s_send_apply_For_Link)
+            if(!ErrorEmail)
             {
-                sysAns.setSysmsg(package::Send_VerifyCode);
-                QByteArray CodeBuf;
-                QDataStream out2(&CodeBuf,QIODevice::WriteOnly);
-                out2.setVersion(QDataStream::Qt_4_0);
+                loginPacket SignInPacket;
 
-                out2 <<  static_cast<short>(sysAns.getheader())<<sysAns.serialize();
+                QJsonDocument SignInDoc;
+                QJsonObject ObjSign;
+                ObjSign.insert("username",ui->txt_username->text());
+                ObjSign.insert("password","");
+                ObjSign.insert("email",ui->txt_email->text());
+                ObjSign.insert("islogin",false);
+                SignInDoc.setObject(ObjSign);
+                QByteArray bufJ;
+                QDataStream out(&bufJ,QIODevice::WriteOnly);
+                out.setVersion(QDataStream::Qt_4_0);
 
-                me.write(CodeBuf);
-                //    sendmessage("wait for link...");
+                SignInPacket.setJsonLoginData(SignInDoc.toJson());
+
+                // out << package::Packeting(SignInPacket.getheader(),SignInPacket.serialize());
+                out << static_cast<short>(SignInPacket.getheader())<<SignInPacket.serialize();
+
+                me.write(bufJ);
                 me.waitForReadyRead();
 
-                QByteArray ansBuf2;
-                QDataStream in2(&ansBuf2,QIODevice::ReadOnly);
-                in2.setVersion(QDataStream::Qt_4_0);
 
-                ansBuf2 = me.readAll();
-
-                CheckVerifySafePacket VerifyAns;
-                VerifyAns.deserialize(ansBuf2);
-                //in2 >> VerifyAns;
-                set_CodeVar(VerifyAns.getLink());
+                QByteArray ansBuf;
+                QDataStream in(&ansBuf,QIODevice::ReadOnly);
+                in.setVersion(QDataStream::Qt_4_0);
 
 
-                ui->stackedWidget->setCurrentIndex(2);
-                //  sendMessage(VerifyAns.Link.toStdString());
-             //   sendMessage((get_CodeVar()).toStdString());
-                QMessageBox::information(this,"DW",get_CodeVar(),"sf");
+                ansBuf = me.readAll();
+
+                systemMessagePacket sysAns;
+                sysAns.deserialize(ansBuf);
+                // in >> sysAns;
 
 
-                //-----------------------------------------------
-                /*int ErrorEmail=mac.checkCorrect_Text(ui->txt_email->text().toStdString().c_str(),Account::EMAIL);
+                //   sendmessage(QString::number(ans).toStdString());
+                //QMessageBox::information(this,"efe",QString::number(ans),"Egr");
+
+                if(sysAns.getSysmsg() == package::s_send_apply_For_Link)
+                {
+                    sysAns.setSysmsg(package::Send_VerifyCode);
+                    QByteArray CodeBuf;
+                    QDataStream out2(&CodeBuf,QIODevice::WriteOnly);
+                    out2.setVersion(QDataStream::Qt_4_0);
+
+                    out2 <<  static_cast<short>(sysAns.getheader())<<sysAns.serialize();
+
+                    me.write(CodeBuf);
+                    //    sendmessage("wait for link...");
+                    me.waitForReadyRead();
+
+                    QByteArray ansBuf2;
+                    QDataStream in2(&ansBuf2,QIODevice::ReadOnly);
+                    in2.setVersion(QDataStream::Qt_4_0);
+
+                    ansBuf2 = me.readAll();
+
+                    CheckVerifySafePacket VerifyAns;
+                    VerifyAns.deserialize(ansBuf2);
+                    //in2 >> VerifyAns;
+                    set_CodeVar(VerifyAns.getLink());
+
+
+                    ui->stackedWidget->setCurrentIndex(2);
+                    //  sendMessage(VerifyAns.Link.toStdString());
+                    //   sendMessage((get_CodeVar()).toStdString());
+                    QMessageBox::information(this,"DW",get_CodeVar(),"sf");
+
+
+                    //-----------------------------------------------
+                    /*int ErrorEmail=mac.checkCorrect_Text(ui->txt_email->text().toStdString().c_str(),Account::EMAIL);
             if(!ErrorEmail)
             {
                 //exit(0);
@@ -498,6 +499,7 @@ void botgram::on_btn_verify_clicked()
                 }
 
             } else fixErrorinAlarmLabel(ErrorEmail,Account::EMAIL);*/
+                }
             }
         }
     }
@@ -798,6 +800,7 @@ void botgram::on_checkname_clicked()
        {
            savenamechat.write(namechat.toStdString().c_str());
            savenamechat.close();*/
+        me.disconnectFromHost();
         chat *w3 = new chat;
         w3->setWindowTitle("chat page");
         w3->resize(1310,810);
