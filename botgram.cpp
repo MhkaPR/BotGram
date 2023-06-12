@@ -59,7 +59,10 @@ botgram::botgram(QWidget *parent)
     ui->wi_capcha->layout()->addWidget(bCaptcha);
     ui->wi_capcha->setCurrentWidget(bCaptcha);
 
-    //connect(bCaptcha,&BuilderCapcha::on_btn_again_clicked,this,&botgram::txt_capcha_clean);
+    codeCaptcha = bCaptcha->strCaptcha;
+    connect(bCaptcha,&BuilderCapcha::refreshedCode,[=](){
+         codeCaptcha = bCaptcha->strCaptcha;
+    } );   //connect(bCaptcha,&BuilderCapcha::on_btn_again_clicked,this,&botgram::txt_capcha_clean);
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("botgramdatabase.db");
 
@@ -258,8 +261,8 @@ void botgram::on_btn_verify_clicked()
     int ErrorUsername=mac.checkCorrect_Text(ui->txt_username->text().toStdString().c_str(),Account::USERNAME);
     int ErrorPassword=mac.checkCorrect_Text(ui->txt_password->text().toStdString().c_str(),Account::PASSWORD);
     int Errorcaptcha = (ui->txt_captcha->text() == codeCaptcha) ? 0 : 1 ;
-
-    if(!ErrorUsername && !ErrorPassword && !Errorcaptcha)
+   sendMessage(codeCaptcha.toStdString());
+    if(!ErrorUsername && !ErrorPassword && !Errorcaptcha )
     {
         // User_DataBase Udb;
         // xml_document<>* Doc=Udb.connectToXml("sample.xml");

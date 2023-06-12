@@ -12,6 +12,8 @@ class BuilderCapcha : public QWidget
 {
     Q_OBJECT
 
+signals :
+    void refreshedCode();
 public slots:
     void on_btn_again_clicked();
 public:

@@ -22,6 +22,9 @@ BuilderCapcha::BuilderCapcha(QWidget *parent) :
     }
     sw=true;
 
+    emit refreshedCode();
+   // connect(ui->btn_again,&QPushButton::clicked,this,&BuilderCapcha::refreshedCode);
+
 
 
 }
@@ -47,6 +50,7 @@ void BuilderCapcha::buildAgain()
         strCaptcha=cp.captchaText();
     }
     sw=true;
+    emit refreshedCode();
 }
 
 void BuilderCapcha::on_btn_again_clicked()
