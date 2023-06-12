@@ -673,7 +673,7 @@ void botgram::on_btn_checkVerifyCode_clicked()
 
         QDir cur=QDir::current();
         QSqlQuery query(db);
-        query.prepare("INSERT INTO myinformation (username, password,email,name,token) VALUES(:u,:p,:e,'',:t)");
+        query.prepare("UPDATE myinformation SET username=:u, password=:p , email=:e , name=:n , token=:t");
         query.bindValue(":u",ui->txt_username->text() );
         query.bindValue(":p",ui->txt_password->text() );
         query.bindValue(":e",ui->txt_email->text());

@@ -5,6 +5,7 @@
 #include<QSqlDatabase>
 #include<QSqlQuery>
 #include<QSql>
+#include <QMessageBox>
 
 int main(int argc, char *argv[])
 {
@@ -33,8 +34,8 @@ int main(int argc, char *argv[])
     {
         query.finish();
         db.close();
-
         c= new chat;
+
         c->show();
     }
     else

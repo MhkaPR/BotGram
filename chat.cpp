@@ -33,7 +33,7 @@
 #include<QFile>
 const int SERVER_PO= 9999;
 //const QString TokenME = "pAWmUPKB";
-const QString TokenME = "mhka1382";
+static QString TokenME = "mhka1382";
 
 
 
@@ -46,6 +46,7 @@ chat::chat(QWidget *parent) :
 
     // QString message;
     ui->setupUi(this);
+
 
     ui->message_text->hide();
     ui->label_onoroff->hide();
@@ -78,8 +79,16 @@ chat::chat(QWidget *parent) :
 
     // Process the results
     while (query.next()) {
+
+
         QString name = query.value("name").toString();
+        QMap<QString,QString> tempMAp;
+        tempMAp["username"] = query.value("username").toString();
+        tempMAp["email"] = query.value("email").toString();
+        usersinformation[name] = tempMAp;
         QString temp;
+
+
 
         //get last update message
         QSqlQuery lastUpdateQuery(db);
@@ -195,14 +204,38 @@ chat::chat(QWidget *parent) :
 void chat::connectToServer()
 {
     // Connect to the server on localhost
-    socket->connectToHost("127.0.0.1", SERVER_PO);
-    connectVerify conn;
-    conn.Token = TokenME;
-    QByteArray buf;
-    QDataStream out(&buf,QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
-    out<<static_cast<short>(conn.getheader())<<conn.serialize();
-    socket->write(buf);
+
+
+    QSqlQuery query_sendToken(db);
+    query_sendToken.prepare("SELECT * FROM myinformation");
+
+    if(!query_sendToken.exec())
+    {
+        QMessageBox::information(this,"warning","Execute the query","ok");
+        return;
+    }
+
+    if(query_sendToken.next())
+    {
+        socket->connectToHost("127.0.0.1", SERVER_PO);
+
+        myinformation["username"] = query_sendToken.value("username").toString();
+        myinformation["password"] = query_sendToken.value("password").toString();
+        myinformation["email"] = query_sendToken.value("email").toString();
+        myinformation["name"] = query_sendToken.value("name").toString();
+
+        connectVerify conn;
+        conn.Token = query_sendToken.value("token").toString();
+        TokenME = conn.Token;
+        QByteArray buf;
+        QDataStream out(&buf,QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_4_0);
+        out<<static_cast<short>(conn.getheader())<<conn.serialize();
+
+        socket->write(buf);
+        socket->waitForBytesWritten();
+
+    }
 
 }
 
@@ -499,9 +532,11 @@ void chat::on_pushButton_send_message_clicked()
 
 
         // send to server, message
+        QString receiveOFmessage = usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"];
+        QString senderOFmessage = myinformation["username"];
         TextMessage messages;
         messages.setSender(TokenME);
-        messages.setReceiver("pv_testUser_mhka1382");
+        messages.setReceiver("pv_"+senderOFmessage+"_"+receiveOFmessage);
         messages.Message = ui->message_text->toPlainText();
         messages.timeSend = messages.gettimeSend().currentDateTime();
         messages.stateMessage = package::sendMode;

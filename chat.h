@@ -7,6 +7,7 @@
 #include<QHostAddress>
 #include<QContextMenuEvent>
 #include"libraries_BotGram/textmessage.h"
+#include <QMap>
 
 namespace Ui {
 class chat;
@@ -65,6 +66,9 @@ private:
   QString selectedpvname;
 
   QString pathImgg;
+
+  QMap<QString,QString> myinformation;
+  QMap<QString,QMap<QString,QString>> usersinformation;
 };
 
 #endif // CHAT_H
