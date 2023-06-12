@@ -333,12 +333,13 @@ void botgram::on_btn_verify_clicked()
 
 
                 QSqlQuery query(db);
-                 query.prepare("UPDATE myinformation SET username=:u , password=:p , email=:e , name=:n");
+                 query.prepare("UPDATE myinformation SET username=:u , password=:p , email=:e , name=:n , token=:t");
 
                 query.bindValue(":u",ui->txt_username->text() );
                 query.bindValue(":p",ui->txt_password->text() );
                 query.bindValue(":e",jsonobj["email"].toString());
                 query.bindValue(":n",jsonobj["name"].toString());
+                query.bindValue(":t",jsonobj["token"].toString());
 
                 // Execute the query
                 if (!query.exec()) {
@@ -656,6 +657,8 @@ void botgram::on_btn_checkVerifyCode_clicked()
 
         TokenPacket Tpac;
         Tpac.deserialize(TokenBuf);
+
+        qDebug()<< Tpac.getToken();
         //in >> Tpac
         db.close();
         db = QSqlDatabase::addDatabase("QSQLITE");
@@ -670,10 +673,11 @@ void botgram::on_btn_checkVerifyCode_clicked()
 
         QDir cur=QDir::current();
         QSqlQuery query(db);
-        query.prepare("INSERT INTO myinformation (username, password,email,name) VALUES(:u,:p,:e,'')");
+        query.prepare("INSERT INTO myinformation (username, password,email,name,token) VALUES(:u,:p,:e,'',:t)");
         query.bindValue(":u",ui->txt_username->text() );
         query.bindValue(":p",ui->txt_password->text() );
         query.bindValue(":e",ui->txt_email->text());
+        query.bindValue(":t",Tpac.getToken());
         // Execute the query
         if (!query.exec()) {
             QMessageBox::information(this,"warning",query.lastError().text(),"ok");

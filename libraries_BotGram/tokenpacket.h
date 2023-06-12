@@ -18,7 +18,6 @@ public:
     void setToken(QString value);
 
 private:
-
      QString Token;
 };
 
