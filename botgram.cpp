@@ -71,6 +71,11 @@ botgram::botgram(QWidget *parent)
         qDebug() << "Failed to open database!";
         return;
     }
+
+
+
+    //3 - list mokatabin
+
 }
 bool botgram::get_LoginVar()
 {
@@ -261,7 +266,7 @@ void botgram::on_btn_verify_clicked()
     int ErrorUsername=mac.checkCorrect_Text(ui->txt_username->text().toStdString().c_str(),Account::USERNAME);
     int ErrorPassword=mac.checkCorrect_Text(ui->txt_password->text().toStdString().c_str(),Account::PASSWORD);
     int Errorcaptcha = (ui->txt_captcha->text() == codeCaptcha) ? 0 : 1 ;
-   sendMessage(codeCaptcha.toStdString());
+   //sendMessage(codeCaptcha.toStdString());
     if(!ErrorUsername && !ErrorPassword && !Errorcaptcha )
     {
         // User_DataBase Udb;
@@ -309,7 +314,45 @@ void botgram::on_btn_verify_clicked()
                 fstream DocPerso(tempAdd.c_str());
                 DocPerso << "1";
                 DocPerso.close();
-                ui->stackedWidget->setCurrentIndex(3);
+
+
+
+                QJsonDocument jsondoc = QJsonDocument::fromJson(sys.getinformation());
+                QJsonObject jsonobj;
+                jsonobj =jsondoc.object();
+                db.close();
+                db = QSqlDatabase::addDatabase("QSQLITE");
+                db.setDatabaseName("botgramdatabase.db");
+
+                // Open the database
+                if (!db.open()) {
+                    qDebug() << "Failed to open database!";
+                    return;
+                }
+
+
+
+                QSqlQuery query(db);
+                 query.prepare("UPDATE myinformation SET username=:u , password=:p , email=:e , name=:n");
+
+                query.bindValue(":u",ui->txt_username->text() );
+                query.bindValue(":p",ui->txt_password->text() );
+                query.bindValue(":e",jsonobj["email"].toString());
+                query.bindValue(":n",jsonobj["name"].toString());
+
+                // Execute the query
+                if (!query.exec()) {
+                    QMessageBox::information(this,"warning",query.lastError().text(),"ok");
+
+                    return;
+                }
+                query.finish();
+                db.commit();
+                chat *w3 = new chat;
+                w3->setWindowTitle("chat page");
+                w3->resize(1310,810);
+                this->hide();
+                w3->show();
 
             }
             //sendMessage(QString::number(sys.msg).toStdString());
@@ -381,7 +424,7 @@ void botgram::on_btn_verify_clicked()
             if(!ErrorEmail)
             {
                 loginPacket SignInPacket;
-
+                //send data to sign in
                 QJsonDocument SignInDoc;
                 QJsonObject ObjSign;
                 ObjSign.insert("username",ui->txt_username->text());
@@ -411,11 +454,14 @@ void botgram::on_btn_verify_clicked()
 
                 systemMessagePacket sysAns;
                 sysAns.deserialize(ansBuf);
-                // in >> sysAns;
 
-
-                //   sendmessage(QString::number(ans).toStdString());
-                //QMessageBox::information(this,"efe",QString::number(ans),"Egr");
+                qDebug() << sysAns.getSysmsg();
+                if(sysAns.getSysmsg() == package::s_email_is_repititive)
+                {
+                    ui->lbl_alarm3->setText("your email is repeatitive");
+                   ui->lbl_pic_alarm3->setStyleSheet("background-color:red;"
+                                                     " border-radius:5px;");
+                }
 
                 if(sysAns.getSysmsg() == package::s_send_apply_For_Link)
                 {
@@ -767,6 +813,48 @@ void botgram::on_checkname_clicked()
     }
     else
     {
+//        db.close();
+//        db = QSqlDatabase::addDatabase("QSQLITE");
+//        db.setDatabaseName("botgramdatabase.db");
+
+
+        QSqlQuery query1(db);
+        query1.prepare("SELECT username FROM myinformation");
+
+        if (!query1.exec()) {
+            QMessageBox::information(this,"warning",query1.lastError().text(),"ok");
+
+            return;
+        }
+        if(query1.next())
+        {
+            qDebug() << query1.value("username").toString();
+            QJsonDocument jsondoc;
+            QJsonObject jsonobj;
+            jsonobj.insert("name",ui->name->text());
+            jsonobj.insert("username",query1.value("username").toString());
+            jsondoc.setObject(jsonobj);
+
+            systemMessagePacket syspacket;
+            syspacket.setSysmsg(package::get_name);
+            syspacket.setinformation(jsondoc.toJson());
+
+            QByteArray changenamebuf;
+            QDataStream out(&changenamebuf,QIODevice::WriteOnly);
+            out.setVersion(QDataStream::Qt_4_0);
+            out<<static_cast<short>(syspacket.getheader())<<syspacket.serialize();
+
+            me.write(changenamebuf);
+            me.waitForBytesWritten();
+
+
+
+
+
+        }
+        query1.finish();
+        db.commit();
+
         db.close();
         db = QSqlDatabase::addDatabase("QSQLITE");
         db.setDatabaseName("botgramdatabase.db");
@@ -785,24 +873,15 @@ void botgram::on_checkname_clicked()
         query.prepare("UPDATE myinformation SET name=:n");
         query.bindValue(":n",ui->name->text() );
         if (!query.exec()) {
-            QMessageBox::information(this,"warning",query.lastError().text(),"ok");
+            QMessageBox::information(this,"warning","query update"+query.lastError().text(),"ok");
 
             return;
         }
         query.finish();
         db.commit();
         db.close();
-        /* QFile savenamechat;
-        QString temp = cur.path()+"/savenamechat.btg";
-        savenamechat.setFileName(temp);
-       if(!savenamechat.open(QIODevice::WriteOnly))
-       {
-           sendMessage(savenamechat.errorString().toStdString());
-       }
-       else
-       {
-           savenamechat.write(namechat.toStdString().c_str());
-           savenamechat.close();*/
+
+
         me.disconnectFromHost();
         chat *w3 = new chat;
         w3->setWindowTitle("chat page");
