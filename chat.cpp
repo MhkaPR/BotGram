@@ -655,9 +655,9 @@ void chat::on_photo_button_clicked()
 
     QFileInfo fileInfo(filePath);
     QString mimeType = fileInfo.suffix();
-    int count =0;
+    //int count =0;
     fmsg.setFileName(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")+"."+mimeType);
-    fmsg.setroom("pv_testUser_mhka1382");
+    fmsg.setroom("pv_"+myinformation["username"]+"_"+usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"]);
     fmsg.settimeSend(QDateTime::currentDateTime());
     fmsg.setSender(TokenME);
 
@@ -674,7 +674,7 @@ void chat::on_photo_button_clicked()
 
     // qDebug() << file.size();
 
-
+     //QMessageBox::information(this,"Dv",TokenME,"Fvdf");
     fmsg.sendFile(file,socket);
 
     delete file;
@@ -853,7 +853,7 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
             QJsonObject data;
             data["sender"] = TokenME;
             data["FileName"] = filename;
-            data["room"] = "pv_testUser_mhka1382";
+            data["room"] = "pv_"+myinformation["username"]+"_"+usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"];
             msgpacket.setinformation(QJsonDocument(data).toJson());
 
             QByteArray msgbytearray;
@@ -1044,7 +1044,7 @@ void chat::on_pushButton_voice_clicked()
                         QFileInfo fileInfo(voiceDataFile->fileName());
                         QString mimeType = fileInfo.suffix();
                         fmsg.setFileName(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")+"."+mimeType);
-                        fmsg.setroom("pv_testUser_mhka1382");
+                        fmsg.setroom("pv_"+myinformation["username"]+"_"+usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"]);
                         fmsg.settimeSend(QDateTime::currentDateTime());
                         fmsg.setSender(TokenME);
 
