@@ -655,15 +655,17 @@ void chat::on_photo_button_clicked()
 
     QFileInfo fileInfo(filePath);
     QString mimeType = fileInfo.suffix();
-    //int count =0;
+   mimeType = mimeType.toLower();
+            //int count =0;
     fmsg.setFileName(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")+"."+mimeType);
     fmsg.setroom("pv_"+myinformation["username"]+"_"+usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"]);
     fmsg.settimeSend(QDateTime::currentDateTime());
     fmsg.setSender(TokenME);
 
-
-
-    QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(timeString,fmsg.gettimeSend().toString("yyyyMMddhhmmsszzz")+"."+fileInfo.suffix()), ui->listWidget_2);
+     QString suffix;
+     suffix=fileInfo.suffix();
+     suffix=suffix.toLower();
+    QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(timeString,fmsg.gettimeSend().toString("yyyyMMddhhmmsszzz")+"."+suffix), ui->listWidget_2);
     item->setBackgroundColor(Qt::gray);
 
 
