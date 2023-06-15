@@ -363,10 +363,12 @@ void chat::onReadyRead()
         fileReceiive.write(fmsg.getData());
         fileReceiive.close();
 
-
+        recievebtn->setText(QString::number(bufsize/1024/1024.0));
         //check if end of file
         if(fmsg.IsEndFile())
         {
+            recievebtn->setEnabled(true);
+            recievebtn->setText("open");
             bufsize = 0;
         }
 
@@ -839,7 +841,8 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
     //QMessageBox::information(this,"dff",QString::number(downloaded),"sdd");
     // Create a button to download or open the file, depending on the download status
     QPushButton *fileButton = new QPushButton(downloaded ? "Open" : "Download", this);
-    connect(fileButton, &QPushButton::clicked, [=]() {
+    recievebtn=fileButton;
+    connect(recievebtn, &QPushButton::clicked, [=]() {
         ui->listWidget_2->setCurrentItem(item);
         if (downloaded) {
             // Check that the file exists before attempting to open it
@@ -864,7 +867,7 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
             out2 << static_cast<short>(msgpacket.getheader()) << msgpacket.serialize();
             socket->write(msgbytearray);
             socket->waitForBytesWritten();
-
+             recievebtn->setEnabled(false);
             // Wait for the file to be received
            // socket->waitForReadyRead();
 
@@ -878,7 +881,7 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
                 // Add the filename to the list of downloaded files
                 downloadedFiles.append(filename);
                 // Update the button text to "Open"
-                fileButton->setText("Open");
+                recievebtn->setText("Open");
             //} else {
               //  qDebug() << "Failed to save file:" << filePath;
             //}
@@ -892,7 +895,7 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
     // Add the button to the item in the list
     QWidget *widget = new QWidget;
     QHBoxLayout *layout = new QHBoxLayout(widget);
-    layout->addWidget(fileButton);
+    layout->addWidget(recievebtn);
     layout->addStretch();
     item->setSizeHint(widget->sizeHint());
     ui->listWidget_2->setItemWidget(item, widget);
@@ -900,7 +903,7 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
 
 }
 // Declare a member variable to store the file button
-QPushButton *fileButton;
+
 
 
 

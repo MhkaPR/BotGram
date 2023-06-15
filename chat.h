@@ -66,7 +66,7 @@ private:
   QString selectedpvname;
 
   QString pathImgg;
-
+  QPushButton *recievebtn = nullptr;
   QMap<QString,QString> myinformation;
   QMap<QString,QMap<QString,QString>> usersinformation;
 };
