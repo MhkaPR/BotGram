@@ -657,16 +657,16 @@ void chat::on_photo_button_clicked()
 
     QFileInfo fileInfo(filePath);
     QString mimeType = fileInfo.suffix();
-   mimeType = mimeType.toLower();
-            //int count =0;
+    mimeType = mimeType.toLower();
+    //int count =0;
     fmsg.setFileName(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")+"."+mimeType);
     fmsg.setroom("pv_"+myinformation["username"]+"_"+usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"]);
     fmsg.settimeSend(QDateTime::currentDateTime());
     fmsg.setSender(TokenME);
 
-     QString suffix;
-     suffix=fileInfo.suffix();
-     suffix=suffix.toLower();
+    QString suffix;
+    suffix=fileInfo.suffix();
+    suffix=suffix.toLower();
     QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(timeString,fmsg.gettimeSend().toString("yyyyMMddhhmmsszzz")+"."+suffix), ui->listWidget_2);
     item->setBackgroundColor(Qt::gray);
 
@@ -678,7 +678,7 @@ void chat::on_photo_button_clicked()
 
     // qDebug() << file.size();
 
-     //QMessageBox::information(this,"Dv",TokenME,"Fvdf");
+    //QMessageBox::information(this,"Dv",TokenME,"Fvdf");
     fmsg.sendFile(file,socket);
 
     delete file;
@@ -847,10 +847,10 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
         if (downloaded) {
             // Check that the file exists before attempting to open it
 
-          //  Open the downloaded file
+            //  Open the downloaded file
             QString filePath = "files/" + filename;
-             //QProcess::startDetached("xdg-open", QStringList() << filePath);
-           QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+            //QProcess::startDetached("xdg-open", QStringList() << filePath);
+            QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
         } else {
             // Send a request to the server to receive the file
             systemMessagePacket msgpacket;
@@ -865,27 +865,28 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
             QDataStream out2(&msgbytearray, QIODevice::WriteOnly);
             out2.setVersion(QDataStream::Qt_4_0);
             out2 << static_cast<short>(msgpacket.getheader()) << msgpacket.serialize();
+            sendmessage(filename);
             socket->write(msgbytearray);
             socket->waitForBytesWritten();
-             recievebtn->setEnabled(false);
+            recievebtn->setEnabled(false);
             // Wait for the file to be received
-           // socket->waitForReadyRead();
+            // socket->waitForReadyRead();
 
             // Save the received file to the "files" directory
             //QByteArray dataReceived = socket->readAll();
-          //  QString filePath = "files/" + filename;
+            //  QString filePath = "files/" + filename;
             //QFile file(filePath);
             //if (file.open(QIODevice::WriteOnly)) {
-              //  file.write(dataReceived);
-                //file.close();
-                // Add the filename to the list of downloaded files
-                downloadedFiles.append(filename);
-                // Update the button text to "Open"
-                recievebtn->setText("Open");
+            //  file.write(dataReceived);
+            //file.close();
+            // Add the filename to the list of downloaded files
+            downloadedFiles.append(filename);
+            // Update the button text to "Open"
+            recievebtn->setText("Open");
             //} else {
-              //  qDebug() << "Failed to save file:" << filePath;
+            //  qDebug() << "Failed to save file:" << filePath;
             //}
-           // QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+            // QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
 
         }
 
@@ -899,7 +900,7 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
     layout->addStretch();
     item->setSizeHint(widget->sizeHint());
     ui->listWidget_2->setItemWidget(item, widget);
-   // QDesktopServices::openUrl()
+    // QDesktopServices::openUrl()
 
 }
 // Declare a member variable to store the file button
@@ -1029,11 +1030,13 @@ void chat::on_pushButton_voice_clicked()
             // Create a new instance of QListWidgetItem and set the icon and text for it
             QDateTime currenttime;
             currenttime=QDateTime::currentDateTime();
-            QString currenttimestr = QString("[%1]").arg(currenttime.toString("hh:mm:ss"));
+            QString currenttimestr =currenttime.toString("hh:mm:ss");
             QString filename = currenttime.toString("yyyyMMddhhmmsszzz")+".wav";
             QImage f(64, 64, QImage::Format_RGB32);
             f.fill(Qt::gray);
-            QListWidgetItem *item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), currenttimestr+"\n"+filename);
+            QListWidgetItem *item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(currenttimestr,filename), ui->listWidget_2);
+            item->setBackgroundColor(Qt::gray);
+            // Set the data for the item to the path of the recorded voice file
 
             // Set the data for the item to the path of the recorded voice file
             QString voiceFile = recorder->outputLocation().toLocalFile();
