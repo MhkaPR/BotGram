@@ -368,7 +368,7 @@ void chat::onReadyRead()
         if(fmsg.IsEndFile())
         {
             recievebtn->setEnabled(true);
-            recievebtn->setText("open");
+            recievebtn->setText("Open");
             bufsize = 0;
         }
 
@@ -1027,7 +1027,13 @@ void chat::on_pushButton_voice_clicked()
     connect(recorder, &QAudioRecorder::stateChanged, this, [=](QAudioRecorder::State state){
         if(state == QAudioRecorder::StoppedState){
             // Create a new instance of QListWidgetItem and set the icon and text for it
-            QListWidgetItem *item = new QListWidgetItem(QIcon(":/icons/voice_icon.png"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+            QDateTime currenttime;
+            currenttime=QDateTime::currentDateTime();
+            QString currenttimestr = QString("[%1]").arg(currenttime.toString("hh:mm:ss"));
+            QString filename = currenttime.toString("yyyyMMddhhmmsszzz")+".wav";
+            QImage f(64, 64, QImage::Format_RGB32);
+            f.fill(Qt::gray);
+            QListWidgetItem *item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), currenttimestr+"\n"+filename);
 
             // Set the data for the item to the path of the recorded voice file
             QString voiceFile = recorder->outputLocation().toLocalFile();
@@ -1060,6 +1066,23 @@ void chat::on_pushButton_voice_clicked()
                         // qDebug() << file.size();
 
                         fmsg.sendFile(voiceDataFile,socket);
+
+                        QSqlQuery query(db);
+                        query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
+                        query.bindValue(":message",fmsg.getFileName());
+                        query.bindValue(":time",fmsg.gettimeSend().toString("yyyyMMdd hh:mm:ss") );
+                        query.bindValue(":sender",1);
+                        query.bindValue(":isfile",1);
+
+                        // Execute the query
+                        if (!query.exec()) {
+                            QMessageBox::information(this,"warning",query.lastError().text(),"ok");
+
+                            return;
+                        }
+                        query.finish();
+                        db.commit();
+
                     }
                     else
                     {
