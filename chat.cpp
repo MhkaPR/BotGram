@@ -303,6 +303,12 @@ void chat::onReadyRead()
 
                 return;
             }
+            QMap<QString,QString> tempMAp;
+            tempMAp["username"] = searching.username;
+            tempMAp["email"] =searching.email;
+            usersinformation[searching.name] = tempMAp;
+
+
             query.clear();
 
             query.prepare("CREATE TABLE "+searching.name+" (message TEXT , time TEXT,sender INTEGER,isfile INTEGER)");
@@ -643,7 +649,7 @@ void chat::on_photo_button_clicked()
     }
 
     pathImgg = filePath;
-    // Create a new QListWidgetItem with the image and time, and add it to listWidget_2
+
     QTime time = QTime::currentTime();
     QString timeString = time.toString("hh:mm:ss"); // or any other time format you prefer
     QImage f(64, 64, QImage::Format_RGB32);
@@ -708,16 +714,13 @@ void chat::on_photo_button_clicked()
 
     ui->listWidget_2->scrollToBottom();
 
-    // Clear all items in listWidget except the first item
-    while (ui->listWidget->count() > 1) {
-        delete ui->listWidget->takeItem(1);
-    }
 
-    // Create a new QListWidgetItem with the text "photo" and the time, and add it to listWidget
-    QListWidgetItem* newItem = new QListWidgetItem(QString("[%1] file").arg(timeString), ui->listWidget);
-    newItem->setBackgroundColor(Qt::white);
+    QString updateuserBox_str = QString("%1\n%2").arg(fmsg.getFileName(),timeString);
 
-    ui->listWidget->scrollToBottom();
+
+    ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
+
+   // ui->listWidget->scrollToBottom();
 
 
 }
@@ -1057,7 +1060,7 @@ void chat::on_pushButton_voice_clicked()
                         fileMessage fmsg(TokenME);
                         QFileInfo fileInfo(voiceDataFile->fileName());
                         QString mimeType = fileInfo.suffix();
-                        fmsg.setFileName(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")+"."+mimeType);
+                        fmsg.setFileName(currenttime.toString("yyyyMMddhhmmsszzz")+"."+mimeType);
                         fmsg.setroom("pv_"+myinformation["username"]+"_"+usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"]);
                         fmsg.settimeSend(QDateTime::currentDateTime());
                         fmsg.setSender(TokenME);
@@ -1073,6 +1076,7 @@ void chat::on_pushButton_voice_clicked()
                         QSqlQuery query(db);
                         query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
                         query.bindValue(":message",fmsg.getFileName());
+
                         query.bindValue(":time",fmsg.gettimeSend().toString("yyyyMMdd hh:mm:ss") );
                         query.bindValue(":sender",1);
                         query.bindValue(":isfile",1);
@@ -1085,6 +1089,10 @@ void chat::on_pushButton_voice_clicked()
                         }
                         query.finish();
                         db.commit();
+
+                        QString updateuserBox_str = QString("%1\n%2").arg(fmsg.getFileName(),currenttimestr);
+                        ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
+
 
                     }
                     else

@@ -43,10 +43,11 @@ public:
 
     QString username;
     QString name;
+    QString email;
 
 private:
     //QString sender;
-    QString email;
+
 
 };
 
