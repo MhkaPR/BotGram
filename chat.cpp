@@ -513,7 +513,7 @@ void chat::on_pushButton_send_message_clicked()
         QDateTime time = QDateTime::currentDateTime();
         QString timeString = time.toString("hh:mm:ss");
         // or any other time format you prefer
-        messageWidget *newMessage = new messageWidget(messageText,timeString,ch);
+        messageWidget *newMessage = new messageWidget(messageText,timeString,ch,true);
         qDebug() << messageText;
 
         // send to server, message

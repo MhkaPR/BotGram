@@ -1,25 +1,22 @@
 #include "messagewidget.h"
 
-messageWidget::messageWidget(const QString& text,QString time, QWidget* parent)
+messageWidget::messageWidget(const QString& text,QString time, QWidget* parent,bool IsSentMessage)
     : QWidget(parent)
 {
 
 
 
 
-
-    this->setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Minimum);
-
     this->setMinimumHeight(100);
 
 
 
+
+    setBacground_color(IsSentMessage);
     QWidget *messageLayer = new QWidget(this);
 
     messageLayer->setMaximumWidth(parent->geometry().width()/5*4);
     messageLayer->setMinimumHeight(100);
-    this->setStyleSheet("background-color: #ae2eea");
-
 
 
     // Create the text label
@@ -32,15 +29,18 @@ messageWidget::messageWidget(const QString& text,QString time, QWidget* parent)
 
 
 
+    //word wrapping
     int lenText = text.length();
     QString newText=text;
-    if(lenText >= 100) newText = wordWrap(text,m_textLabel->maximumWidth()/Ach);
+    if(lenText >= 100) newText = wordWrap(text,(parent->geometry().width()/5*4)/Ach);
     m_textLabel->setWordWrap(true);
 
+    //fix message
     m_textLabel->setText(newText);
     m_textLabel->setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Fixed);
-    m_timeLabel->setAlignment(Qt::AlignmentFlag::AlignRight | Qt::AlignmentFlag::AlignTop);
-    m_textLabel->setStyleSheet("background-color: #ffffff; border: 0px solid #cccccc;padding: 10px;");
+    m_textLabel->setAlignment(Qt::AlignmentFlag::AlignRight | Qt::AlignmentFlag::AlignTop);
+
+    m_textLabel->setStyleSheet("background-color: "+background_color.name()+"; border: 0px solid #cccccc;padding: 10px;");
 
 
     // Create the time label
@@ -49,7 +49,7 @@ messageWidget::messageWidget(const QString& text,QString time, QWidget* parent)
     m_timeLabel->setText(time);
     m_timeLabel->setFixedWidth(100);
     m_timeLabel->setAlignment(Qt::AlignmentFlag::AlignRight | Qt::AlignmentFlag::AlignBottom);
-    m_timeLabel->setStyleSheet("background-color: #ffffff; border: 0px solid #cccccc;padding: 2px;");
+    m_timeLabel->setStyleSheet("background-color: "+background_color.name()+"; border: 0px solid #cccccc;padding: 2px;");
 
     //create the layout of inside of messsage
 
@@ -57,8 +57,8 @@ messageWidget::messageWidget(const QString& text,QString time, QWidget* parent)
 
     layout_inside->addWidget(m_textLabel);
     layout_inside->addWidget(m_timeLabel);
-    qDebug() << text;
-    layout_inside->setAlignment(Qt::AlignRight);
+
+    setAlignmentOfmessage(layout_inside,IsSentMessage);
     messageLayer->setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Fixed);
 
     // Create the layout of all of message
@@ -66,14 +66,17 @@ messageWidget::messageWidget(const QString& text,QString time, QWidget* parent)
 
     layout->addWidget(messageLayer);
 
-    layout->setAlignment(Qt::AlignRight);
+    setAlignmentOfmessage(layout,IsSentMessage);
+    //layout->setAlignment(Qt::AlignLeft);
 
 
+    this->setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Fixed);
 
 
     // Set the size and style
 
-    messageLayer->setStyleSheet("background-color: #ffffff; border: 1px solid #cccccc; border-radius: 20px; padding: 10px;");
+    messageLayer->setStyleSheet("background-color: "+background_color.name()+"; border: 1px solid #cccccc; border-radius: 20px; padding: 10px;");
+
 }
 
 QString messageWidget::wordWrap(QString inputText,int maxWidth)
@@ -137,4 +140,28 @@ QString messageWidget::wordWrap(QString inputText,int maxWidth)
     }
 
     return wrappedText;
+}
+
+void messageWidget::setBacground_color(bool value)
+{
+    if(value)
+    {
+        background_color.setRgb(180,255,192);
+    }
+    else {
+        background_color.setRgb(255,255,255);
+    }
+}
+
+void messageWidget::setBacground_color(QColor color)
+{
+    background_color = color;
+}
+
+void messageWidget::setAlignmentOfmessage(QVBoxLayout *layout,bool value)
+{
+    Qt::AlignmentFlag flag;
+    if(value) flag = Qt::AlignLeft;
+    else flag = Qt::AlignRight;
+    layout->setAlignment(flag);
 }

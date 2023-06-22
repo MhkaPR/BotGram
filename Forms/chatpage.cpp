@@ -32,6 +32,7 @@ chatPage::chatPage(QWidget *parent) :
     //    ScrollLayout->addWidget(newmessageWid3);
     //    ScrollLayout->addWidget(newmessageWid4);
 
+    ScrollLayout->setAlignment(Qt::AlignmentFlag::AlignTop);
     ScrollWidget->setLayout(ScrollLayout);
     //ScrollWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 
