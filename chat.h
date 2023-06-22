@@ -8,6 +8,7 @@
 #include<QContextMenuEvent>
 #include"libraries_BotGram/textmessage.h"
 #include <QMap>
+#include "Forms/chatpage.h"
 
 namespace Ui {
 class chat;
@@ -58,6 +59,8 @@ private slots:
 
    void sendmessage(QString message);
 
+   void on_commandLinkButton_clicked();
+
 private:
     Ui::chat *ui;
      QByteArray name;
@@ -69,6 +72,8 @@ private:
   QPushButton *recievebtn = nullptr;
   QMap<QString,QString> myinformation;
   QMap<QString,QMap<QString,QString>> usersinformation;
+  chatPage *ch=nullptr;
+
 };
 
 #endif // CHAT_H

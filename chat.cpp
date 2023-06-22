@@ -31,6 +31,8 @@
 #include<QJsonDocument>
 #include<QJsonObject>
 #include<QFile>
+
+#include <libraries_BotGram/messagewidget.h>
 const int SERVER_PO= 9999;
 //const QString TokenME = "pAWmUPKB";
 static QString TokenME = "mhka1382";
@@ -175,29 +177,8 @@ chat::chat(QWidget *parent) :
 
     connectToServer();
 
-    //    systemMessagePacket sysmsg;
-    //    sysmsg.setSysmsg(package::SysCodes::send_file);
 
-    //    QJsonObject obj;
 
-    //    obj.insert("room","pv_testUser_mhka1382");
-    //    obj.insert("FileName","20230603174457740.jpg");
-
-    //    QJsonDocument doc;
-    //    doc.setObject(obj);
-
-    //    sysmsg.setinformation(doc.toJson());
-
-    //    QByteArray buf123;
-    //    QDataStream out123(&buf123,QIODevice::WriteOnly);
-    //    out123.setVersion(QDataStream::Qt_4_0);
-
-    //    out123 << static_cast<short>(sysmsg.getheader()) << sysmsg.serialize();
-
-    //    sendmessage("sff");
-    //    socket->write(buf123);
-    //    socket->waitForBytesWritten();
-    //    socket->waitForReadyRead();
 
 }
 
@@ -520,24 +501,20 @@ void chat::on_pushButton_send_message_clicked()
 {
 
 
+
     QString messageText = ui->message_text->toPlainText();
+
     if(messageText.isEmpty())
     {
         ui->message_text->setStyleSheet("background-color: rgb(255, 0, 0);");
     }
     else
     {
-
-
-        //// Create a new QListWidgetItem with the message and time
         QDateTime time = QDateTime::currentDateTime();
-        QString timeString = time.toString("hh:mm:ss"); // or any other time format you prefer
-
-
-        // QListWidgetItem* item = new QListWidgetItem(messageWithTime);
-
-
-
+        QString timeString = time.toString("hh:mm:ss");
+        // or any other time format you prefer
+        messageWidget *newMessage = new messageWidget(messageText,timeString,ch);
+        qDebug() << messageText;
 
         // send to server, message
         QString receiveOFmessage = usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"];
@@ -560,13 +537,14 @@ void chat::on_pushButton_send_message_clicked()
             ui->message_text->clear();
 
 
-
-            ui->listWidget_2->addItem(QString("[%1]:\n%2").arg(timeString,messageText));
+            //add message
+            ch->addMessage(newMessage);
+            //ui->listWidget_2->addItem(QString("[%1]:\n%2").arg(timeString,messageText));
 
 
 
             // ui->listWidget_2->addItem(item);
-            ui->listWidget_2->scrollToBottom();
+            //ui->listWidget_2->scrollToBottom();
 
 
             QString messageTweLine = getTweLine(messages.Message,50);
@@ -583,7 +561,7 @@ void chat::on_pushButton_send_message_clicked()
             ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+button_message);
 
             // Scroll to the bottom of the list widget_2
-            ui->listWidget_2->scrollToBottom();
+            //ui->listWidget_2->scrollToBottom();
 
 
             //save in database
@@ -615,10 +593,95 @@ void chat::on_pushButton_send_message_clicked()
 
 
     }
+
+
+    //        //// Create a new QListWidgetItem with the message and time
+    //        QDateTime time = QDateTime::currentDateTime();
+    //        QString timeString = time.toString("hh:mm:ss"); // or any other time format you prefer
+
+
+    //        // QListWidgetItem* item = new QListWidgetItem(messageWithTime);
+
+
+
+
+    //        // send to server, message
+    //        QString receiveOFmessage = usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"];
+    //        QString senderOFmessage = myinformation["username"];
+    //        TextMessage messages;
+    //        messages.setSender(TokenME);
+    //        messages.setReceiver("pv_"+senderOFmessage+"_"+receiveOFmessage);
+    //        messages.Message = ui->message_text->toPlainText();
+    //        messages.timeSend = messages.gettimeSend().currentDateTime();
+    //        messages.stateMessage = package::sendMode;
+    //        QByteArray buff2;
+    //        QDataStream out2(&buff2,QIODevice::WriteOnly);
+    //        out2.setVersion(QDataStream::Qt_4_0);
+    //        out2<<static_cast<short>(messages.getheader())<<messages.serialize();
+    //        socket->write(buff2);
+    //        if(socket->waitForBytesWritten())
+    //        {
+
+    //            // Add the item to listWidget2
+    //            ui->message_text->clear();
+
+
+
+    //            ui->listWidget_2->addItem(QString("[%1]:\n%2").arg(timeString,messageText));
+
+
+
+    //            // ui->listWidget_2->addItem(item);
+    //            ui->listWidget_2->scrollToBottom();
+
+
+    //            QString messageTweLine = getTweLine(messages.Message,50);
+
+    //            QListWidgetItem *newListWidget = new QListWidgetItem;
+    //            QLabel *lbl_message = new QLabel;
+    //            lbl_message->setFixedWidth(300);
+    //            lbl_message->setText(messages.Message);
+
+    //            QString button_message = QString("%1\n%2").arg(messageTweLine,timeString);
+    //            // QListWidgetItem* newItem = new QListWidgetItem();
+    //            // newItem->setTextColor(Qt::black); // set text color to black
+    //            //ui->listWidget->addItem(newItem);
+    //            ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+button_message);
+
+    //            // Scroll to the bottom of the list widget_2
+    //            ui->listWidget_2->scrollToBottom();
+
+
+    //            //save in database
+
+    //            QSqlQuery query(db);
+    //            query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
+    //            query.bindValue(":message",messages.Message );
+    //            query.bindValue(":time",messages.timeSend.toString("yyyyMMdd hh:mm:ss") );
+    //            query.bindValue(":sender",1);
+    //            query.bindValue(":isfile",0);
+
+    //            // Execute the query
+    //            if (!query.exec()) {
+    //                QMessageBox::information(this,"warning",query.lastError().text(),"ok");
+
+    //                return;
+    //            }
+    //            query.finish();
+    //            db.commit();
+
+    //            //            ui->listWidget_2->addItem(newListWidget);
+    //            //            ui->listWidget_2->setItemWidget(newListWidget,lbl_message);
+
+    //        }
+    //        else
+    //        {
+    //            ui->label_selectchat->setText("wait for connecting...");
+    //        }
+
+
+    //    }
 }
-
-
-
 void chat::on_photo_button_clicked()
 {
 
@@ -720,7 +783,7 @@ void chat::on_photo_button_clicked()
 
     ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
 
-   // ui->listWidget->scrollToBottom();
+    // ui->listWidget->scrollToBottom();
 
 
 }
@@ -1176,3 +1239,11 @@ void chat::sendmessage(QString message)
     QMessageBox::information(this,"info",message);
 }
 
+
+void chat::on_commandLinkButton_clicked()
+{
+    ch = new chatPage;
+    ui->chatPage_Widget->layout()->addWidget(ch);
+    ui->chatPage_Widget->setCurrentWidget(ch);
+    //ch->show();
+}

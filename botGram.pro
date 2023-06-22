@@ -27,6 +27,7 @@ SOURCES += \
     DataFiles/checkingcaptcha/captcha.cpp \
     DataFiles/checkingcaptcha/dialog.cpp \
     Forms/buildercapcha.cpp \
+    Forms/chatpage.cpp \
     botgrameenv.cpp \
 #    capchabuilder.cpp \
     chat.cpp \
@@ -48,6 +49,7 @@ SOURCES += \
     libraries_BotGram/database/user_database.cpp \
     libraries_BotGram/filemessage.cpp \
     libraries_BotGram/loginpacket.cpp \
+    libraries_BotGram/messagewidget.cpp \
     libraries_BotGram/package.cpp \
     libraries_BotGram/pvroom.cpp \
     libraries_BotGram/queriespacket.cpp \
@@ -68,6 +70,7 @@ HEADERS += \
     DataFiles/checkingcaptcha/captcha.h \
     DataFiles/checkingcaptcha/dialog.h \
     Forms/buildercapcha.h \
+    Forms/chatpage.h \
     botgram.h \
     botgrameenv.h \
 #    capchabuilder.h \
@@ -97,6 +100,7 @@ HEADERS += \
     libraries_BotGram/database/user_database.h \
     libraries_BotGram/filemessage.h \
     libraries_BotGram/loginpacket.h \
+    libraries_BotGram/messagewidget.h \
     libraries_BotGram/package.h \
     libraries_BotGram/pvroom.h \
     libraries_BotGram/queriespacket.h \
@@ -114,6 +118,7 @@ HEADERS += \
 FORMS += \
     DataFiles/checkingcaptcha/dialog.ui \
     Forms/buildercapcha.ui \
+    Forms/chatpage.ui \
     botgram.ui \
     botgrameenv.ui \
  \#    capchabuilder.ui

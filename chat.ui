@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1310</width>
-    <height>810</height>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -86,6 +86,19 @@
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QCommandLinkButton" name="commandLinkButton">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>550</y>
+      <width>186</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>CommandLinkButton</string>
     </property>
    </widget>
   </widget>
@@ -371,6 +384,20 @@ border-color: rgb(131, 155, 151);</string>
     <property name="text">
      <string/>
     </property>
+   </widget>
+   <widget class="QStackedWidget" name="chatPage_Widget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>20</y>
+      <width>731</width>
+      <height>521</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="page"/>
    </widget>
   </widget>
  </widget>
