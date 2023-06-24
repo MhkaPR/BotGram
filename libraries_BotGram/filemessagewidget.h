@@ -6,8 +6,7 @@
 #include "messagewidget.h"
 #include "QPushButton"
 #include <QFile>
-#include "systemmessagepacket.h"
-#include "chat.h"
+
 
 //json
 #include <QJsonArray>
@@ -18,6 +17,7 @@
 
 class FileMessageWidget : public messageWidget
 {
+    Q_OBJECT
 public:
     FileMessageWidget(const QString& text,QString time, QWidget* parent,const QString& filename,bool IsSentMessage);
     void setfileField(QString title);
@@ -25,7 +25,7 @@ public:
     bool checkDownloaded(const QString& filename);
 
 signals:
-    void downloadFile(QString filename);
+    void downloadFile();
 public slots:
     void btn_file_clicked();
 

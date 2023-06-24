@@ -13,6 +13,7 @@
 
 class messageWidget:public QWidget
 {
+    Q_OBJECT
 public:
     explicit messageWidget(const QString& text,QString time, QWidget* parent = nullptr,bool IsSentMessage = false);
     QLabel* m_textLabel=nullptr;

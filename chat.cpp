@@ -32,6 +32,7 @@
 #include<QJsonObject>
 #include<QFile>
 #include <libraries_BotGram/messagewidget.h>
+#include "libraries_BotGram/filemessagewidget.h"
 
 
 const int SERVER_PO= 9999;
@@ -479,9 +480,9 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
 
             ch->addMessage(newFile_Before);
 
-//            connect(newFile_Before,&FileMessageWidget::downloadFile,[&](){
-//                this->sendApplyForDownload(message);
-//            });
+            connect(newFile_Before,&FileMessageWidget::downloadFile,[=](){
+                this->sendApplyForDownload(message);
+            });
         }
         else
         {

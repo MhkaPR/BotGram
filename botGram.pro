@@ -101,6 +101,7 @@ HEADERS += \
     libraries_BotGram/database/user_database.h \
     libraries_BotGram/filemessage.h \
     libraries_BotGram/filemessagewidget.h \
+    moc_FileMessageWidget.cpp \
     libraries_BotGram/loginpacket.h \
     libraries_BotGram/messagewidget.h \
     libraries_BotGram/package.h \

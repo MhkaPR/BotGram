@@ -159,7 +159,7 @@ void FileMessageWidget::btn_file_clicked()
     QString filename = lbl_title->text();
     if(!checkDownloaded(lbl_title->text()))
     {
-        emit downloadFile(filename);
+        emit downloadFile();
         setIconOfCircle(false);
     }
     else

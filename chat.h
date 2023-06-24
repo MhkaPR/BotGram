@@ -9,7 +9,7 @@
 #include"libraries_BotGram/textmessage.h"
 #include <QMap>
 #include "Forms/chatpage.h"
-#include "libraries_BotGram/filemessagewidget.h"
+
 namespace Ui {
 class chat;
 }
