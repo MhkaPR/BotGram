@@ -104,6 +104,7 @@ HEADERS += \
     moc_FileMessageWidget.cpp \
     libraries_BotGram/loginpacket.h \
     libraries_BotGram/messagewidget.h \
+    moc_messagewidget.cpp \
     libraries_BotGram/package.h \
     libraries_BotGram/pvroom.h \
     libraries_BotGram/queriespacket.h \
