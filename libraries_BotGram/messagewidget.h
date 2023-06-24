@@ -20,12 +20,15 @@ public:
 
     static QString wordWrap(QString inputText,int maxWidth);
 
-   void setBacground_color(bool value);
-   void setBacground_color(QColor color);
-   void setAlignmentOfmessage(QVBoxLayout *layout,bool value);
+    virtual void setBacground_color(bool value);
+    virtual void setBacground_color(QColor color);
+    virtual void setAlignmentOfmessage(QVBoxLayout *layout,bool value);
+    QWidget *messageLayer=nullptr;
+    QVBoxLayout *layout_inside = nullptr;
 
-private:
+protected:
     QColor background_color;
+
 
 };
 

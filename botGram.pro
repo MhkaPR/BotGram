@@ -48,6 +48,7 @@ SOURCES += \
 #    libraries_BotGram/database_complex.cpp \
     libraries_BotGram/database/user_database.cpp \
     libraries_BotGram/filemessage.cpp \
+    libraries_BotGram/filemessagewidget.cpp \
     libraries_BotGram/loginpacket.cpp \
     libraries_BotGram/messagewidget.cpp \
     libraries_BotGram/package.cpp \
@@ -95,10 +96,11 @@ HEADERS += \
     libraries_BotGram/database.h \
     #libraries_BotGram/database/Packages.h \
     libraries_BotGram/database/database_complex.h \
- \#    libraries_BotGram/database_complex.h
- \#    user_database.h
+ #    libraries_BotGram/database_complex.h
+ #    user_database.h
     libraries_BotGram/database/user_database.h \
     libraries_BotGram/filemessage.h \
+    libraries_BotGram/filemessagewidget.h \
     libraries_BotGram/loginpacket.h \
     libraries_BotGram/messagewidget.h \
     libraries_BotGram/package.h \

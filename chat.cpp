@@ -31,8 +31,9 @@
 #include<QJsonDocument>
 #include<QJsonObject>
 #include<QFile>
-
 #include <libraries_BotGram/messagewidget.h>
+
+
 const int SERVER_PO= 9999;
 //const QString TokenME = "pAWmUPKB";
 static QString TokenME = "mhka1382";
@@ -174,6 +175,7 @@ chat::chat(QWidget *parent) :
     connect(socket, &QTcpSocket::connected, this, &chat::onConnected);
     connect(socket, &QTcpSocket::disconnected, this, &chat::onDisconnected);
     connect(socket, &QTcpSocket::readyRead, this, &chat::onReadyRead);
+
 
     connectToServer();
 
@@ -385,6 +387,7 @@ void chat::onReadyRead()
         msg.Message = arr[0].toString();
         msg.timeSend = QDateTime::fromString(arr[1].toString());
         mesg = msg;
+
         ui->listWidget_2->addItem(mesg.sender+":"+mesg.Message+" // "+arr[1].toString());
         ui->listWidget_2->scrollToBottom();
         QSqlQuery query(db);
@@ -419,15 +422,35 @@ chat::~chat()
     delete this;
 }
 
+void chat::sendApplyForDownload(QString filename)
+{
+    systemMessagePacket msgpacket;
+    msgpacket.setSysmsg(package::SysCodes::send_file);
+    QJsonObject data;
+    data["sender"] = TokenME;
+    data["FileName"] = filename;
+    data["room"] = "pv_"+myinformation["username"]+"_"+usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"];
+    msgpacket.setinformation(QJsonDocument(data).toJson());
+
+    QByteArray msgbytearray;
+    QDataStream out2(&msgbytearray, QIODevice::WriteOnly);
+    out2.setVersion(QDataStream::Qt_4_0);
+    out2 << static_cast<short>(msgpacket.getheader()) << msgpacket.serialize();
+    sendmessage(filename);
+    socket->write(msgbytearray);
+    socket->waitForBytesWritten();
+}
+
 
 void chat::on_listWidget_itemClicked(QListWidgetItem *item)
 {
 
-    ui->listWidget_2->clear();
+    //    ui->listWidget_2->clear();
 
-    for (int i = 0;i < 23;i++) {
-        ui->listWidget_2->addItem("");
-    }
+
+    //    for (int i = 0;i < 23;i++) {
+    //        ui->listWidget_2->addItem("");
+    //    }
     selectedpvname = item->text().split("\n")[0];
 
     //QMessageBox::information(this,"sff",itemname);
@@ -446,31 +469,24 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
         QString message = query.value("message").toString();
         QString time = query.value("time").toString();
         time = time.remove(0,9);
-        QString temp = QString("[%1]").arg(time)+message;
         bool isMe = query.value("sender").toBool();
-        QListWidgetItem* item_Room = new QListWidgetItem(temp);
-        if(isMe)
-        {
-            item_Room->setBackgroundColor(Qt::green);
-        }
+
+
         if(query.value("isfile").toBool()==1)
         {
-
-            QImage f(64, 64, QImage::Format_RGB32);
-            f.fill(Qt::gray);
+            FileMessageWidget *newFile_Before = new FileMessageWidget("",time,this,message,isMe);
 
 
+            ch->addMessage(newFile_Before);
 
-            QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(time,message), ui->listWidget_2);
-            item->setBackgroundColor(Qt::gray);
-            ui->listWidget_2->addItem(item);
-            ui->listWidget_2->scrollToBottom();
+//            connect(newFile_Before,&FileMessageWidget::downloadFile,[&](){
+//                this->sendApplyForDownload(message);
+//            });
         }
         else
-
         {
-            ui->listWidget_2->addItem(item_Room);
-            ui->listWidget_2->scrollToBottom();
+            messageWidget *messageOfBefore =new messageWidget(message,time,this,isMe);
+            ch->addMessage(messageOfBefore);
         }
 
         //delete  item;
@@ -713,14 +729,14 @@ void chat::on_photo_button_clicked()
 
     pathImgg = filePath;
 
-    QTime time = QTime::currentTime();
+    QDateTime time = QDateTime::currentDateTime();
     QString timeString = time.toString("hh:mm:ss"); // or any other time format you prefer
     QImage f(64, 64, QImage::Format_RGB32);
     f.fill(Qt::gray);
 
 
 
-
+    //send file to server
 
     fileMessage fmsg(TokenME);
 
@@ -728,28 +744,31 @@ void chat::on_photo_button_clicked()
     QString mimeType = fileInfo.suffix();
     mimeType = mimeType.toLower();
     //int count =0;
-    fmsg.setFileName(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz")+"."+mimeType);
+    fmsg.setFileName(time.toString("yyyyMMddhhmmsszzz")+"."+mimeType);
     fmsg.setroom("pv_"+myinformation["username"]+"_"+usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"]);
-    fmsg.settimeSend(QDateTime::currentDateTime());
+    fmsg.settimeSend(time);
     fmsg.setSender(TokenME);
 
     QString suffix;
     suffix=fileInfo.suffix();
     suffix=suffix.toLower();
-    QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(timeString,fmsg.gettimeSend().toString("yyyyMMddhhmmsszzz")+"."+suffix), ui->listWidget_2);
-    item->setBackgroundColor(Qt::gray);
 
 
-    quint64 fileSize = static_cast<quint64>(file->size());
+    //    QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(timeString,fmsg.gettimeSend().toString("yyyyMMddhhmmsszzz")+"."+suffix), ui->listWidget_2);
+    //    item->setBackgroundColor(Qt::gray);
+
+
+
+    //    quint64 fileSize = static_cast<quint64>(file->size());
     // quint64 bufsize=0;
 
     fmsg.setcount_size("0");
 
-    // qDebug() << file.size();
 
-    //QMessageBox::information(this,"Dv",TokenME,"Fvdf");
     fmsg.sendFile(file,socket);
 
+
+    file->copy("files/"+fmsg.getFileName());
     delete file;
 
 
@@ -775,12 +794,13 @@ void chat::on_photo_button_clicked()
 
 
 
-    ui->listWidget_2->scrollToBottom();
+    // ui->listWidget_2->scrollToBottom();
 
+
+    FileMessageWidget *newfile = new FileMessageWidget("",timeString,this,fmsg.getFileName(),true);
+    ch->addMessage(newfile);
 
     QString updateuserBox_str = QString("%1\n%2").arg(fmsg.getFileName(),timeString);
-
-
     ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
 
     // ui->listWidget->scrollToBottom();
@@ -906,6 +926,13 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
     bool downloaded = downloadedFiles.contains(filename);
     //QMessageBox::information(this,"dff",QString::number(downloaded),"sdd");
     // Create a button to download or open the file, depending on the download status
+
+
+
+
+    // connect(this,&FileMessageWidget::downloadFile,chat,&chat::btn_file_clicked);
+
+
     QPushButton *fileButton = new QPushButton(downloaded ? "Open" : "Download", this);
     recievebtn=fileButton;
     connect(recievebtn, &QPushButton::clicked, [=]() {

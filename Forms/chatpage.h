@@ -5,6 +5,7 @@
 #include <libraries_BotGram/messagewidget.h>
 #include <QScrollArea>
 #include <QScrollBar>
+#include "libraries_BotGram/filemessagewidget.h"
 
 namespace Ui {
 class chatPage;
@@ -19,6 +20,7 @@ public:
     ~chatPage();
 
     void addMessage(messageWidget* newMsg);
+    void addMessage(FileMessageWidget* newFileMsg);
 
 private:
     Ui::chatPage *ui;

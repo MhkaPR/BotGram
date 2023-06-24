@@ -52,7 +52,7 @@ void chatPage::addMessage(messageWidget *newMsg)
     ScrollLayout->addWidget(newMsg);
     //ScrollWidget->setLayout(ScrollLayout);
     ScrollWidget->setLayout(ScrollLayout);
-   //ui->scrollArea->verticalScrollBar()->setValue(ui->scrollArea->verticalScrollBar()->maximum());
+    //ui->scrollArea->verticalScrollBar()->setValue(ui->scrollArea->verticalScrollBar()->maximum());
     // Get a pointer to the last widget in the layout
     QWidget* lastWidget = ScrollLayout->itemAt(ScrollLayout->count() - 1)->widget();
 
@@ -61,3 +61,18 @@ void chatPage::addMessage(messageWidget *newMsg)
 
 
 }
+void chatPage::addMessage(FileMessageWidget *newFileMsg)
+{
+    ScrollLayout->addWidget(newFileMsg);
+    //ScrollWidget->setLayout(ScrollLayout);
+    ScrollWidget->setLayout(ScrollLayout);
+    //ui->scrollArea->verticalScrollBar()->setValue(ui->scrollArea->verticalScrollBar()->maximum());
+    // Get a pointer to the last widget in the layout
+    QWidget* lastWidget = ScrollLayout->itemAt(ScrollLayout->count() - 1)->widget();
+
+    // Scroll to the last widget
+    ui->scrollArea->ensureWidgetVisible(lastWidget);
+
+
+}
+

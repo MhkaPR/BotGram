@@ -9,7 +9,7 @@
 #include"libraries_BotGram/textmessage.h"
 #include <QMap>
 #include "Forms/chatpage.h"
-
+#include "libraries_BotGram/filemessagewidget.h"
 namespace Ui {
 class chat;
 }
@@ -23,8 +23,8 @@ public:
     TextMessage mesg;
       QStringList downloadedFiles;
     ~chat();
-   // QString namechat;
-
+   // QString namechat
+      void sendApplyForDownload(QString filename);
 private slots:
     void on_listWidget_itemClicked(QListWidgetItem *item);
 
@@ -57,11 +57,14 @@ private slots:
 
 
 
-   void sendmessage(QString message);
+
 
    void on_commandLinkButton_clicked();
 
+
+
 private:
+   void sendmessage(QString message);
     Ui::chat *ui;
      QByteArray name;
   QTcpSocket *socket;
