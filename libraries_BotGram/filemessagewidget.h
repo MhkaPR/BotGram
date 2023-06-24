@@ -23,10 +23,13 @@ public:
     void setfileField(QString title);
     void setIconOfCircle(bool fixDownloadIcon);
     bool checkDownloaded(const QString& filename);
+    void setDownloaded(bool value);
+    bool getDownloaded();
 
 signals:
     void downloadFile();
 public slots:
+    void ActiveBtnToCauseOfFileEnded();
     void btn_file_clicked();
 
 private:

@@ -18,6 +18,8 @@ class chat : public QWidget
 {
     Q_OBJECT
 
+signals:
+    void fileEnded();
 public:
     explicit chat(QWidget *parent = nullptr);
     TextMessage mesg;

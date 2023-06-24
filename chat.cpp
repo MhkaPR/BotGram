@@ -178,6 +178,7 @@ chat::chat(QWidget *parent) :
     connect(socket, &QTcpSocket::readyRead, this, &chat::onReadyRead);
 
 
+
     connectToServer();
 
 
@@ -254,11 +255,12 @@ void chat::onReadyRead()
     // Handle incoming data from the server
 
 
+    qDebug() << data[0];
+
     if(data[0] == '~')
     {
         return;
     }
-
 
     QDataStream in(&data,QIODevice::ReadOnly);
     in.setVersion(QDataStream::Qt_4_0);
@@ -309,13 +311,6 @@ void chat::onReadyRead()
         }
         break;
 
-        //send apply ??
-        //receive part 1 ??
-        //send ok answer ??
-        //while receive part i
-        // send ok answer
-
-
 
 
 
@@ -353,12 +348,13 @@ void chat::onReadyRead()
         fileReceiive.write(fmsg.getData());
         fileReceiive.close();
 
-        recievebtn->setText(QString::number(bufsize/1024/1024.0));
+        //recievebtn->setText(QString::number(bufsize/1024/1024.0));
         //check if end of file
         if(fmsg.IsEndFile())
         {
-            recievebtn->setEnabled(true);
-            recievebtn->setText("Open");
+            //recievebtn->setEnabled(true);
+            //recievebtn->setText("Open");
+            emit fileEnded();
             bufsize = 0;
         }
 
@@ -437,9 +433,12 @@ void chat::sendApplyForDownload(QString filename)
     QDataStream out2(&msgbytearray, QIODevice::WriteOnly);
     out2.setVersion(QDataStream::Qt_4_0);
     out2 << static_cast<short>(msgpacket.getheader()) << msgpacket.serialize();
-    sendmessage(filename);
+    //    sendmessage(filename);
     socket->write(msgbytearray);
+
     socket->waitForBytesWritten();
+//    socket->waitForReadyRead();
+
 }
 
 
@@ -478,11 +477,14 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
             FileMessageWidget *newFile_Before = new FileMessageWidget("",time,this,message,isMe);
 
 
+
             ch->addMessage(newFile_Before);
 
             connect(newFile_Before,&FileMessageWidget::downloadFile,[=](){
+
                 this->sendApplyForDownload(message);
             });
+            connect(this,&chat::fileEnded,newFile_Before,&FileMessageWidget::ActiveBtnToCauseOfFileEnded);
         }
         else
         {
@@ -755,19 +757,13 @@ void chat::on_photo_button_clicked()
     suffix=suffix.toLower();
 
 
-    //    QListWidgetItem* item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(timeString,fmsg.gettimeSend().toString("yyyyMMddhhmmsszzz")+"."+suffix), ui->listWidget_2);
-    //    item->setBackgroundColor(Qt::gray);
-
-
-
-    //    quint64 fileSize = static_cast<quint64>(file->size());
-    // quint64 bufsize=0;
 
     fmsg.setcount_size("0");
 
 
     fmsg.sendFile(file,socket);
 
+    //fmsg.getFileName()
 
     file->copy("files/"+fmsg.getFileName());
     delete file;
@@ -797,9 +793,14 @@ void chat::on_photo_button_clicked()
 
     // ui->listWidget_2->scrollToBottom();
 
+    QString filename = fmsg.getFileName();
 
     FileMessageWidget *newfile = new FileMessageWidget("",timeString,this,fmsg.getFileName(),true);
     ch->addMessage(newfile);
+    connect(newfile,&FileMessageWidget::downloadFile,[=](){
+        this->sendApplyForDownload(filename);
+    });
+    connect(this,&chat::fileEnded,newfile,&FileMessageWidget::ActiveBtnToCauseOfFileEnded);
 
     QString updateuserBox_str = QString("%1\n%2").arg(fmsg.getFileName(),timeString);
     ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);

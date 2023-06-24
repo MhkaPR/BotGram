@@ -104,10 +104,14 @@ void FileMessageWidget::setfileField(QString title)
     btn_file->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     QPixmap fileIcon;
     if(!checkDownloaded(title))
+    {
         fileIcon= QPixmap("DataFiles\\pngwing.png");
+        downloaded = false;
+    }
     else
     {
         fileIcon= QPixmap("DataFiles\\downloadedFIleIcon.png");
+        downloaded = true;
     }
     btn_file->setIcon(QIcon(fileIcon));
     connect(btn_file,&QPushButton::clicked,this,&FileMessageWidget::btn_file_clicked);
@@ -134,12 +138,12 @@ void FileMessageWidget::setIconOfCircle(bool fixDownloadIcon)
     if(fixDownloadIcon)
     {
         // downlaod Icon
-         btn_file->setIcon(QIcon(QPixmap("DataFiles\\pngwing.png")));
+        btn_file->setIcon(QIcon(QPixmap("DataFiles\\pngwing.png")));
     }
     else
     {
         //open Icon
-         btn_file->setIcon(QIcon(QPixmap("DataFiles\\downloadedFIleIcon.png")));
+        btn_file->setIcon(QIcon(QPixmap("DataFiles\\downloadedFIleIcon.png")));
     }
 }
 
@@ -154,19 +158,52 @@ bool FileMessageWidget::checkDownloaded(const QString& filename)
 
 }
 
+void FileMessageWidget::setDownloaded(bool value)
+{
+    downloaded = value;
+}
+
+bool FileMessageWidget::getDownloaded()
+{
+    return downloaded;
+}
+
+void FileMessageWidget::ActiveBtnToCauseOfFileEnded()
+{
+    btn_file->setEnabled(true);
+    btn_file->setText("");
+}
+
 void FileMessageWidget::btn_file_clicked()
 {
     QString filename = lbl_title->text();
     if(!checkDownloaded(lbl_title->text()))
     {
-        emit downloadFile();
-        setIconOfCircle(false);
+        if(downloaded == true)
+        {
+            setIconOfCircle(true);
+            downloaded =false;
+            qDebug()<<downloaded << 1;
+        }
+        else
+        {
+            setIconOfCircle(false);
+            downloaded =true;
+            btn_file->setEnabled(false);
+            btn_file->setText("downloading");
+            qDebug()<<downloaded << 2;
+            emit downloadFile();
+
+        }
+
+
+
     }
     else
     {
         QString filePath = "files/" + filename;
         QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
-
+         qDebug()<<downloaded << 3;
 
     }
 
