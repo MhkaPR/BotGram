@@ -86,10 +86,8 @@ chat::chat(QWidget *parent) :
 
 
         QString name = query.value("name").toString();
-        QMap<QString,QString> tempMAp;
-        tempMAp["username"] = query.value("username").toString();
-        tempMAp["email"] = query.value("email").toString();
-        usersinformation[name] = tempMAp;
+        usernames_names[query.value("username").toString()] =  query.value("name").toString();
+        usernames_email[query.value("username").toString()] =  query.value("email").toString();
         QString temp;
 
 
@@ -126,23 +124,19 @@ chat::chat(QWidget *parent) :
 
 
 
-    ui->pushButton_send_message->setStyleSheet("QPushButton {"
-                                               "background-color: #54A8FF;"
-                                               "border: none;"
-                                               "border-radius: 4px;"
-                                               "color: #FFFFFF;"
-                                               "font-size: 14px;"
-                                               "padding: 8px 12px;"
-                                               "}"
-                                               "QPushButton:hover {"
-                                               "background-color: #4D98E8;"
-                                               "}");
+    //    ui->pushButton_send_message->setStyleSheet(
+    //                " background-color: rgb(0, 170, 255);"
+    //                " background-image: url(:/new/prefix1/sendmessageIcon.png);"
+    //                "border-radius:5px;");
+
+    ui->pushButton_send_message->setVisible(false);
+
     ui->photo_button->setStyleSheet("QPushButton {"
                                     "border: none;"
                                     "background-image: url(:/icons/pin.png);"
                                     "background-position: center;"
                                     "background-color: rgb(255, 255, 127);"
-                                    "padding: 0px 10px 0px 10px;"
+
                                     "}"
                                     "QPushButton:hover {"
                                     "background-color: #E6E6E6;"
@@ -152,7 +146,7 @@ chat::chat(QWidget *parent) :
                                          "background-image: url(:/icons/pin.png);"
                                          "background-position: center;"
                                          "background-color: #4D98E8;"
-                                         "padding: 0px 10px 0px 10px;"
+
                                          "}"
                                          "QPushButton:hover {"
                                          "background-color: #E6E6E6;"
@@ -162,7 +156,7 @@ chat::chat(QWidget *parent) :
                                         "background-image: url(:/icons/pin.png);"
                                         "background-position: center;"
                                         "background-color: rgb(255, 85, 255);"
-                                        "padding: 0px 10px 0px 10px;"
+
                                         "}"
                                         "QPushButton:hover {"
                                         "background-color: #E6E6E6;"
@@ -289,10 +283,9 @@ void chat::onReadyRead()
 
                 return;
             }
-            QMap<QString,QString> tempMAp;
-            tempMAp["username"] = searching.username;
-            tempMAp["email"] =searching.email;
-            usersinformation[searching.name] = tempMAp;
+
+            usernames_names[searching.username] = searching.name;
+            usernames_email[searching.email] = searching.email;
 
 
             query.clear();
@@ -373,22 +366,62 @@ void chat::onReadyRead()
 
     default:
     {
+
+        // msg.deserialize(data);
         QJsonDocument doc = QJsonDocument::fromJson(data);
-        QJsonObject obj;
-        obj = doc.object();
-        QStringList list;
-        list  = obj.keys();
-        msg.sender = list[0];
+        QJsonArray messagesArray = doc.array();
 
-        QJsonArray arr = obj[msg.sender].toArray();
-        msg.Message = arr[0].toString();
-        msg.timeSend = QDateTime::fromString(arr[1].toString());
-        mesg = msg;
+        int messagesCount = messagesArray.size();
+        for (int i= 0;i< messagesCount;i++)
+        {
 
-        ui->listWidget_2->addItem(mesg.sender+":"+mesg.Message+" // "+arr[1].toString());
-        ui->listWidget_2->scrollToBottom();
+            QJsonObject obj = messagesArray[i].toObject();
+            msg.sender = obj["username"].toString();
+            msg.Message = obj["message"].toString();
+            msg.timeSend = QDateTime::fromString(obj["date"].toString(),"yyyy.MM.dd-hh:mm:ss.zzz");
+            msg.IsFile = obj["isFile"].toBool();
+
+            qDebug() << msg.sender << msg.Message << msg.timeSend << obj["date"];
+            messageWidget *ClinetMessage = new messageWidget(msg.Message,msg.timeSend.toString("hh:mm:ss"),this,false);
+            ch->addMessage(ClinetMessage);
+
+
+            QString messageTweLine =getTweLine(msg.Message,50);
+
+            QString temp = QString("%1\n%2").arg(messageTweLine).arg(msg.timeSend.toString("hh:mm:dd"));
+            temp = "\n" + temp;
+
+            ui->listWidget->currentItem()->setText(usernames_names[msg.sender]+temp);
+
+
+
+
+
+        }
+        //        QJsonDocument doc = QJsonDocument::fromJson(data);
+        //        qDebug() << data;
+        //        QJsonObject obj;
+        //        obj = doc.object();
+        //        QStringList list;
+        //        list  = obj.keys();
+        //        msg.sender = list[0];
+
+        //        QJsonArray arr = obj[msg.sender].toArray();
+        //        msg.Message = arr[0].toString();
+        //        msg.timeSend = QDateTime::fromString(arr[1].toString());
+        //        mesg = msg;
+
+        //        qDebug() << arr;
+
+
+
+
+        //        ui->listWidget_2->addItem(mesg.sender+":"+mesg.Message+" // "+arr[1].toString());
+        //        ui->listWidget_2->scrollToBottom();
         QSqlQuery query(db);
-        query.prepare("INSERT INTO "+selectedpvname+" (username, name,email) VALUES (:username, :name,:email)");
+        sendmessage(usernames_names[msg.sender]);
+
+        query.prepare("INSERT INTO "+usernames_names[msg.sender]+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
         query.bindValue(":message",msg.Message );
         query.bindValue(":time",msg.timeSend.toString("yyyyMMdd hh:mm:ss") );
         query.bindValue(":sender",0);
@@ -426,7 +459,7 @@ void chat::sendApplyForDownload(QString filename)
     QJsonObject data;
     data["sender"] = TokenME;
     data["FileName"] = filename;
-    data["room"] = "pv_"+myinformation["username"]+"_"+usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"];
+    data["room"] = "pv_"+myinformation["username"]+"_"+usernames_names.key(ui->listWidget->currentItem()->text().split("\n")[0]);
     msgpacket.setinformation(QJsonDocument(data).toJson());
 
     QByteArray msgbytearray;
@@ -437,81 +470,94 @@ void chat::sendApplyForDownload(QString filename)
     socket->write(msgbytearray);
 
     socket->waitForBytesWritten();
-//    socket->waitForReadyRead();
+    //    socket->waitForReadyRead();
 
+}
+
+void chat::OpenchatPage()
+{
+    ch->deleteLater();
+    delete ch;
+    ch = nullptr;
+    ch = new chatPage;
+    ui->chatPage_Widget->layout()->addWidget(ch);
+    ui->chatPage_Widget->setCurrentWidget(ch);
+    //ch->show();
 }
 
 
 void chat::on_listWidget_itemClicked(QListWidgetItem *item)
 {
 
-    //    ui->listWidget_2->clear();
+    if(LastItemChoosed != item)
+    {
+        LastItemChoosed = item;
+        // open new chat Page For Another Member
+        OpenchatPage();
 
+        selectedpvname = item->text().split("\n")[0];
 
-    //    for (int i = 0;i < 23;i++) {
-    //        ui->listWidget_2->addItem("");
-    //    }
-    selectedpvname = item->text().split("\n")[0];
+        //QMessageBox::information(this,"sff",itemname);
 
-    //QMessageBox::information(this,"sff",itemname);
+        QSqlQuery query(db);
+        query.prepare("SELECT * FROM  "+selectedpvname);
 
-    QSqlQuery query(db);
-    query.prepare("SELECT * FROM  "+selectedpvname);
-
-    // Execute the query
-    if (!query.exec()) {
-        qDebug() << "Failed to execute query!";
-        return;
-    }
-
-    // Process the results
-    while (query.next()) {
-        QString message = query.value("message").toString();
-        QString time = query.value("time").toString();
-        time = time.remove(0,9);
-        bool isMe = query.value("sender").toBool();
-
-
-        if(query.value("isfile").toBool()==1)
-        {
-            FileMessageWidget *newFile_Before = new FileMessageWidget("",time,this,message,isMe);
-
-
-
-            ch->addMessage(newFile_Before);
-
-            connect(newFile_Before,&FileMessageWidget::downloadFile,[=](){
-
-                this->sendApplyForDownload(message);
-            });
-            connect(this,&chat::fileEnded,newFile_Before,&FileMessageWidget::ActiveBtnToCauseOfFileEnded);
-        }
-        else
-        {
-            messageWidget *messageOfBefore =new messageWidget(message,time,this,isMe);
-            ch->addMessage(messageOfBefore);
+        // Execute the query
+        if (!query.exec()) {
+            qDebug() << "Failed to execute query!";
+            return;
         }
 
-        //delete  item;
+        // Process the results
+        while (query.next()) {
+            QString message = query.value("message").toString();
+            QString time = query.value("time").toString();
+            time = time.remove(0,9);
+            bool isMe = query.value("sender").toBool();
+
+
+            if(query.value("isfile").toBool()==1)
+            {
+                FileMessageWidget *newFile_Before = new FileMessageWidget("",time,this,message,isMe);
+
+
+
+                ch->addMessage(newFile_Before);
+
+                connect(newFile_Before,&FileMessageWidget::downloadFile,[=](){
+
+                    this->sendApplyForDownload(message);
+                });
+                connect(this,&chat::fileEnded,newFile_Before,&FileMessageWidget::ActiveBtnToCauseOfFileEnded);
+            }
+            else
+            {
+                messageWidget *messageOfBefore =new messageWidget(message,time,this,isMe);
+                ch->addMessage(messageOfBefore);
+            }
+
+            //delete  item;
+        }
+
+        ui->message_text->show();
+        ui->pushButton_send_message->show();
+        if(ui->message_text->toPlainText().isEmpty())
+            ui->pushButton_send_message->setVisible(false);
+        //ui->label_selectchat->hide();
+        ui->label->hide();
+        ui->listWidget_2->show();
+        ui->label_selectchat->show();
+        ui->photo_button->show();
+        ui->pushButton_camera->show();
+        ui->pushButton_voice->show();
+        ui->label_onoroff->show();
+
+        //ui->label_selectchat->setText(name);
+        //ui->label_selectchat->setAlignment(Qt::AlignHCenter);
+        ui->label_selectchat->setText(name);
+        ui->label_selectchat->setAlignment(Qt::AlignHCenter);
+
     }
-
-    ui->message_text->show();
-    ui->pushButton_send_message->show();
-    //ui->label_selectchat->hide();
-    ui->label->hide();
-    ui->listWidget_2->show();
-    ui->label_selectchat->show();
-    ui->photo_button->show();
-    ui->pushButton_camera->show();
-    ui->pushButton_voice->show();
-    ui->label_onoroff->show();
-
-    //ui->label_selectchat->setText(name);
-    //ui->label_selectchat->setAlignment(Qt::AlignHCenter);
-    ui->label_selectchat->setText(name);
-    ui->label_selectchat->setAlignment(Qt::AlignHCenter);
-
-
 
 }
 
@@ -523,95 +569,90 @@ void chat::on_pushButton_send_message_clicked()
 
     QString messageText = ui->message_text->toPlainText();
 
-    if(messageText.isEmpty())
+
+    QDateTime time = QDateTime::currentDateTime();
+    QString timeString = time.toString("hh:mm:ss");
+    // or any other time format you prefer
+    messageWidget *newMessage = new messageWidget(messageText,timeString,ch,true);
+    qDebug() << messageText;
+
+    // send to server, message
+    QString receiveOFmessage = usernames_names.key(ui->listWidget->currentItem()->text().split("\n")[0]);
+    QString senderOFmessage = myinformation["username"];
+    TextMessage messages;
+    messages.setSender(TokenME);
+    messages.setReceiver("pv_"+senderOFmessage+"_"+receiveOFmessage);
+    messages.Message = ui->message_text->toPlainText();
+    messages.timeSend = messages.gettimeSend().currentDateTime();
+    messages.stateMessage = package::sendMode;
+    QByteArray buff2;
+    QDataStream out2(&buff2,QIODevice::WriteOnly);
+    out2.setVersion(QDataStream::Qt_4_0);
+    out2<<static_cast<short>(messages.getheader())<<messages.serialize();
+    socket->write(buff2);
+    if(socket->waitForBytesWritten())
     {
-        ui->message_text->setStyleSheet("background-color: rgb(255, 0, 0);");
+
+        // Add the item to listWidget2
+        ui->message_text->clear();
+
+
+        //add message
+        ch->addMessage(newMessage);
+        //ui->listWidget_2->addItem(QString("[%1]:\n%2").arg(timeString,messageText));
+
+
+
+        // ui->listWidget_2->addItem(item);
+        //ui->listWidget_2->scrollToBottom();
+
+
+        QString messageTweLine = getTweLine(messages.Message,50);
+
+        QListWidgetItem *newListWidget = new QListWidgetItem;
+        QLabel *lbl_message = new QLabel;
+        lbl_message->setFixedWidth(300);
+        lbl_message->setText(messages.Message);
+
+        QString button_message = QString("%1\n%2").arg(messageTweLine,timeString);
+        // QListWidgetItem* newItem = new QListWidgetItem();
+        // newItem->setTextColor(Qt::black); // set text color to black
+        //ui->listWidget->addItem(newItem);
+        ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+button_message);
+
+        // Scroll to the bottom of the list widget_2
+        //ui->listWidget_2->scrollToBottom();
+
+
+        //save in database
+
+        QSqlQuery query(db);
+        query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
+        query.bindValue(":message",messages.Message );
+        query.bindValue(":time",messages.timeSend.toString("yyyyMMdd hh:mm:ss") );
+        query.bindValue(":sender",1);
+        query.bindValue(":isfile",0);
+
+        // Execute the query
+        if (!query.exec()) {
+            QMessageBox::information(this,"warning",query.lastError().text(),"ok");
+
+            return;
+        }
+        query.finish();
+        db.commit();
+
+        //            ui->listWidget_2->addItem(newListWidget);
+        //            ui->listWidget_2->setItemWidget(newListWidget,lbl_message);
+
     }
     else
     {
-        QDateTime time = QDateTime::currentDateTime();
-        QString timeString = time.toString("hh:mm:ss");
-        // or any other time format you prefer
-        messageWidget *newMessage = new messageWidget(messageText,timeString,ch,true);
-        qDebug() << messageText;
-
-        // send to server, message
-        QString receiveOFmessage = usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"];
-        QString senderOFmessage = myinformation["username"];
-        TextMessage messages;
-        messages.setSender(TokenME);
-        messages.setReceiver("pv_"+senderOFmessage+"_"+receiveOFmessage);
-        messages.Message = ui->message_text->toPlainText();
-        messages.timeSend = messages.gettimeSend().currentDateTime();
-        messages.stateMessage = package::sendMode;
-        QByteArray buff2;
-        QDataStream out2(&buff2,QIODevice::WriteOnly);
-        out2.setVersion(QDataStream::Qt_4_0);
-        out2<<static_cast<short>(messages.getheader())<<messages.serialize();
-        socket->write(buff2);
-        if(socket->waitForBytesWritten())
-        {
-
-            // Add the item to listWidget2
-            ui->message_text->clear();
-
-
-            //add message
-            ch->addMessage(newMessage);
-            //ui->listWidget_2->addItem(QString("[%1]:\n%2").arg(timeString,messageText));
-
-
-
-            // ui->listWidget_2->addItem(item);
-            //ui->listWidget_2->scrollToBottom();
-
-
-            QString messageTweLine = getTweLine(messages.Message,50);
-
-            QListWidgetItem *newListWidget = new QListWidgetItem;
-            QLabel *lbl_message = new QLabel;
-            lbl_message->setFixedWidth(300);
-            lbl_message->setText(messages.Message);
-
-            QString button_message = QString("%1\n%2").arg(messageTweLine,timeString);
-            // QListWidgetItem* newItem = new QListWidgetItem();
-            // newItem->setTextColor(Qt::black); // set text color to black
-            //ui->listWidget->addItem(newItem);
-            ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+button_message);
-
-            // Scroll to the bottom of the list widget_2
-            //ui->listWidget_2->scrollToBottom();
-
-
-            //save in database
-
-            QSqlQuery query(db);
-            query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
-            query.bindValue(":message",messages.Message );
-            query.bindValue(":time",messages.timeSend.toString("yyyyMMdd hh:mm:ss") );
-            query.bindValue(":sender",1);
-            query.bindValue(":isfile",0);
-
-            // Execute the query
-            if (!query.exec()) {
-                QMessageBox::information(this,"warning",query.lastError().text(),"ok");
-
-                return;
-            }
-            query.finish();
-            db.commit();
-
-            //            ui->listWidget_2->addItem(newListWidget);
-            //            ui->listWidget_2->setItemWidget(newListWidget,lbl_message);
-
-        }
-        else
-        {
-            ui->label_selectchat->setText("wait for connecting...");
-        }
-
-
+        ui->label_selectchat->setText("wait for connecting...");
     }
+
+
+
 
 
     //        //// Create a new QListWidgetItem with the message and time
@@ -748,7 +789,7 @@ void chat::on_photo_button_clicked()
     mimeType = mimeType.toLower();
     //int count =0;
     fmsg.setFileName(time.toString("yyyyMMddhhmmsszzz")+"."+mimeType);
-    fmsg.setroom("pv_"+myinformation["username"]+"_"+usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"]);
+    fmsg.setroom("pv_"+myinformation["username"]+"_"+usernames_names.key(ui->listWidget->currentItem()->text().split("\n")[0]));
     fmsg.settimeSend(time);
     fmsg.setSender(TokenME);
 
@@ -813,13 +854,13 @@ void chat::on_photo_button_clicked()
 void chat::on_message_text_textChanged()
 {
     // Check if the message text box is empty
-    QString message = ui->message_text->toPlainText().trimmed();
-    if (message.isEmpty()) {
-        // If the message text box is empty, clear the "typing..." message from the label
-        ui->label_selectchat->setText(name);
-    } else {
-        // If the message text box is not empty, set the "typing..." message in the label
-        ui->label_selectchat->setText("typing...              " +  name);
+    if(ui->message_text->toPlainText().isEmpty())
+    {
+        ui->pushButton_send_message->setVisible(false);
+    }
+    else
+    {
+        ui->pushButton_send_message->setVisible(true);
     }
 }
 
@@ -953,7 +994,7 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
             QJsonObject data;
             data["sender"] = TokenME;
             data["FileName"] = filename;
-            data["room"] = "pv_"+myinformation["username"]+"_"+usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"];
+            data["room"] = "pv_"+myinformation["username"]+"_"+usernames_names.key(ui->listWidget->currentItem()->text().split("\n")[0]);
             msgpacket.setinformation(QJsonDocument(data).toJson());
 
             QByteArray msgbytearray;
@@ -1127,75 +1168,91 @@ void chat::on_pushButton_voice_clicked()
             currenttime=QDateTime::currentDateTime();
             QString currenttimestr =currenttime.toString("hh:mm:ss");
             QString filename = currenttime.toString("yyyyMMddhhmmsszzz")+".wav";
-            QImage f(64, 64, QImage::Format_RGB32);
-            f.fill(Qt::gray);
-            QListWidgetItem *item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(currenttimestr,filename), ui->listWidget_2);
-            item->setBackgroundColor(Qt::gray);
+
+
+
+
+            //            QImage f(64, 64, QImage::Format_RGB32);
+            //            f.fill(Qt::gray);
+
+
+            //            QListWidgetItem *item = new QListWidgetItem(QIcon(QPixmap::fromImage(f)), QString("[%1]\n%2").arg(currenttimestr,filename), ui->listWidget_2);
+            //            item->setBackgroundColor(Qt::gray);
             // Set the data for the item to the path of the recorded voice file
 
             // Set the data for the item to the path of the recorded voice file
-            QString voiceFile = recorder->outputLocation().toLocalFile();
+            QString voiceFileaAddress = recorder->outputLocation().toLocalFile();
 
 
-            item->setData(Qt::UserRole, voiceFile);
+            //            item->setData(Qt::UserRole, voiceFile);
 
-            // Add the item to the list widget
-            ui->listWidget_2->addItem(item);
+            //            // Add the item to the list widget
+            //            ui->listWidget_2->addItem(item);
 
             // Copy the recorded voice file to a new location
-            QString newPath = QFileDialog::getSaveFileName(this, "Save Voice", "", "WAV Files (*.wav)");
-            if(!newPath.isEmpty()){
-                if(QFile::copy(voiceFile, newPath)){
-                    voiceDataFile->setFileName(newPath);
-                    if(voiceDataFile->open(QIODevice::ReadOnly))
-                    {
-                        fileMessage fmsg(TokenME);
-                        QFileInfo fileInfo(voiceDataFile->fileName());
-                        QString mimeType = fileInfo.suffix();
-                        fmsg.setFileName(currenttime.toString("yyyyMMddhhmmsszzz")+"."+mimeType);
-                        fmsg.setroom("pv_"+myinformation["username"]+"_"+usersinformation[ui->listWidget->currentItem()->text().split("\n")[0]]["username"]);
-                        fmsg.settimeSend(QDateTime::currentDateTime());
-                        fmsg.setSender(TokenME);
+            QString newPath = "files/"+filename;
 
-                        // quint64 bufsize=0;
+            if(QFile::copy(voiceFileaAddress, QDir::currentPath()+"/"+newPath)){
+                voiceDataFile->setFileName(newPath);
+                if(voiceDataFile->open(QIODevice::ReadOnly))
+                {
+                    fileMessage fmsg(TokenME);
+                    QFileInfo fileInfo(voiceDataFile->fileName());
+                    QString mimeType = fileInfo.suffix();
+                    fmsg.setFileName(currenttime.toString("yyyyMMddhhmmsszzz")+"."+mimeType);
+                    fmsg.setroom("pv_"+myinformation["username"]+"_"+usernames_names.key(ui->listWidget->currentItem()->text().split("\n")[0]));
+                    fmsg.settimeSend(QDateTime::currentDateTime());
+                    fmsg.setSender(TokenME);
 
-                        fmsg.setcount_size("0");
+                    // quint64 bufsize=0;
 
-                        // qDebug() << file.size();
+                    fmsg.setcount_size("0");
 
-                        fmsg.sendFile(voiceDataFile,socket);
+                    // qDebug() << file.size();
 
-                        QSqlQuery query(db);
-                        query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
-                        query.bindValue(":message",fmsg.getFileName());
+                    fmsg.sendFile(voiceDataFile,socket);
 
-                        query.bindValue(":time",fmsg.gettimeSend().toString("yyyyMMdd hh:mm:ss") );
-                        query.bindValue(":sender",1);
-                        query.bindValue(":isfile",1);
-
-                        // Execute the query
-                        if (!query.exec()) {
-                            QMessageBox::information(this,"warning",query.lastError().text(),"ok");
-
-                            return;
-                        }
-                        query.finish();
-                        db.commit();
-
-                        QString updateuserBox_str = QString("%1\n%2").arg(fmsg.getFileName(),currenttimestr);
-                        ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
+                    FileMessageWidget *VoiceFile = new FileMessageWidget("",currenttimestr,this,filename,true);
+                    ch->addMessage(VoiceFile);
 
 
+                    connect(VoiceFile,&FileMessageWidget::downloadFile,[=](){
+                        this->sendApplyForDownload(filename);
+                    });
+                    connect(this,&chat::fileEnded,VoiceFile,&FileMessageWidget::ActiveBtnToCauseOfFileEnded);
+
+
+                    QSqlQuery query(db);
+                    query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
+                    query.bindValue(":message",fmsg.getFileName());
+
+                    query.bindValue(":time",fmsg.gettimeSend().toString("yyyyMMdd hh:mm:ss") );
+                    query.bindValue(":sender",1);
+                    query.bindValue(":isfile",1);
+
+                    // Execute the query
+                    if (!query.exec()) {
+                        QMessageBox::information(this,"warning",query.lastError().text(),"ok");
+
+                        return;
                     }
-                    else
-                    {
-                        QMessageBox::information(this,"sdfg",voiceDataFile->errorString());
-                    }
-                    QMessageBox::information(this, "Success", "Voice saved successfully!");
-                }else{
-                    QMessageBox::warning(this, "Error", "Failed to save voice!");
+                    query.finish();
+                    db.commit();
+
+                    QString updateuserBox_str = QString("%1\n%2").arg(fmsg.getFileName(),currenttimestr);
+                    ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
+
+
                 }
+                else
+                {
+                    QMessageBox::information(this,"sdfg",voiceDataFile->errorString());
+                }
+                QMessageBox::information(this, "Success", "Voice saved successfully!");
+            }else{
+                QMessageBox::warning(this, "Error", "Failed to save voice!");
             }
+
         }
     });
 

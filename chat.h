@@ -27,6 +27,7 @@ public:
     ~chat();
    // QString namechat
       void sendApplyForDownload(QString filename);
+      void OpenchatPage();
 private slots:
     void on_listWidget_itemClicked(QListWidgetItem *item);
 
@@ -76,8 +77,10 @@ private:
   QString pathImgg;
   QPushButton *recievebtn = nullptr;
   QMap<QString,QString> myinformation;
-  QMap<QString,QMap<QString,QString>> usersinformation;
+  QMap<QString,QString> usernames_names;
+  QMap<QString,QString> usernames_email;
   chatPage *ch=nullptr;
+  QListWidgetItem *LastItemChoosed = nullptr;
 
 };
 

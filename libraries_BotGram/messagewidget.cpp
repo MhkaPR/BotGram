@@ -36,7 +36,7 @@ messageWidget::messageWidget(const QString& text,QString time, QWidget* parent,b
     if(lenText > 50) newText = wordWrap(text,50);
     m_textLabel->setWordWrap(true);
 
-    qDebug() << newText;
+
     //fix message
     m_textLabel->setText(newText);
 

@@ -7,6 +7,8 @@
         <file>alarmC_green.png</file>
         <file>alarmC_red.png</file>
         <file>alarmC_yello.png</file>
+        <file>sendmessageIcon.png</file>
+        <file>17545.png</file>
     </qresource>
     <qresource prefix="/Eye">
         <file>closedEye.png</file>

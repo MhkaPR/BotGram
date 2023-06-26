@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1310</width>
-    <height>720</height>
+    <width>1286</width>
+    <height>616</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,7 @@
       <x>0</x>
       <y>0</y>
       <width>541</width>
-      <height>20</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
@@ -45,7 +45,9 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 85, 255);</string>
+     <string notr="true">background-color: rgb(255, 85, 0);
+color:white;
+border-top-left-radius:20px;</string>
     </property>
     <property name="text">
      <string>                                         Bot Gram</string>
@@ -55,63 +57,63 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>20</y>
+      <y>50</y>
       <width>541</width>
-      <height>581</height>
+      <height>551</height>
      </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>472</x>
-      <y>550</y>
-      <width>51</width>
-      <height>51</height>
+      <x>200</x>
+      <y>510</y>
+      <width>150</width>
+      <height>150</height>
      </rect>
     </property>
+    <property name="mouseTracking">
+     <bool>false</bool>
+    </property>
     <property name="styleSheet">
-     <string notr="true">  background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 5px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);</string>
+     <string notr="true">
+QPushButton{
+background-color: rgb(255, 85, 0);
+
+border-radius:75px;
+ transition: border-radius 10s ease;
+}
+QPushButton:hover
+{
+ border-radius: 60px;
+}
+
+</string>
     </property>
     <property name="text">
      <string/>
     </property>
-   </widget>
-   <widget class="QCommandLinkButton" name="commandLinkButton">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>550</y>
-      <width>186</width>
-      <height>41</height>
-     </rect>
+    <property name="icon">
+     <iconset>
+      <normaloff>DataFiles/Untitled-1.png</normaloff>DataFiles/Untitled-1.png</iconset>
     </property>
-    <property name="text">
-     <string>CommandLinkButton</string>
+    <property name="iconSize">
+     <size>
+      <width>120</width>
+      <height>120</height>
+     </size>
     </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>120</y>
-      <width>55</width>
-      <height>16</height>
-     </rect>
+    <property name="checkable">
+     <bool>false</bool>
     </property>
-    <property name="text">
-     <string>TextLabel</string>
+    <property name="autoRepeat">
+     <bool>false</bool>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
+    </property>
+    <property name="default">
+     <bool>false</bool>
     </property>
    </widget>
   </widget>
@@ -136,7 +138,7 @@
       <x>0</x>
       <y>0</y>
       <width>731</width>
-      <height>21</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
@@ -147,7 +149,8 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 0);</string>
+     <string notr="true">background-color: rgb(0, 170, 255);
+border-top-right-radius: 20px;</string>
     </property>
     <property name="text">
      <string/>
@@ -158,52 +161,50 @@
      <rect>
       <x>0</x>
       <y>540</y>
-      <width>731</width>
-      <height>61</height>
+      <width>730</width>
+      <height>60</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(85, 255, 127);
-</string>
+     <string notr="true">background-color: rgb(255, 255, 255);
+border-bottom: 2px solid #00aaff;
+border-radius:5px;</string>
     </property>
     <property name="placeholderText">
      <string>write your message</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_send_message">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>550</y>
-      <width>51</width>
-      <height>51</height>
+      <x>670</x>
+      <y>540</y>
+      <width>60</width>
+      <height>60</height>
      </rect>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::StrongFocus</enum>
+    </property>
     <property name="styleSheet">
-     <string notr="true">  background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 5px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);</string>
+     <string notr="true">background-color: rgb(0, 170, 255);
+background-image: url(:/new/prefix1/sendmessageIcon.png);
+border-radius:5px;</string>
     </property>
     <property name="text">
-     <string>send</string>
+     <string/>
     </property>
    </widget>
    <widget class="QListWidget" name="listWidget_2">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>20</y>
+      <y>50</y>
       <width>731</width>
-      <height>521</height>
+      <height>491</height>
      </rect>
     </property>
     <item>
@@ -346,27 +347,35 @@ border-color: rgb(131, 155, 151);</string>
    <widget class="QPushButton" name="photo_button">
     <property name="geometry">
      <rect>
-      <x>650</x>
+      <x>610</x>
       <y>570</y>
-      <width>21</width>
+      <width>51</width>
       <height>28</height>
      </rect>
     </property>
     <property name="text">
-     <string/>
+     <string>File</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_onoroff">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>0</x>
       <y>0</y>
-      <width>71</width>
-      <height>21</height>
+      <width>101</width>
+      <height>51</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(85, 170, 255);</string>
+     <string notr="true">background-color: rgb(0, 170, 255);
+color:white;</string>
     </property>
     <property name="text">
      <string>     online</string>
@@ -375,37 +384,40 @@ border-color: rgb(131, 155, 151);</string>
    <widget class="QPushButton" name="pushButton_camera">
     <property name="geometry">
      <rect>
-      <x>630</x>
+      <x>480</x>
       <y>570</y>
-      <width>21</width>
+      <width>61</width>
       <height>28</height>
      </rect>
     </property>
     <property name="text">
-     <string/>
+     <string>Camera</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_voice">
     <property name="geometry">
      <rect>
-      <x>610</x>
+      <x>550</x>
       <y>570</y>
-      <width>20</width>
+      <width>51</width>
       <height>28</height>
      </rect>
     </property>
     <property name="text">
-     <string/>
+     <string>Voice</string>
     </property>
    </widget>
    <widget class="QStackedWidget" name="chatPage_Widget">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>20</y>
+      <y>50</y>
       <width>731</width>
-      <height>521</height>
+      <height>491</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
     </property>
     <property name="currentIndex">
      <number>0</number>

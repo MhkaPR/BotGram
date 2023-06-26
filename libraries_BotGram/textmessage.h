@@ -19,15 +19,15 @@ public:
     QDateTime timeSend;
     SEND_STATE stateMessage;
     QString getSender();
-     QString getReciever();
-      QString getMessage();
-       QDateTime gettimeSend();
-       SEND_STATE getstateMessage();
-       QByteArray buf;
-       bool IsFile;
+    QString getReciever();
+    QString getMessage();
+    QDateTime gettimeSend();
+    SEND_STATE getstateMessage();
+    QByteArray buf;
+    bool IsFile;
 
-       void setSender(QString value);
-        void setReceiver(QString value);
+    void setSender(QString value);
+    void setReceiver(QString value);
 private:
 
 };
