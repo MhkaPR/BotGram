@@ -21,8 +21,10 @@ public:
 
     void addMessage(messageWidget* newMsg);
     void addMessage(FileMessageWidget* newFileMsg);
+    void fixScrollInWidget(QWidget* Widget);
 
 private:
+    bool IsFirst = true;
     Ui::chatPage *ui;
     QWidget *ScrollWidget=nullptr;
     QVBoxLayout *ScrollLayout=nullptr;

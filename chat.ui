@@ -362,7 +362,7 @@ border-color: rgb(131, 155, 151);</string>
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>101</width>
+      <width>711</width>
       <height>51</height>
      </rect>
     </property>
@@ -424,6 +424,16 @@ color:white;</string>
     </property>
     <widget class="QWidget" name="page"/>
    </widget>
+   <zorder>listWidget_2</zorder>
+   <zorder>chatPage_Widget</zorder>
+   <zorder>label_selectchat</zorder>
+   <zorder>message_text</zorder>
+   <zorder>pushButton_send_message</zorder>
+   <zorder>label</zorder>
+   <zorder>photo_button</zorder>
+   <zorder>label_onoroff</zorder>
+   <zorder>pushButton_camera</zorder>
+   <zorder>pushButton_voice</zorder>
   </widget>
  </widget>
  <resources/>

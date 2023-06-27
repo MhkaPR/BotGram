@@ -237,7 +237,6 @@ void chat::onDisconnected()
     {
         QMessageBox::information(this,"error","socket error:"+socket1->errorString());
     }
-    //QThread::sleep(0.5);
     connectToServer();
 }
 
@@ -476,6 +475,8 @@ void chat::sendApplyForDownload(QString filename)
 
 void chat::OpenchatPage()
 {
+
+    ui->chatPage_Widget->layout()->removeWidget(ch);
     ch->deleteLater();
     delete ch;
     ch = nullptr;
@@ -496,6 +497,8 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
         OpenchatPage();
 
         selectedpvname = item->text().split("\n")[0];
+
+        ui->label_onoroff->setText(selectedpvname);
 
         //QMessageBox::information(this,"sff",itemname);
 
@@ -573,7 +576,7 @@ void chat::on_pushButton_send_message_clicked()
     QDateTime time = QDateTime::currentDateTime();
     QString timeString = time.toString("hh:mm:ss");
     // or any other time format you prefer
-    messageWidget *newMessage = new messageWidget(messageText,timeString,ch,true);
+    messageWidget *newMessage = new messageWidget(messageText,timeString,this,true);
     qDebug() << messageText;
 
     // send to server, message
@@ -599,6 +602,7 @@ void chat::on_pushButton_send_message_clicked()
 
         //add message
         ch->addMessage(newMessage);
+        //ch->fixScrollInWidget(newMessage);
         //ui->listWidget_2->addItem(QString("[%1]:\n%2").arg(timeString,messageText));
 
 

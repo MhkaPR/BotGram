@@ -3,6 +3,7 @@
 #include<QAbstractSlider>
 
 
+
 #include <QtDebug>
 chatPage::chatPage(QWidget *parent) :
     QWidget(parent),
@@ -12,9 +13,16 @@ chatPage::chatPage(QWidget *parent) :
 
     ui->scrollArea->setWidgetResizable(true);
 
-    ScrollWidget = new QWidget;
+    if(IsFirst)
+    {
+        ScrollWidget = new QWidget;
+        ScrollLayout = new QVBoxLayout;
+        IsFirst = false;
+    }
 
-    ScrollLayout = new QVBoxLayout;
+
+
+
 
 
     //    QString textField ="Lorem ipsum dolor sit\n amet, consectetur adipiscing elit. Sed \nut perspiciatis unde omnis iste na\ntus error sit voluptatem accusantium doloremque laudant\n\nium.";
@@ -49,16 +57,38 @@ chatPage::~chatPage()
 
 void chatPage::addMessage(messageWidget *newMsg)
 {
+
     ScrollLayout->addWidget(newMsg);
+
     //ScrollWidget->setLayout(ScrollLayout);
-    ScrollWidget->setLayout(ScrollLayout);
+    //ScrollWidget->setLayout(ScrollLayout);
     //ui->scrollArea->verticalScrollBar()->setValue(ui->scrollArea->verticalScrollBar()->maximum());
     // Get a pointer to the last widget in the layout
-    QWidget* lastWidget = ScrollLayout->itemAt(ScrollLayout->count() - 1)->widget();
+   // QWidget* lastWidget = ScrollLayout->itemAt(ScrollLayout->count() - 1)->widget();
 
+
+
+     ui->scrollArea->verticalScrollBar()->setRange(0,ScrollWidget->height());
+     qDebug() << ui->scrollArea->verticalScrollBar()->maximum();
+      ui->scrollArea->ensureWidgetVisible(newMsg);
+     //ui->scrollArea->verticalScrollBar()->setValue(ui->scrollArea->verticalScrollBar()->maximum());
     // Scroll to the last widget
-    ui->scrollArea->ensureWidgetVisible(lastWidget);
 
+//    QScrollBar *scrollBar = ui->scrollArea->verticalScrollBar();
+//    scrollBar->setValue(scrollBar->maximum()); // scroll to the bottom
+
+//    // You can also connect signals to slots to respond to changes in the scrollbar position
+//    connect(scrollBar, SIGNAL(valueChanged(int)), this, SLOT(onScrollBarValueChanged(int)));
+
+
+
+  //  ui->scrollArea->setWidget(ScrollWidget);
+   // ui->scrollArea->ensureWidgetVisible(newMsg->messageLayer);
+   //ui->scrollArea->verticalScrollBar()->setValue(ui->scrollArea->verticalScrollBar()->maximum());
+
+
+
+    //myScrollBar->setValue(2000);
 
 }
 void chatPage::addMessage(FileMessageWidget *newFileMsg)
@@ -68,11 +98,24 @@ void chatPage::addMessage(FileMessageWidget *newFileMsg)
     ScrollWidget->setLayout(ScrollLayout);
     //ui->scrollArea->verticalScrollBar()->setValue(ui->scrollArea->verticalScrollBar()->maximum());
     // Get a pointer to the last widget in the layout
-    QWidget* lastWidget = ScrollLayout->itemAt(ScrollLayout->count() - 1)->widget();
 
-    // Scroll to the last widget
-    ui->scrollArea->ensureWidgetVisible(lastWidget);
+//    QScrollBar *scrollBar = ui->scrollArea->verticalScrollBar();
+//    scrollBar->setValue(scrollBar->maximum()); // scroll to the bottom
+
+    // You can also connect signals to slots to respond to changes in the scrollbar position
+   // connect(scrollBar, SIGNAL(valueChanged(int)), this, SLOT(onScrollBarValueChanged(int)));
+
+    ui->scrollArea->ensureWidgetVisible(newFileMsg);
+//    QWidget* lastWidget = ScrollLayout->itemAt(ScrollLayout->count() - 1)->widget();
+
+//    // Scroll to the last widget
+//    ui->scrollArea->ensureWidgetVisible(lastWidget);
 
 
+}
+
+void chatPage::fixScrollInWidget(QWidget *Widget)
+{
+    ui->scrollArea->ensureWidgetVisible(Widget);
 }
 
