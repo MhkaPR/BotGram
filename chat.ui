@@ -424,8 +424,8 @@ color:white;</string>
     </property>
     <widget class="QWidget" name="page"/>
    </widget>
-   <zorder>listWidget_2</zorder>
    <zorder>chatPage_Widget</zorder>
+   <zorder>listWidget_2</zorder>
    <zorder>label_selectchat</zorder>
    <zorder>message_text</zorder>
    <zorder>pushButton_send_message</zorder>
