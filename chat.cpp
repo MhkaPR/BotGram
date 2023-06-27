@@ -382,7 +382,8 @@ void chat::onReadyRead()
 
             qDebug() << msg.sender << msg.Message << msg.timeSend << obj["date"];
             messageWidget *ClinetMessage = new messageWidget(msg.Message,msg.timeSend.toString("hh:mm:ss"),this,false);
-            ch->addMessage(ClinetMessage);
+            //ch->addMessage(ClinetMessage);
+            this->addMessage(ClinetMessage);
 
 
             QString messageTweLine =getTweLine(msg.Message,50);
