@@ -9,6 +9,7 @@
 #include"libraries_BotGram/textmessage.h"
 #include <QMap>
 #include "Forms/chatpage.h"
+#include <libraries_BotGram/userboxwidget.h>
 
 namespace Ui {
 class chat;
@@ -66,6 +67,7 @@ private slots:
 
    void addMessage(messageWidget *msg);
    void addMessage(FileMessageWidget *fmsg);
+   void addUserBox(UserBoxWidget *fmsg);
 
 
 

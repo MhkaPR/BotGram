@@ -61,6 +61,7 @@ SOURCES += \
     libraries_BotGram/textmessage.cpp \
     #libraries_BotGram/tokenbuilder.cpp \
     libraries_BotGram/tokenpacket.cpp \
+    libraries_BotGram/userboxwidget.cpp \
     libraries_BotGram/verify.cpp \
     main.cpp \
     botgram.cpp \
@@ -101,6 +102,7 @@ HEADERS += \
     libraries_BotGram/database/user_database.h \
     libraries_BotGram/filemessage.h \
     libraries_BotGram/filemessagewidget.h \
+    libraries_BotGram/userboxwidget.h \
     moc_FileMessageWidget.cpp \
     libraries_BotGram/loginpacket.h \
     libraries_BotGram/messagewidget.h \

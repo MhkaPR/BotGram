@@ -38,6 +38,7 @@
 #include <QGuiApplication>
 
 
+
 const int SERVER_PO= 9999;
 //const QString TokenME = "pAWmUPKB";
 static QString TokenME = "mhka1382";
@@ -106,11 +107,13 @@ chat::chat(QWidget *parent) :
 
             return;
         }
+        QString messageTweLine;
+        QString time;
         if(lastUpdateQuery.next())
         {
-            QString time = lastUpdateQuery.value("max(time)").toString();
+            time = lastUpdateQuery.value("max(time)").toString();
             time.remove(0,9);
-            QString messageTweLine =getTweLine(lastUpdateQuery.value("message").toString(),50);
+            messageTweLine =getTweLine(lastUpdateQuery.value("message").toString(),50);
             //            QString line1 = messageTweLine.remove(0,50);
             //            QString line2 = messageTweLine.remove(0,qMin(50,messageTweLine.length()));
             //            line1.remove("\n");
@@ -121,7 +124,12 @@ chat::chat(QWidget *parent) :
             temp = "\n" + temp;
         }
 
-        ui->listWidget->addItem(name+temp);
+        //ui->listWidget->addItem(name+temp);
+
+        QPixmap f;
+        UserBoxWidget *newUser = new UserBoxWidget(f,name,messageTweLine,time,this);
+        this->addUserBox(newUser);
+
     }
     query.finish();
 
@@ -1398,4 +1406,11 @@ void chat::addMessage(FileMessageWidget *fmsg)
     QListWidgetItem *Item = new QListWidgetItem(ui->listWidget_2);
     Item->setSizeHint(fmsg->sizeHint());
     ui->listWidget_2->setItemWidget(Item,fmsg);
+}
+
+void chat::addUserBox(UserBoxWidget *userBox)
+{
+    QListWidgetItem *Item = new QListWidgetItem(ui->listWidget);
+    Item->setSizeHint(userBox->sizeHint());
+    ui->listWidget->setItemWidget(Item,userBox);
 }
