@@ -1350,3 +1350,10 @@ void chat::addMessage(messageWidget *msg)
     Item->setSizeHint(msg->sizeHint());
     ui->listWidget_2->setItemWidget(Item,msg);
 }
+
+void chat::addMessage(FileMessageWidget *fmsg)
+{
+    QListWidgetItem *Item = new QListWidgetItem(ui->listWidget_2);
+    Item->setSizeHint(fmsg->sizeHint());
+    ui->listWidget_2->setItemWidget(Item,fmsg);
+}
