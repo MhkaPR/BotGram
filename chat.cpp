@@ -1284,6 +1284,10 @@ void chat::on_pushButton_voice_clicked()
                     FileMessageWidget *VoiceFile = new FileMessageWidget("",currenttimestr,this,filename,true);
                     //ch->addMessage(VoiceFile);
                     this->addMessage(VoiceFile);
+                    UserBoxWidget *currentuserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
+                    currentuserBox->lbl_TweLineOfLastMessages.setText(currentuserBox->getTweLine(fmsg.getFileName(),50));
+                    currentuserBox->lbl_time.setText(currenttimestr);
+
                     ui->listWidget_2->scrollToBottom();
 
 
