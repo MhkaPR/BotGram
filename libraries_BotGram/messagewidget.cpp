@@ -63,7 +63,7 @@ messageWidget::messageWidget(const QString& text,QString time, QWidget* parent,b
     layout_inside->addWidget(m_timeLabel);
 
     setAlignmentOfmessage(layout_inside,IsSentMessage);
-    messageLayer->setSizePolicy(QSizePolicy::Policy::MinimumExpanding,QSizePolicy::Policy::Fixed);
+    messageLayer->setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Fixed);
 
 
 
