@@ -4,9 +4,36 @@ UserBoxWidget::UserBoxWidget(QPixmap ImageOfProfile,QString Name,QString TweLine
     : QWidget(parent)
 {
     lbl_name.setText(Name);
+    lbl_name.setStyleSheet("border: 0px solid #cccccc;"
+                           "font-size:20px;color:#000000 ;"
+                           "padding: 3px;"
+                          );
+    lbl_TweLineOfLastMessages.setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Fixed);
+
     lbl_TweLineOfLastMessages.setText(TweLineOfLastMessage);
+    lbl_TweLineOfLastMessages.setStyleSheet("border: 0px solid #cccccc;"
+                                            "color:#666666 ;"
+                                            "padding: 3px;"
+                                          );
+    lbl_TweLineOfLastMessages.setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Fixed);
+
     lbl_time.setText(time);
+    lbl_time.setStyleSheet("border: 0px solid #cccccc;"
+                           "color:#666666 ;"
+                           "padding: 3px;"
+                          );
+    lbl_time.setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Fixed);
+
+
     lbl_image.setPixmap(ImageOfProfile);
+    lbl_image.setFixedSize(100,100);
+    lbl_image.setStyleSheet("border: 1px solid #cccccc;"
+                            " border-radius: 50px;"
+                            " padding: 1px;"
+                            );
+    lbl_image.setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Fixed);
+
+
 
     // add in right layout
     RightLayoutForObjects.addWidget(&lbl_name);
@@ -14,16 +41,24 @@ UserBoxWidget::UserBoxWidget(QPixmap ImageOfProfile,QString Name,QString TweLine
     RightLayoutForObjects.addWidget(&lbl_time);
 
     complateRightObjects.setLayout(&RightLayoutForObjects);
+    complateRightObjects.setStyleSheet("border: 0px solid #cccccc;");
+
 
     //add in main layout
     mainLayout.addWidget(&lbl_image);
     mainLayout.addWidget(&complateRightObjects);
 
+
     this->setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Fixed);
 
-    this->setStyleSheet("border: 1px solid #cccccc; border-radius: 20px; padding: 1px;");
+
+    this->setStyleSheet("border: 1px solid #cccccc;");
 
     this->setLayout(&mainLayout);
+
+
+
+
 
 
 

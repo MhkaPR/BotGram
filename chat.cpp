@@ -178,8 +178,8 @@ chat::chat(QWidget *parent) :
 
 
     //QScrollBar * scroolBarOfchat = ui->listWidget_2->verticalScrollBar();
-//    scroolBarOfchat->setSingleStep(50);
-//    scroolBarOfchat->setPageStep(1);
+    //    scroolBarOfchat->setSingleStep(50);
+    //    scroolBarOfchat->setPageStep(1);
 
     socket = new QTcpSocket(this);
     connect(socket, &QTcpSocket::connected, this, &chat::onConnected);
@@ -197,19 +197,19 @@ chat::chat(QWidget *parent) :
     ui->listWidget_2->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
     ui->listWidget_2->setSelectionRectVisible(false);
     scrollBar->setSingleStep(20);  // set the scroll step to 1 pixel
-//    scrollBar->setPageStep(ui->listWidget_2->height());  // set the page step to the height of the list widget
-//      // set the scroll mode to ScrollPerPixel
+    //    scrollBar->setPageStep(ui->listWidget_2->height());  // set the page step to the height of the list widget
+    //      // set the scroll mode to ScrollPerPixel
 
-//    // Connect the valueChanged signal of the scrollbar to a custom slot
-//    QObject::connect(scrollBar, &QScrollBar::valueChanged, ui->listWidget_2, [=](int value) {
-//        // Adjust the scroll position to scroll one pixel at a time
-//        int delta = value - scrollBar->value();
-//        if (delta > 1) {
-//            scrollBar->setValue(value - 1);
-//        } else if (delta < -1) {
-//            scrollBar->setValue(value + 1);
-//        }
-//    });
+    //    // Connect the valueChanged signal of the scrollbar to a custom slot
+    //    QObject::connect(scrollBar, &QScrollBar::valueChanged, ui->listWidget_2, [=](int value) {
+    //        // Adjust the scroll position to scroll one pixel at a time
+    //        int delta = value - scrollBar->value();
+    //        if (delta > 1) {
+    //            scrollBar->setValue(value - 1);
+    //        } else if (delta < -1) {
+    //            scrollBar->setValue(value + 1);
+    //        }
+    //    });
 
 
 
@@ -517,14 +517,14 @@ void chat::sendApplyForDownload(QString filename)
 void chat::OpenchatPage()
 {
 
-//    ui->chatPage_Widget->layout()->removeWidget(ch);
-//    ch->deleteLater();
-//    delete ch;
-//    ch = nullptr;
-//    ch = new chatPage;
-//    ui->chatPage_Widget->layout()->addWidget(ch);
-//    ui->chatPage_Widget->setCurrentWidget(ch);
-//    //ch->show();
+    //    ui->chatPage_Widget->layout()->removeWidget(ch);
+    //    ch->deleteLater();
+    //    delete ch;
+    //    ch = nullptr;
+    //    ch = new chatPage;
+    //    ui->chatPage_Widget->layout()->addWidget(ch);
+    //    ui->chatPage_Widget->setCurrentWidget(ch);
+    //    //ch->show();
 }
 
 
@@ -538,8 +538,10 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
         // open new chat Page For Another Member
         //OpenchatPage();
 
-        selectedpvname = item->text().split("\n")[0];
+        UserBoxWidget *selectedUser=dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(item));
 
+        //selectedpvname = item->text().split("\n")[0];
+        selectedpvname = selectedUser->lbl_name.text();
         ui->label_onoroff->setText(selectedpvname);
 
         //QMessageBox::information(this,"sff",itemname);
@@ -1387,10 +1389,10 @@ void chat::sendmessage(QString message)
 
 void chat::on_commandLinkButton_clicked()
 {
-//    ch = new chatPage;
-//    ui->chatPage_Widget->layout()->addWidget(ch);
-//    ui->chatPage_Widget->setCurrentWidget(ch);
-//    //ch->show();
+    //    ch = new chatPage;
+    //    ui->chatPage_Widget->layout()->addWidget(ch);
+    //    ui->chatPage_Widget->setCurrentWidget(ch);
+    //    //ch->show();
 }
 
 void chat::addMessage(messageWidget *msg)
