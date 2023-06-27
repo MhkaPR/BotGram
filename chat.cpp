@@ -523,10 +523,8 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
             {
                 FileMessageWidget *newFile_Before = new FileMessageWidget("",time,this,message,isMe);
 
-
-
-
-                ch->addMessage(newFile_Before);
+                this->addMessage(newFile_Before);
+                //ch->addMessage(newFile_Before);
 
                 connect(newFile_Before,&FileMessageWidget::downloadFile,[=](){
 
@@ -537,7 +535,8 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
             else
             {
                 messageWidget *messageOfBefore =new messageWidget(message,time,this,isMe);
-                ch->addMessage(messageOfBefore);
+                //ch->addMessage(messageOfBefore);
+                this->addMessage(messageOfBefore);
             }
 
             //delete  item;
