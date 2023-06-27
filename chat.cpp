@@ -847,7 +847,8 @@ void chat::on_photo_button_clicked()
     QString filename = fmsg.getFileName();
 
     FileMessageWidget *newfile = new FileMessageWidget("",timeString,this,fmsg.getFileName(),true);
-    ch->addMessage(newfile);
+    //ch->addMessage(newfile);
+    this->addMessage(newfile);
     connect(newfile,&FileMessageWidget::downloadFile,[=](){
         this->sendApplyForDownload(filename);
     });
