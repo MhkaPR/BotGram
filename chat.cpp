@@ -605,6 +605,7 @@ void chat::on_pushButton_send_message_clicked()
         //add message
         //ch->addMessage(newMessage);
         this->addMessage(newMessage);
+        ui->listWidget_2->scrollToBottom();
 //        QListWidgetItem * newMessageItem = new QListWidgetItem(ui->listWidget_2);
 
 //        newMessageItem->setSizeHint(newMessage->sizeHint());
@@ -851,6 +852,7 @@ void chat::on_photo_button_clicked()
     FileMessageWidget *newfile = new FileMessageWidget("",timeString,this,fmsg.getFileName(),true);
     //ch->addMessage(newfile);
     this->addMessage(newfile);
+    ui->listWidget_2->scrollToBottom();
     connect(newfile,&FileMessageWidget::downloadFile,[=](){
         this->sendApplyForDownload(filename);
     });
@@ -1226,7 +1228,9 @@ void chat::on_pushButton_voice_clicked()
                     fmsg.sendFile(voiceDataFile,socket);
 
                     FileMessageWidget *VoiceFile = new FileMessageWidget("",currenttimestr,this,filename,true);
-                    ch->addMessage(VoiceFile);
+                    //ch->addMessage(VoiceFile);
+                    this->addMessage(VoiceFile);
+                    ui->listWidget_2->scrollToBottom();
 
 
                     connect(VoiceFile,&FileMessageWidget::downloadFile,[=](){
