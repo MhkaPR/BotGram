@@ -232,3 +232,12 @@ QString UserBoxWidget::wordWrap(QString inputText, int maxWidth)
     return wrappedText;
 
 }
+
+QString UserBoxWidget::getTweLine(QString text, int len)
+{
+
+   QStringList textList = wordWrap(text,len).split("\n");
+   text = textList[0]+"\n"+textList[1];
+   return  text;
+
+}

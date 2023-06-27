@@ -432,7 +432,8 @@ void chat::onReadyRead()
             QString temp = QString("%1\n%2").arg(messageTweLine).arg(msg.timeSend.toString("hh:mm:dd"));
             temp = "\n" + temp;
 
-            ui->listWidget->currentItem()->setText(usernames_names[msg.sender]+temp);
+//            ui->listWidget->currentItem()->setText(usernames_names[msg.sender]+temp);
+//            UserBoxWidget *receiverUserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget.cur)
 
 
 
@@ -667,17 +668,18 @@ void chat::on_pushButton_send_message_clicked()
 
         QString messageTweLine = getTweLine(messages.Message,50);
 
-        QListWidgetItem *newListWidget = new QListWidgetItem;
-        QLabel *lbl_message = new QLabel;
-        lbl_message->setFixedWidth(300);
-        lbl_message->setText(messages.Message);
+        //QListWidgetItem *newListWidget = new QListWidgetItem;
+//        QLabel *lbl_message = new QLabel;
+//        lbl_message->setFixedWidth(300);
+//        lbl_message->setText(messages.Message);
 
-        QString button_message = QString("%1\n%2").arg(messageTweLine,timeString);
+        //QString button_message = QString("%1\n%2").arg(messageTweLine,timeString);
         // QListWidgetItem* newItem = new QListWidgetItem();
         // newItem->setTextColor(Qt::black); // set text color to black
         //ui->listWidget->addItem(newItem);
         UserBoxWidget *currentuserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
-        currentuserBox->lbl_TweLineOfLastMessages.setText(messageTweLine);
+
+        currentuserBox->lbl_TweLineOfLastMessages.setText(currentuserBox->getTweLine(messageText,50));
         currentuserBox->lbl_time.setText(timeString);
         //ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+button_message);
 
