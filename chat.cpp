@@ -493,6 +493,7 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
 
     if(LastItemChoosed != item)
     {
+        ui->listWidget_2->clear();
         LastItemChoosed = item;
         // open new chat Page For Another Member
         //OpenchatPage();
