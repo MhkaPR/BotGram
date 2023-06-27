@@ -602,7 +602,7 @@ void chat::on_pushButton_send_message_clicked()
 
 
         //add message
-        ch->addMessage(newMessage);
+        //ch->addMessage(newMessage);
         QListWidgetItem * newMessageItem = new QListWidgetItem(ui->listWidget_2);
 
         newMessageItem->setSizeHint(newMessage->sizeHint());
@@ -1342,4 +1342,11 @@ void chat::on_commandLinkButton_clicked()
     ui->chatPage_Widget->layout()->addWidget(ch);
     ui->chatPage_Widget->setCurrentWidget(ch);
     //ch->show();
+}
+
+void chat::addMessage(messageWidget *msg)
+{
+    QListWidgetItem *Item = new QListWidgetItem(ui->listWidget_2);
+    Item->setSizeHint(msg->sizeHint());
+    ui->listWidget_2->setItemWidget(Item,msg);
 }
