@@ -15,6 +15,7 @@ public:
                   QString Time, QWidget* parent = nullptr);
 
     static QString wordWrap(QString inputText,int maxWidth);
+    QString getTweLine(QString text,int len);
 
     QLabel lbl_name;
     QLabel lbl_time;

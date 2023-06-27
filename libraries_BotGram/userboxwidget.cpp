@@ -16,6 +16,12 @@ UserBoxWidget::UserBoxWidget(QPixmap ImageOfProfile,QString Name,QString TweLine
     {
         TweLines= wordWrap(TweLineOfLastMessage,WordWrapLen).split("\n");
         TweLineOfLastMessage = (TweLines[0]+"\n"+TweLines[1]);
+        if(TweLines[1].length() == WordWrapLen)
+            TweLineOfLastMessage += " ...";
+    }
+    else
+    {
+        TweLineOfLastMessage +="\n ";
     }
 
     lbl_TweLineOfLastMessages.setText(TweLineOfLastMessage);
@@ -236,8 +242,12 @@ QString UserBoxWidget::wordWrap(QString inputText, int maxWidth)
 QString UserBoxWidget::getTweLine(QString text, int len)
 {
 
-   QStringList textList = wordWrap(text,len).split("\n");
-   text = textList[0]+"\n"+textList[1];
-   return  text;
+    if(text.length() > len)
+    {
+        QStringList textList = wordWrap(text,len).split("\n");
+        text = textList[0]+"\n"+textList[1];
+
+    }
+    return  text;
 
 }

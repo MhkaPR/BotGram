@@ -427,10 +427,10 @@ void chat::onReadyRead()
             this->addMessage(ClinetMessage);
 
 
-            QString messageTweLine =getTweLine(msg.Message,50);
+            //QString messageTweLine =getTweLine(msg.Message,50);
 
-            QString temp = QString("%1\n%2").arg(messageTweLine).arg(msg.timeSend.toString("hh:mm:dd"));
-            temp = "\n" + temp;
+//            QString temp = QString("%1\n%2").arg(messageTweLine).arg(msg.timeSend.toString("hh:mm:dd"));
+//            temp = "\n" + temp;
 
 //            ui->listWidget->currentItem()->setText(usernames_names[msg.sender]+temp);
 //            UserBoxWidget *receiverUserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget.cur)
@@ -666,7 +666,7 @@ void chat::on_pushButton_send_message_clicked()
         //ui->listWidget_2->scrollToBottom();
 
 
-        QString messageTweLine = getTweLine(messages.Message,50);
+        //QString messageTweLine = getTweLine(messages.Message,50);
 
         //QListWidgetItem *newListWidget = new QListWidgetItem;
 //        QLabel *lbl_message = new QLabel;
@@ -680,6 +680,7 @@ void chat::on_pushButton_send_message_clicked()
         UserBoxWidget *currentuserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
 
         currentuserBox->lbl_TweLineOfLastMessages.setText(currentuserBox->getTweLine(messageText,50));
+        //currentuserBox->.setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
         currentuserBox->lbl_time.setText(timeString);
         //ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+button_message);
 
