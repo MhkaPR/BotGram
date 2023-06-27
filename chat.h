@@ -64,6 +64,9 @@ private slots:
 
    void on_commandLinkButton_clicked();
 
+   void addMessage(messageWidget *msg);
+   void addMessage(FileMessageWidget *fmsg);
+
 
 
 private:

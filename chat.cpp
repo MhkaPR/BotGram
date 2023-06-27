@@ -495,7 +495,7 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
     {
         LastItemChoosed = item;
         // open new chat Page For Another Member
-        OpenchatPage();
+        //OpenchatPage();
 
         selectedpvname = item->text().split("\n")[0];
 
