@@ -509,14 +509,14 @@ void chat::sendApplyForDownload(QString filename)
 void chat::OpenchatPage()
 {
 
-    ui->chatPage_Widget->layout()->removeWidget(ch);
-    ch->deleteLater();
-    delete ch;
-    ch = nullptr;
-    ch = new chatPage;
-    ui->chatPage_Widget->layout()->addWidget(ch);
-    ui->chatPage_Widget->setCurrentWidget(ch);
-    //ch->show();
+//    ui->chatPage_Widget->layout()->removeWidget(ch);
+//    ch->deleteLater();
+//    delete ch;
+//    ch = nullptr;
+//    ch = new chatPage;
+//    ui->chatPage_Widget->layout()->addWidget(ch);
+//    ui->chatPage_Widget->setCurrentWidget(ch);
+//    //ch->show();
 }
 
 
@@ -1379,10 +1379,10 @@ void chat::sendmessage(QString message)
 
 void chat::on_commandLinkButton_clicked()
 {
-    ch = new chatPage;
-    ui->chatPage_Widget->layout()->addWidget(ch);
-    ui->chatPage_Widget->setCurrentWidget(ch);
-    //ch->show();
+//    ch = new chatPage;
+//    ui->chatPage_Widget->layout()->addWidget(ch);
+//    ui->chatPage_Widget->setCurrentWidget(ch);
+//    //ch->show();
 }
 
 void chat::addMessage(messageWidget *msg)
