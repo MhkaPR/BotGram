@@ -113,7 +113,7 @@ chat::chat(QWidget *parent) :
         {
             time = lastUpdateQuery.value("max(time)").toString();
             time.remove(0,9);
-           // messageTweLine =getTweLine(lastUpdateQuery.value("message").toString(),50);
+            // messageTweLine =getTweLine(lastUpdateQuery.value("message").toString(),50);
 
             //            QString line1 = messageTweLine.remove(0,50);
             //            QString line2 = messageTweLine.remove(0,qMin(50,messageTweLine.length()));
@@ -429,11 +429,11 @@ void chat::onReadyRead()
 
             //QString messageTweLine =getTweLine(msg.Message,50);
 
-//            QString temp = QString("%1\n%2").arg(messageTweLine).arg(msg.timeSend.toString("hh:mm:dd"));
-//            temp = "\n" + temp;
+            //            QString temp = QString("%1\n%2").arg(messageTweLine).arg(msg.timeSend.toString("hh:mm:dd"));
+            //            temp = "\n" + temp;
 
-//            ui->listWidget->currentItem()->setText(usernames_names[msg.sender]+temp);
-//            UserBoxWidget *receiverUserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget.cur)
+            //            ui->listWidget->currentItem()->setText(usernames_names[msg.sender]+temp);
+            //            UserBoxWidget *receiverUserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget.cur)
 
 
 
@@ -669,9 +669,9 @@ void chat::on_pushButton_send_message_clicked()
         //QString messageTweLine = getTweLine(messages.Message,50);
 
         //QListWidgetItem *newListWidget = new QListWidgetItem;
-//        QLabel *lbl_message = new QLabel;
-//        lbl_message->setFixedWidth(300);
-//        lbl_message->setText(messages.Message);
+        //        QLabel *lbl_message = new QLabel;
+        //        lbl_message->setFixedWidth(300);
+        //        lbl_message->setText(messages.Message);
 
         //QString button_message = QString("%1\n%2").arg(messageTweLine,timeString);
         // QListWidgetItem* newItem = new QListWidgetItem();
@@ -904,14 +904,17 @@ void chat::on_photo_button_clicked()
     //ch->addMessage(newfile);
     this->addMessage(newfile);
     ui->listWidget_2->scrollToBottom();
+
     connect(newfile,&FileMessageWidget::downloadFile,[=](){
         this->sendApplyForDownload(filename);
     });
     connect(this,&chat::fileEnded,newfile,&FileMessageWidget::ActiveBtnToCauseOfFileEnded);
 
     QString updateuserBox_str = QString("%1\n%2").arg(fmsg.getFileName(),timeString);
-    ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
-
+    //ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
+    UserBoxWidget *currentuserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
+    currentuserBox->lbl_TweLineOfLastMessages.setText(currentuserBox->getTweLine(updateuserBox_str,50));
+    currentuserBox->lbl_time.setText(timeString);
     // ui->listWidget->scrollToBottom();
 
 
@@ -1384,8 +1387,8 @@ QString chat::getTweLine(QString data,int lengthOfeachLine)
         ansString += ("\n"  + answer[0]);
     }
 
-//    if(ansString > 2*lengthOfeachLine)
-//        ansString.remove(2*lengthOfeachLine,ansString.length()-2*lengthOfeachLine);
+    //    if(ansString > 2*lengthOfeachLine)
+    //        ansString.remove(2*lengthOfeachLine,ansString.length()-2*lengthOfeachLine);
     return ansString;
 }
 
