@@ -603,10 +603,11 @@ void chat::on_pushButton_send_message_clicked()
 
         //add message
         //ch->addMessage(newMessage);
-        QListWidgetItem * newMessageItem = new QListWidgetItem(ui->listWidget_2);
+        this->addMessage(newMessage);
+//        QListWidgetItem * newMessageItem = new QListWidgetItem(ui->listWidget_2);
 
-        newMessageItem->setSizeHint(newMessage->sizeHint());
-        ui->listWidget_2->setItemWidget(newMessageItem,newMessage);
+//        newMessageItem->setSizeHint(newMessage->sizeHint());
+//        ui->listWidget_2->setItemWidget(newMessageItem,newMessage);
 
         //ch->fixScrollInWidget(newMessage);
         //ui->listWidget_2->addItem(QString("[%1]:\n%2").arg(timeString,messageText));
