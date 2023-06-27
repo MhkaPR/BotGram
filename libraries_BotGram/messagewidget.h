@@ -9,6 +9,10 @@
 #include <QTextBrowser>
 #include <QFontMetrics>
 #include <QDebug>
+#include <QMouseEvent>
+#include <QMenu>
+#include <QClipboard>
+#include <QApplication>
 
 
 class messageWidget:public QWidget
@@ -26,6 +30,8 @@ public:
     virtual void setAlignmentOfmessage(QVBoxLayout *layout,bool value);
     QWidget *messageLayer=nullptr;
     QVBoxLayout *layout_inside = nullptr;
+
+    void mousePressEvent(QMouseEvent *event) override;
 
 protected:
     QColor background_color;

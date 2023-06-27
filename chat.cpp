@@ -33,6 +33,9 @@
 #include<QFile>
 #include <libraries_BotGram/messagewidget.h>
 #include "libraries_BotGram/filemessagewidget.h"
+#include <QAbstractItemView>
+#include <QWheelEvent>
+#include <QGuiApplication>
 
 
 const int SERVER_PO= 9999;
@@ -166,6 +169,10 @@ chat::chat(QWidget *parent) :
 
 
 
+    //QScrollBar * scroolBarOfchat = ui->listWidget_2->verticalScrollBar();
+//    scroolBarOfchat->setSingleStep(50);
+//    scroolBarOfchat->setPageStep(1);
+
     socket = new QTcpSocket(this);
     connect(socket, &QTcpSocket::connected, this, &chat::onConnected);
     connect(socket, &QTcpSocket::disconnected, this, &chat::onDisconnected);
@@ -174,6 +181,31 @@ chat::chat(QWidget *parent) :
 
 
     connectToServer();
+
+
+
+    ui->listWidget_2->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    QScrollBar* scrollBar = ui->listWidget_2->verticalScrollBar();
+    ui->listWidget_2->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
+    ui->listWidget_2->setSelectionRectVisible(false);
+    scrollBar->setSingleStep(20);  // set the scroll step to 1 pixel
+//    scrollBar->setPageStep(ui->listWidget_2->height());  // set the page step to the height of the list widget
+//      // set the scroll mode to ScrollPerPixel
+
+//    // Connect the valueChanged signal of the scrollbar to a custom slot
+//    QObject::connect(scrollBar, &QScrollBar::valueChanged, ui->listWidget_2, [=](int value) {
+//        // Adjust the scroll position to scroll one pixel at a time
+//        int delta = value - scrollBar->value();
+//        if (delta > 1) {
+//            scrollBar->setValue(value - 1);
+//        } else if (delta < -1) {
+//            scrollBar->setValue(value + 1);
+//        }
+//    });
+
+
+
+
 
 
 
@@ -544,6 +576,7 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
             //delete  item;
         }
 
+        ui->listWidget_2->scrollToBottom();
         ui->message_text->show();
         ui->pushButton_send_message->show();
         if(ui->message_text->toPlainText().isEmpty())
@@ -561,6 +594,7 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
         //ui->label_selectchat->setAlignment(Qt::AlignHCenter);
         ui->label_selectchat->setText(name);
         ui->label_selectchat->setAlignment(Qt::AlignHCenter);
+        ui->listWidget_2->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
     }
 
@@ -606,10 +640,10 @@ void chat::on_pushButton_send_message_clicked()
         //ch->addMessage(newMessage);
         this->addMessage(newMessage);
         ui->listWidget_2->scrollToBottom();
-//        QListWidgetItem * newMessageItem = new QListWidgetItem(ui->listWidget_2);
+        //        QListWidgetItem * newMessageItem = new QListWidgetItem(ui->listWidget_2);
 
-//        newMessageItem->setSizeHint(newMessage->sizeHint());
-//        ui->listWidget_2->setItemWidget(newMessageItem,newMessage);
+        //        newMessageItem->setSizeHint(newMessage->sizeHint());
+        //        ui->listWidget_2->setItemWidget(newMessageItem,newMessage);
 
         //ch->fixScrollInWidget(newMessage);
         //ui->listWidget_2->addItem(QString("[%1]:\n%2").arg(timeString,messageText));
@@ -1357,6 +1391,7 @@ void chat::addMessage(messageWidget *msg)
     Item->setSizeHint(msg->sizeHint());
     ui->listWidget_2->setItemWidget(Item,msg);
 }
+
 
 void chat::addMessage(FileMessageWidget *fmsg)
 {

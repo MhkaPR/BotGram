@@ -7,7 +7,7 @@ messageWidget::messageWidget(const QString& text,QString time, QWidget* parent,b
 
 
 
-   this->setMinimumHeight(100);
+    this->setMinimumHeight(100);
 
 
     setBacground_color(IsSentMessage);
@@ -297,4 +297,30 @@ void messageWidget::setAlignmentOfmessage(QVBoxLayout *layout,bool value)
     if(value) flag = Qt::AlignLeft;
     else flag = Qt::AlignRight;
     layout->setAlignment(flag);
+}
+
+void messageWidget::mousePressEvent(QMouseEvent *event)
+{
+
+    if (event->button() == Qt::RightButton) {
+
+
+
+
+        QMenu menu(this);
+        QAction *action1 = menu.addAction("Copy");
+        QAction *action2 = menu.addAction("Action 2");
+        QAction *selectedAction = menu.exec(event->globalPos());
+        if (selectedAction == action1) {
+            QClipboard *Copy = QApplication::clipboard();
+            Copy->setText(m_textLabel->text());
+            // Handle Action 1
+        } else if (selectedAction == action2) {
+            // Handle Action 2
+        }
+    } else {
+
+        QWidget::mousePressEvent(event);
+    }
+    //QWidget::mousePressEvent(event);
 }
