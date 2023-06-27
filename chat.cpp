@@ -113,7 +113,8 @@ chat::chat(QWidget *parent) :
         {
             time = lastUpdateQuery.value("max(time)").toString();
             time.remove(0,9);
-            messageTweLine =getTweLine(lastUpdateQuery.value("message").toString(),50);
+           // messageTweLine =getTweLine(lastUpdateQuery.value("message").toString(),50);
+
             //            QString line1 = messageTweLine.remove(0,50);
             //            QString line2 = messageTweLine.remove(0,qMin(50,messageTweLine.length()));
             //            line1.remove("\n");
@@ -127,7 +128,7 @@ chat::chat(QWidget *parent) :
         //ui->listWidget->addItem(name+temp);
 
         QPixmap f;
-        UserBoxWidget *newUser = new UserBoxWidget(f,name,messageTweLine,time,this);
+        UserBoxWidget *newUser = new UserBoxWidget(f,name,lastUpdateQuery.value("message").toString(),time,this);
         this->addUserBox(newUser);
 
     }
@@ -675,7 +676,10 @@ void chat::on_pushButton_send_message_clicked()
         // QListWidgetItem* newItem = new QListWidgetItem();
         // newItem->setTextColor(Qt::black); // set text color to black
         //ui->listWidget->addItem(newItem);
-        ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+button_message);
+        UserBoxWidget *currentuserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
+        currentuserBox->lbl_TweLineOfLastMessages.setText(messageTweLine);
+        currentuserBox->lbl_time.setText(timeString);
+        //ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+button_message);
 
         // Scroll to the bottom of the list widget_2
         //ui->listWidget_2->scrollToBottom();
@@ -1374,10 +1378,11 @@ QString chat::getTweLine(QString data,int lengthOfeachLine)
     }
     else
     {
-
         ansString += ("\n"  + answer[0]);
     }
 
+//    if(ansString > 2*lengthOfeachLine)
+//        ansString.remove(2*lengthOfeachLine,ansString.length()-2*lengthOfeachLine);
     return ansString;
 }
 

@@ -7,21 +7,29 @@ UserBoxWidget::UserBoxWidget(QPixmap ImageOfProfile,QString Name,QString TweLine
     lbl_name.setStyleSheet("border: 0px solid #cccccc;"
                            "font-size:20px;color:#000000 ;"
                            "padding: 3px;"
-                          );
+                           );
     lbl_TweLineOfLastMessages.setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Fixed);
+
+    const int WordWrapLen = 50;
+    QStringList TweLines;
+    if(TweLineOfLastMessage.length() > WordWrapLen)
+    {
+        TweLines= wordWrap(TweLineOfLastMessage,WordWrapLen).split("\n");
+        TweLineOfLastMessage = (TweLines[0]+"\n"+TweLines[1]);
+    }
 
     lbl_TweLineOfLastMessages.setText(TweLineOfLastMessage);
     lbl_TweLineOfLastMessages.setStyleSheet("border: 0px solid #cccccc;"
                                             "color:#666666 ;"
                                             "padding: 3px;"
-                                          );
+                                            );
     lbl_TweLineOfLastMessages.setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Fixed);
 
     lbl_time.setText(time);
     lbl_time.setStyleSheet("border: 0px solid #cccccc;"
                            "color:#666666 ;"
                            "padding: 3px;"
-                          );
+                           );
     lbl_time.setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Fixed);
 
 
