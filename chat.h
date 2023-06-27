@@ -10,6 +10,9 @@
 #include <QMap>
 #include "Forms/chatpage.h"
 #include <libraries_BotGram/userboxwidget.h>
+#include <iostream>
+
+
 
 namespace Ui {
 class chat;
@@ -71,6 +74,10 @@ private slots:
 
 
 
+
+
+   void on_txt_searchUser_textChanged(const QString &arg1);
+
 private:
    void sendmessage(QString message);
     Ui::chat *ui;
@@ -86,6 +93,7 @@ private:
   QMap<QString,QString> usernames_email;
   chatPage *ch=nullptr;
   QListWidgetItem *LastItemChoosed = nullptr;
+  QList<QListWidgetItem*> itemsOfListWidgetUsers;
 
 };
 

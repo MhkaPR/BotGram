@@ -535,12 +535,15 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
 
     if(LastItemChoosed != item)
     {
+
         ui->listWidget_2->clear();
         LastItemChoosed = item;
         // open new chat Page For Another Member
         //OpenchatPage();
 
         UserBoxWidget *selectedUser=dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(item));
+
+
 
         //selectedpvname = item->text().split("\n")[0];
         selectedpvname = selectedUser->lbl_name.text();
@@ -570,6 +573,8 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
                 FileMessageWidget *newFile_Before = new FileMessageWidget("",time,this,message,isMe);
 
                 this->addMessage(newFile_Before);
+                itemsOfListWidgetUsers.append(ui->listWidget->item(ui->listWidget->count()-1));
+
                 //ch->addMessage(newFile_Before);
 
                 connect(newFile_Before,&FileMessageWidget::downloadFile,[=](){
@@ -1284,6 +1289,7 @@ void chat::on_pushButton_voice_clicked()
                     FileMessageWidget *VoiceFile = new FileMessageWidget("",currenttimestr,this,filename,true);
                     //ch->addMessage(VoiceFile);
                     this->addMessage(VoiceFile);
+
                     UserBoxWidget *currentuserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
                     currentuserBox->lbl_TweLineOfLastMessages.setText(currentuserBox->getTweLine(fmsg.getFileName(),50));
                     currentuserBox->lbl_time.setText(currenttimestr);
@@ -1430,4 +1436,14 @@ void chat::addUserBox(UserBoxWidget *userBox)
     QListWidgetItem *Item = new QListWidgetItem(ui->listWidget);
     Item->setSizeHint(userBox->sizeHint());
     ui->listWidget->setItemWidget(Item,userBox);
+}
+
+
+void chat::on_txt_searchUser_textChanged(const QString &arg1)
+{
+
+
+
+
+
 }
