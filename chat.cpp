@@ -456,6 +456,27 @@ void chat::onReadyRead()
                 //checkUser->addUnReadmessageCount(1);
 
             }
+            else
+            {
+                if(msg.IsFile)
+                {
+                    FileMessageWidget *ReceivedFileMessage = new FileMessageWidget("",msg.gettimeSend().toString("hh:mm:ss"),this,msg.getMessage(),false);
+                    this->addMessage(ReceivedFileMessage);
+                    checkUserForCurrect->lbl_TweLineOfLastMessages.setText(checkUserForCurrect->getTweLine(ReceivedFileMessage->lbl_title->text(),50));
+                    checkUserForCurrect->lbl_time.setText(ReceivedFileMessage->m_timeLabel->text());
+
+                }
+                else
+                {
+                    messageWidget *ReceivedMessage = new messageWidget(msg.getMessage(),msg.gettimeSend().toString("hh:mm:ss"),this,false);
+                    this->addMessage(ReceivedMessage);
+                    checkUserForCurrect->lbl_TweLineOfLastMessages.setText(checkUserForCurrect->getTweLine(ReceivedMessage->m_textLabel->text(),50));
+                    checkUserForCurrect->lbl_time.setText(ReceivedMessage->m_timeLabel->text());
+
+                }
+                ui->listWidget_2->scrollToBottom();
+            }
+
             query.bindValue(":Seen",msg.IsFile);
 
 

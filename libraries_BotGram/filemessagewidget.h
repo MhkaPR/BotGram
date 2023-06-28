@@ -19,6 +19,7 @@ class FileMessageWidget : public messageWidget
 {
     Q_OBJECT
 public:
+    QLabel *lbl_title = nullptr;
     FileMessageWidget(const QString& text,QString time, QWidget* parent,const QString& filename,bool IsSentMessage);
     void setfileField(QString title);
     void setIconOfCircle(bool fixDownloadIcon);
@@ -36,7 +37,7 @@ private:
     bool downloaded;
     QWidget *FileDownload_Open_field=nullptr;
     QPushButton *btn_file=nullptr;
-    QLabel *lbl_title = nullptr;
+
 };
 
 #endif // FILEMESSAGEWIDGET_H
