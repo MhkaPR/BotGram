@@ -65,18 +65,15 @@ UserBoxWidget::UserBoxWidget(QPixmap ImageOfProfile,QString Name,QString TweLine
 
 
     //unread mesages
+    lbl_UnreadMessagesCount.setFixedSize(QSize(30,30));
+    lbl_UnreadMessagesCount.setText(QString::number(unreadMessageCount));
+    lbl_UnreadMessagesCount.setAlignment(Qt::AlignmentFlag::AlignCenter);
+    lbl_UnreadMessagesCount.setStyleSheet("background-color:#00A2E8;border-radius:15px;color:#ffffff");
     if(!unreadMessageCount)
     {
-        lbl_UnreadMessagesCount.setMaximumWidth(0);
+        lbl_UnreadMessagesCount.setVisible(false);
     }
-    else
-    {
-        lbl_UnreadMessagesCount.setText(QString::number(unreadMessageCount));
-        lbl_UnreadMessagesCount.setAlignment(Qt::AlignmentFlag::AlignCenter);
-        lbl_UnreadMessagesCount.setFixedSize(QSize(30,30));
-        lbl_UnreadMessagesCount.setStyleSheet("background-color:#00A2E8;border-radius:15px;color:#ffffff");
 
-    }
     lbl_UnreadMessagesCount.setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Fixed);
 
     //fix name and time
@@ -214,3 +211,15 @@ QString UserBoxWidget::getTweLine(QString text, int len)
     return  text;
 
 }
+
+void UserBoxWidget::addUnReadmessageCount(int count)
+{
+    if(lbl_UnreadMessagesCount.text() == "0")
+    {
+        lbl_UnreadMessagesCount.setVisible(true);
+
+    }
+    int count_Now = lbl_UnreadMessagesCount.text().toInt();
+    lbl_UnreadMessagesCount.setText(QString::number(count+count_Now));
+}
+

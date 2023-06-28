@@ -121,14 +121,14 @@ chat::chat(QWidget *parent) :
 
 
 
-            temp = QString("%1\n%2").arg(messageTweLine).arg(time);
-            temp = "\n" + temp;
+            //            temp = QString("%1\n%2").arg(messageTweLine).arg(time);
+            //            temp = "\n" + temp;
         }
 
         //ui->listWidget->addItem(name+temp);
 
         QPixmap f;
-        UserBoxWidget *newUser = new UserBoxWidget(f,name,lastUpdateQuery.value("message").toString(),time,5,this);
+        UserBoxWidget *newUser = new UserBoxWidget(f,name,lastUpdateQuery.value("message").toString(),time,0,this);
         this->addUserBox(newUser);
 
     }
@@ -422,69 +422,55 @@ void chat::onReadyRead()
             msg.IsFile = obj["isFile"].toBool();
 
             qDebug() << msg.sender << msg.Message << msg.timeSend << obj["date"];
-            messageWidget *ClinetMessage = new messageWidget(msg.Message,msg.timeSend.toString("hh:mm:ss"),this,false);
+            //messageWidget *ClinetMessage = new messageWidget(msg.Message,msg.timeSend.toString("hh:mm:ss"),this,false);
             //ch->addMessage(ClinetMessage);
-            this->addMessage(ClinetMessage);
-
-
-            //QString messageTweLine =getTweLine(msg.Message,50);
-
-            //            QString temp = QString("%1\n%2").arg(messageTweLine).arg(msg.timeSend.toString("hh:mm:dd"));
-            //            temp = "\n" + temp;
-
-            //            ui->listWidget->currentItem()->setText(usernames_names[msg.sender]+temp);
-            //            UserBoxWidget *receiverUserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget.cur)
+            //this->addMessage(ClinetMessage);
 
 
 
+            QSqlQuery query(db);
+            sendmessage(usernames_names[msg.sender]);
 
+            query.prepare("INSERT INTO "+usernames_names[msg.sender]+" (message, time,sender,isfile,Seen) VALUES (:message, :time,:sender,:isfile,:Seen)");
+            query.bindValue(":message",msg.Message );
+            query.bindValue(":time",msg.timeSend.toString("yyyyMMdd hh:mm:ss") );
+            query.bindValue(":sender",0);
+            query.bindValue(":isfile",msg.IsFile);
+
+            UserBoxWidget *checkUserForCurrect = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
+            if(checkUserForCurrect->lbl_name.text() != usernames_names[msg.getSender()])
+            {
+                query.bindValue(":Seen",0);
+
+                for (int i = 0; i < ui->listWidget->count(); ++i) {
+                  UserBoxWidget *checkUser = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->item(i)));
+                  if(checkUser->lbl_name.text() == usernames_names[msg.getSender()])
+                  {
+                      checkUser->addUnReadmessageCount(1);
+                      break;
+                  }
+                }
+                //checkUser->addUnReadmessageCount(1);
+
+            }
+            query.bindValue(":Seen",msg.IsFile);
+
+
+            // Execute the query
+            if (!query.exec()) {
+                QMessageBox::information(this,"warning","Execute the query","ok");
+
+                return;
+            }
+            query.finish();
 
         }
-        //        QJsonDocument doc = QJsonDocument::fromJson(data);
-        //        qDebug() << data;
-        //        QJsonObject obj;
-        //        obj = doc.object();
-        //        QStringList list;
-        //        list  = obj.keys();
-        //        msg.sender = list[0];
-
-        //        QJsonArray arr = obj[msg.sender].toArray();
-        //        msg.Message = arr[0].toString();
-        //        msg.timeSend = QDateTime::fromString(arr[1].toString());
-        //        mesg = msg;
-
-        //        qDebug() << arr;
 
 
-
-
-        //        ui->listWidget_2->addItem(mesg.sender+":"+mesg.Message+" // "+arr[1].toString());
-        //        ui->listWidget_2->scrollToBottom();
-        QSqlQuery query(db);
-        sendmessage(usernames_names[msg.sender]);
-
-        query.prepare("INSERT INTO "+usernames_names[msg.sender]+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
-        query.bindValue(":message",msg.Message );
-        query.bindValue(":time",msg.timeSend.toString("yyyyMMdd hh:mm:ss") );
-        query.bindValue(":sender",0);
-        query.bindValue(":isfile",msg.IsFile);
-
-        // Execute the query
-        if (!query.exec()) {
-            QMessageBox::information(this,"warning","Execute the query","ok");
-
-            return;
-        }
-        query.finish();
 
         break;
     }
     }
-
-
-
-
-
 
     // Process the data
 }
@@ -501,7 +487,9 @@ void chat::sendApplyForDownload(QString filename)
     QJsonObject data;
     data["sender"] = TokenME;
     data["FileName"] = filename;
-    data["room"] = "pv_"+myinformation["username"]+"_"+usernames_names.key(ui->listWidget->currentItem()->text().split("\n")[0]);
+    UserBoxWidget *currentuserBoxForSendAppayForDownload = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
+
+    data["room"] = "pv_"+myinformation["username"]+"_"+usernames_names.key(currentuserBoxForSendAppayForDownload->lbl_name.text());
     msgpacket.setinformation(QJsonDocument(data).toJson());
 
     QByteArray msgbytearray;
@@ -633,7 +621,10 @@ void chat::on_pushButton_send_message_clicked()
     qDebug() << messageText;
 
     // send to server, message
-    QString receiveOFmessage = usernames_names.key(ui->listWidget->currentItem()->text().split("\n")[0]);
+
+    UserBoxWidget *currentuserBoxForsendDAtaToServer = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
+    QString receiveOFmessage = usernames_names.key(currentuserBoxForsendDAtaToServer->lbl_name.text());
+    /*= usernames_names.key(ui->listWidget->currentItem()->text().split("\n")[0]);*/
     QString senderOFmessage = myinformation["username"];
     TextMessage messages;
     messages.setSender(TokenME);
@@ -860,7 +851,10 @@ void chat::on_photo_button_clicked()
     mimeType = mimeType.toLower();
     //int count =0;
     fmsg.setFileName(time.toString("yyyyMMddhhmmsszzz")+"."+mimeType);
-    fmsg.setroom("pv_"+myinformation["username"]+"_"+usernames_names.key(ui->listWidget->currentItem()->text().split("\n")[0]));
+
+    UserBoxWidget *currentuserBoxForsendFile = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
+
+    fmsg.setroom("pv_"+myinformation["username"]+"_"+usernames_names.key(currentuserBoxForsendFile->lbl_name.text()));
     fmsg.settimeSend(time);
     fmsg.setSender(TokenME);
 
@@ -1071,7 +1065,9 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
             QJsonObject data;
             data["sender"] = TokenME;
             data["FileName"] = filename;
-            data["room"] = "pv_"+myinformation["username"]+"_"+usernames_names.key(ui->listWidget->currentItem()->text().split("\n")[0]);
+            UserBoxWidget *currentuserBoxForReceiveFile = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
+
+            data["room"] = "pv_"+myinformation["username"]+"_"+usernames_names.key(currentuserBoxForReceiveFile->lbl_name.text());
             msgpacket.setinformation(QJsonDocument(data).toJson());
 
             QByteArray msgbytearray;
@@ -1277,7 +1273,10 @@ void chat::on_pushButton_voice_clicked()
                     QFileInfo fileInfo(voiceDataFile->fileName());
                     QString mimeType = fileInfo.suffix();
                     fmsg.setFileName(currenttime.toString("yyyyMMddhhmmsszzz")+"."+mimeType);
-                    fmsg.setroom("pv_"+myinformation["username"]+"_"+usernames_names.key(ui->listWidget->currentItem()->text().split("\n")[0]));
+                    UserBoxWidget *currentuserBoxForSendVoiceFile = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
+
+
+                    fmsg.setroom("pv_"+myinformation["username"]+"_"+usernames_names.key(currentuserBoxForSendVoiceFile->lbl_name.text()));
                     fmsg.settimeSend(QDateTime::currentDateTime());
                     fmsg.setSender(TokenME);
 
@@ -1323,8 +1322,8 @@ void chat::on_pushButton_voice_clicked()
                     query.finish();
                     db.commit();
 
-                    QString updateuserBox_str = QString("%1\n%2").arg(fmsg.getFileName(),currenttimestr);
-                    ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
+//                    QString updateuserBox_str = QString("%1\n%2").arg(fmsg.getFileName(),currenttimestr);
+//                    ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
 
 
                 }

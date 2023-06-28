@@ -22,6 +22,8 @@ public:
     QLabel lbl_TweLineOfLastMessages;
     QLabel lbl_image;
     QLabel lbl_UnreadMessagesCount;
+
+    void addUnReadmessageCount(int count);
 private:
 
     //QHBoxLayout NameTimeLayout;
