@@ -527,12 +527,16 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
     if(LastItemChoosed != item)
     {
 
+
         ui->listWidget_2->clear();
         LastItemChoosed = item;
         // open new chat Page For Another Member
         //OpenchatPage();
 
         UserBoxWidget *selectedUser=dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(item));
+        selectedUser->lbl_UnreadMessagesCount.setText("0");
+        selectedUser->lbl_UnreadMessagesCount.setVisible(false);
+
 
 
 
