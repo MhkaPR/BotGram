@@ -520,6 +520,19 @@ void chat::OpenchatPage()
     //    //ch->show();
 }
 
+void chat::SeenNewMessagesInDataBase(QString name)
+{
+    QSqlQuery query(db);
+    query.prepare("UPDATE "+name+" SET Seen = 1 WHERE Seen = 0 ");
+    if(!query.exec())
+    {
+        qDebug() << "Failed to execute query in Seen mesages!";
+        return;
+    }
+    query.finish();
+
+}
+
 
 void chat::on_listWidget_itemClicked(QListWidgetItem *item)
 {
@@ -536,6 +549,7 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
         UserBoxWidget *selectedUser=dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(item));
         selectedUser->lbl_UnreadMessagesCount.setText("0");
         selectedUser->lbl_UnreadMessagesCount.setVisible(false);
+        SeenNewMessagesInDataBase(selectedUser->lbl_name.text());
 
 
 
@@ -561,6 +575,7 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
             QString time = query.value("time").toString();
             time = time.remove(0,9);
             bool isMe = query.value("sender").toBool();
+
 
 
             if(query.value("isfile").toBool()==1)
