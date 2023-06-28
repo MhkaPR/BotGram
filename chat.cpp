@@ -542,6 +542,11 @@ void chat::OpenchatPage()
     //    //ch->show();
 }
 
+void chat::setpin(bool pin)
+{
+
+}
+
 
 void chat::on_listWidget_itemClicked(QListWidgetItem *item)
 {
@@ -595,12 +600,14 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
                     this->sendApplyForDownload(message);
                 });
                 connect(this,&chat::fileEnded,newFile_Before,&FileMessageWidget::ActiveBtnToCauseOfFileEnded);
+
             }
             else
             {
                 messageWidget *messageOfBefore =new messageWidget(message,time,this,isMe);
                 //ch->addMessage(messageOfBefore);
                 this->addMessage(messageOfBefore);
+                connect(messageOfBefore,&messageWidget::pinnedStatusChanged,this,&chat::setpin);
             }
 
             //delete  item;
@@ -1047,6 +1054,7 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
         }
         return;
     }
+
 
     // Get the filename from the clicked item
     QString filename = item->text();

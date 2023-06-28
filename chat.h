@@ -24,6 +24,7 @@ class chat : public QWidget
 
 signals:
     void fileEnded();
+
 public:
     explicit chat(QWidget *parent = nullptr);
     TextMessage mesg;
@@ -32,6 +33,8 @@ public:
    // QString namechat
       void sendApplyForDownload(QString filename);
       void OpenchatPage();
+public slots:
+       void setpin(bool pin);
 private slots:
     void on_listWidget_itemClicked(QListWidgetItem *item);
 

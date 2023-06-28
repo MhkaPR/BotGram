@@ -1,4 +1,5 @@
 #include "messagewidget.h"
+#include<QListWidget>
 
 messageWidget::messageWidget(const QString& text,QString time, QWidget* parent,bool IsSentMessage)
     : QWidget(parent)
@@ -83,7 +84,6 @@ messageWidget::messageWidget(const QString& text,QString time, QWidget* parent,b
     // Set the size and style
 
     messageLayer->setStyleSheet("background-color: "+background_color.name()+"; border: 1px solid #cccccc; border-radius: 20px; padding: 10px;");
-
 
 }
 
@@ -306,6 +306,7 @@ void messageWidget::mousePressEvent(QMouseEvent *event)
         QMenu menu(this);
         QAction *CopyAction = menu.addAction("Copy");
         QAction *DeleteAction = menu.addAction("Delete message (Not complate)");
+        QAction *pinAction = menu.addAction("pin");
         QAction *selectedAction = menu.exec(event->globalPos());
         if (selectedAction == CopyAction) {
             QClipboard *Copy = QApplication::clipboard();
@@ -314,9 +315,21 @@ void messageWidget::mousePressEvent(QMouseEvent *event)
         } else if (selectedAction == DeleteAction) {
             // Handle Action 2
         }
+        else if (selectedAction == pinAction) {
+
+            emit pinnedStatusChanged(true);
+
+
+
     } else {
 
         QWidget::mousePressEvent(event);
     }
     //QWidget::mousePressEvent(event);
+         } }
+void messageWidget::setPinned(bool pinned)
+{
+    //m_isPinned = pinned;
+    //m_pinLabel->setVisible(pinned);
+    //emit pinnedStatusChanged(pinned);
 }

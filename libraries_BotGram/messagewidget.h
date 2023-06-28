@@ -15,7 +15,7 @@
 #include <QApplication>
 
 
-class messageWidget:public QWidget
+/*class messageWidget:public QWidget
 {
     Q_OBJECT
 public:
@@ -31,12 +31,47 @@ public:
     QWidget *messageLayer=nullptr;
     QVBoxLayout *layout_inside = nullptr;
 
+       QLabel *m_pinLabel;  // Added pinLabel
+       bool m_isPinned;     // Added isPinned flag
+       QString m_pinnedText; //Added pinnedText
     void mousePressEvent(QMouseEvent *event) override;
 
 protected:
     QColor background_color;
+public slots:
+    void setPinned(bool pinned);
+
+signals:
+    void pinnedStatusChanged(bool pinned);
+
+};*/
+class messageWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit messageWidget(const QString& text, QString time, QWidget* parent = nullptr, bool IsSentMessage = false);
+    QLabel* m_textLabel = nullptr;
+    QLabel* m_timeLabel = nullptr;
+
+    static QString wordWrap(QString inputText, int maxWidth);
+
+    virtual void setBacground_color(bool value);
+    virtual void setBacground_color(QColor color);
+    virtual void setAlignmentOfmessage(QVBoxLayout *layout, bool value);
+    QWidget *messageLayer = nullptr;
+    QVBoxLayout *layout_inside = nullptr;
 
 
+
+    void mousePressEvent(QMouseEvent *event) override;
+
+protected:
+    QColor background_color;
+public slots:
+    void setPinned(bool pinned);
+
+signals:
+    void pinnedStatusChanged(bool pinned);
 };
 
 #endif // MESSAGEWIDGET_H
