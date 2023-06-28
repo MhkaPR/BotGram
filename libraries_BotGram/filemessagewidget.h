@@ -25,7 +25,7 @@ public:
     bool checkDownloaded(const QString& filename);
     void setDownloaded(bool value);
     bool getDownloaded();
-
+      QLabel *lbl_title = nullptr;
 signals:
     void downloadFile();
 public slots:
@@ -36,7 +36,7 @@ private:
     bool downloaded;
     QWidget *FileDownload_Open_field=nullptr;
     QPushButton *btn_file=nullptr;
-    QLabel *lbl_title = nullptr;
+
 };
 
 #endif // FILEMESSAGEWIDGET_H

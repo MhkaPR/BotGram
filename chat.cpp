@@ -64,6 +64,7 @@ chat::chat(QWidget *parent) :
     ui->photo_button->hide();
     ui->pushButton_camera->hide();
     ui->pushButton_voice->hide();
+    ui->search_line->hide();
 
 
     db = QSqlDatabase::addDatabase("QSQLITE");
@@ -1442,8 +1443,78 @@ void chat::addUserBox(UserBoxWidget *userBox)
 void chat::on_txt_searchUser_textChanged(const QString &arg1)
 {
 
+    // Create a regular expression from the search query
+    QRegExp regex(arg1, Qt::CaseInsensitive, QRegExp::FixedString);
 
+    // Iterate over the list widget items and show/hide them based on the search query
+    for (int i = 0; i < ui->listWidget->count(); i++) {
+
+        QListWidgetItem *item = ui->listWidget->item(i);
+        UserBoxWidget *matchUser = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(item));
+        QString nameUser = matchUser->lbl_name.text();
+                // Use the regular expression to check if the item text contains the search query
+                bool matches = regex.indexIn(nameUser) != -1;
+
+        // Show/hide the item based on whether it matches the search query
+        item->setHidden(!matches);
+    }
 
 
 
 }
+
+
+
+
+
+void chat::on_search_button_clicked()
+{
+    if (ui->search_line->isHidden()) {
+
+           ui->search_line->setText("");
+           ui->search_line->show();
+       } else {
+           ui->search_line->hide();
+       }
+    if(!ui->search_line->isHidden())
+    {
+        ui->search_button->setText("close");
+    }
+    else {
+        ui->search_button->setText("search");
+    }
+}
+
+
+void chat::on_search_line_textChanged(const QString &arg1)
+{
+    QRegExp regex(arg1, Qt::CaseInsensitive, QRegExp::FixedString);
+
+    // Iterate over the list widget items and show/hide them based on the search query
+    for (int i = 0; i < ui->listWidget_2->count(); i++) {
+
+        QListWidgetItem *item = ui->listWidget_2->item(i);
+        messageWidget *matchUser = dynamic_cast<messageWidget*>(ui->listWidget_2->itemWidget(item));
+        FileMessageWidget *matchUserfile = dynamic_cast<FileMessageWidget*>(ui->listWidget_2->itemWidget(item));
+       QString text ;
+        if(matchUserfile==nullptr)
+        {
+
+             text = matchUser->m_textLabel->text();
+        }
+        else
+        {
+             text = matchUserfile->lbl_title->text();
+        }
+
+
+
+                // Use the regular expression to check if the item text contains the search query
+                bool matches = regex.indexIn(text) != -1;
+
+        // Show/hide the item based on whether it matches the search query
+        item->setHidden(!matches);
+
+    }
+}
+

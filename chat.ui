@@ -34,8 +34,8 @@
    <widget class="QListWidget" name="listWidget">
     <property name="geometry">
      <rect>
-      <x>-10</x>
-      <y>40</y>
+      <x>0</x>
+      <y>50</y>
       <width>541</width>
       <height>551</height>
      </rect>
@@ -207,31 +207,6 @@ background-color: rgb(255, 255, 255);</string>
         </property>
         <property name="placeholderText">
          <string>    Search</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btn_closeSearch">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>50</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>50</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>E</string>
         </property>
        </widget>
       </item>
@@ -460,8 +435,52 @@ color:white;</string>
       <height>28</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
     <property name="text">
      <string>Voice</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="search_button">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>10</y>
+      <width>93</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">  border: none;
+
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;</string>
+    </property>
+    <property name="text">
+     <string>search</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="search_line">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>10</y>
+      <width>251</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 8px;
+    font-size: 16px;</string>
+    </property>
+    <property name="placeholderText">
+     <string>search</string>
     </property>
    </widget>
    <zorder>label_selectchat</zorder>
@@ -473,6 +492,8 @@ color:white;</string>
    <zorder>pushButton_camera</zorder>
    <zorder>pushButton_voice</zorder>
    <zorder>listWidget_2</zorder>
+   <zorder>search_button</zorder>
+   <zorder>search_line</zorder>
   </widget>
  </widget>
  <resources/>
