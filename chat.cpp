@@ -37,8 +37,6 @@
 #include <QWheelEvent>
 #include <QGuiApplication>
 
-
-
 const int SERVER_PO= 9999;
 //const QString TokenME = "pAWmUPKB";
 static QString TokenME = "mhka1382";
@@ -129,6 +127,9 @@ chat::chat(QWidget *parent) :
 
         QPixmap f;
         UserBoxWidget *newUser = new UserBoxWidget(f,name,lastUpdateQuery.value("message").toString(),time,0,this);
+        int UnreadCount = countOfunreadMessages(newUser->lbl_name.text());
+        if(UnreadCount != 0)
+            newUser->addUnReadmessageCount(UnreadCount);
         this->addUserBox(newUser);
 
     }
@@ -443,7 +444,8 @@ void chat::onReadyRead()
             {
                 query.bindValue(":Seen",0);
 
-                for (int i = 0; i < ui->listWidget->count(); ++i) {
+                for (int i = 0; i < ui->listWidget->count(); ++i)
+                {
                     UserBoxWidget *checkUser = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->item(i)));
                     if(checkUser->lbl_name.text() == usernames_names[msg.getSender()])
                     {
@@ -453,7 +455,6 @@ void chat::onReadyRead()
                         break;
                     }
                 }
-                //checkUser->addUnReadmessageCount(1);
 
             }
             else
@@ -552,6 +553,31 @@ void chat::SeenNewMessagesInDataBase(QString name)
     }
     query.finish();
 
+}
+
+int chat::countOfunreadMessages(QString name)
+{
+
+    QSqlQuery query(db);
+    query.prepare("SELECT count(*) FROM  "+name+" WHERE Seen = 0");
+    if(!query.exec())
+    {
+        qDebug() << "Failed to execute query in Seen mesages!";
+        exit(1);
+    }
+    if(query.next())
+    {
+
+        int ans = query.value("count(*)").toInt();
+        query.finish();
+        return ans;
+
+    }
+    else{
+        qDebug() << "Failed to Find query!!!!";
+        query.finish();
+        exit(1);
+    }
 }
 
 

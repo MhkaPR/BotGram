@@ -32,7 +32,8 @@ public:
    // QString namechat
       void sendApplyForDownload(QString filename);
       void OpenchatPage();
-      void SeenNewMessagesInDataBase(QString username);
+      void SeenNewMessagesInDataBase(QString name);
+      int countOfunreadMessages(QString name);
 private slots:
     void on_listWidget_itemClicked(QListWidgetItem *item);
 

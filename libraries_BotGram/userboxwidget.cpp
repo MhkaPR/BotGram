@@ -214,8 +214,9 @@ QString UserBoxWidget::getTweLine(QString text, int len)
 
 void UserBoxWidget::addUnReadmessageCount(int count)
 {
-    lbl_UnreadMessagesCount.setVisible(true);
+
     int count_Now = lbl_UnreadMessagesCount.text().toInt();
+    lbl_UnreadMessagesCount.setVisible(true);
     lbl_UnreadMessagesCount.setText(QString::number(count+count_Now));
 }
 
