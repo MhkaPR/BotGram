@@ -496,6 +496,22 @@ color:white;</string>
      <string>emojies</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_pin">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>49</y>
+      <width>721</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: yellow; font-weight: bold;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
    <zorder>label_selectchat</zorder>
    <zorder>message_text</zorder>
    <zorder>pushButton_send_message</zorder>
@@ -508,6 +524,7 @@ color:white;</string>
    <zorder>search_button</zorder>
    <zorder>search_line</zorder>
    <zorder>pushButton_2</zorder>
+   <zorder>label_pin</zorder>
   </widget>
  </widget>
  <resources/>

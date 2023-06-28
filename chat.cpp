@@ -66,7 +66,7 @@ chat::chat(QWidget *parent) :
     ui->pushButton_voice->hide();
     ui->search_line->hide();
     ui->pushButton_2->hide();
-
+    ui->label_pin->setVisible(false);
 
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("botgramdatabase.db");
@@ -438,7 +438,7 @@ void chat::onReadyRead()
             messageWidget *ClinetMessage = new messageWidget(msg.Message,msg.timeSend.toString("hh:mm:ss"),this,false);
             //ch->addMessage(ClinetMessage);
             this->addMessage(ClinetMessage);
-
+              connect(ClinetMessage,&messageWidget::pinnedStatusChanged,this,&chat::setpin);
 
             //QString messageTweLine =getTweLine(msg.Message,50);
 
@@ -545,6 +545,55 @@ void chat::OpenchatPage()
 void chat::setpin(bool pin)
 {
 
+    ui->label_pin->setVisible(true);
+
+    if(pin) {
+         // Get the current message text
+
+        messageWidget *msgg = dynamic_cast<messageWidget*>(sender());
+        FileMessageWidget *matchUserfile = dynamic_cast<FileMessageWidget*>(sender());
+       QString text ;
+        if(matchUserfile==nullptr)
+        {
+
+             text = msgg->m_textLabel->text();
+        }
+        else
+        {
+             text = matchUserfile->lbl_title->text();
+        }
+         QString message = text.split("\n")[0];
+          ui->label_pin->setText(message);
+         // Insert the message at the top of listwidget_2
+
+          QSqlQuery query(db);
+          query.prepare("CREATE TABLE IF NOT EXISTS pin (message TEXT , username TEXT )");
+          if (!query.exec()) {
+              qDebug() << "Failed to execute query";
+             exit(0);
+          }
+
+          if (query.numRowsAffected() > 0) {
+              qDebug() << "Table created successfully";
+          } else {
+              qDebug() << "Table already exists";
+          }
+//          query.finish();
+          query.clear();
+              UserBoxWidget *user = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
+
+          query.prepare("INSERT INTO pin (message, username) VALUES (:message, :username)");
+          query.bindValue(":message",message);
+          query.bindValue(":username",user->lbl_name.text());
+          if (!query.exec()) {
+              QMessageBox::information(this,"warning",query.lastError().text(),"ok");
+
+              return;
+          }
+          query.finish();
+          db.commit();
+
+     }
 }
 
 
@@ -560,8 +609,23 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
         //OpenchatPage();
 
         UserBoxWidget *selectedUser=dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(item));
+         QSqlQuery query1(db);
+          query1.prepare("SELECT * FROM pin WHERE username=:u");
+          query1.bindValue(":u",selectedUser->lbl_name.text());
+          if (!query1.exec()) {
+              qDebug() << "Failed to execute query!";
+              return;
+          }
+          if(query1.next())
+          {
 
-
+             ui->label_pin->setText( query1.value("message").toString());
+             ui->label_pin->setVisible(true);
+          }
+          else
+    {
+              ui->label_pin->setVisible(false);
+          }
 
         //selectedpvname = item->text().split("\n")[0];
         selectedpvname = selectedUser->lbl_name.text();
@@ -591,6 +655,7 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
                 FileMessageWidget *newFile_Before = new FileMessageWidget("",time,this,message,isMe);
 
                 this->addMessage(newFile_Before);
+                  connect(newFile_Before,&FileMessageWidget::pinnedStatusChanged,this,&chat::setpin);
                 itemsOfListWidgetUsers.append(ui->listWidget->item(ui->listWidget->count()-1));
 
                 //ch->addMessage(newFile_Before);
@@ -676,6 +741,7 @@ void chat::on_pushButton_send_message_clicked()
         //add message
         //ch->addMessage(newMessage);
         this->addMessage(newMessage);
+          connect(newMessage,&messageWidget::pinnedStatusChanged,this,&chat::setpin);
         ui->listWidget_2->scrollToBottom();
         //        QListWidgetItem * newMessageItem = new QListWidgetItem(ui->listWidget_2);
 
@@ -928,6 +994,7 @@ void chat::on_photo_button_clicked()
     FileMessageWidget *newfile = new FileMessageWidget("",timeString,this,fmsg.getFileName(),true);
     //ch->addMessage(newfile);
     this->addMessage(newfile);
+      connect(newfile,&FileMessageWidget::pinnedStatusChanged,this,&chat::setpin);
     ui->listWidget_2->scrollToBottom();
 
     connect(newfile,&FileMessageWidget::downloadFile,[=](){
@@ -1310,6 +1377,7 @@ void chat::on_pushButton_voice_clicked()
                     FileMessageWidget *VoiceFile = new FileMessageWidget("",currenttimestr,this,filename,true);
                     //ch->addMessage(VoiceFile);
                     this->addMessage(VoiceFile);
+                      connect(VoiceFile,&FileMessageWidget::pinnedStatusChanged,this,&chat::setpin);
 
                     UserBoxWidget *currentuserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
                     currentuserBox->lbl_TweLineOfLastMessages.setText(currentuserBox->getTweLine(fmsg.getFileName(),50));
