@@ -433,6 +433,7 @@ void chat::onReadyRead()
 
             query.prepare("INSERT INTO "+usernames_names[msg.sender]+" (message, time,sender,isfile,Seen) VALUES (:message, :time,:sender,:isfile,:Seen)");
             query.bindValue(":message",msg.Message );
+
             query.bindValue(":time",msg.timeSend.toString("yyyyMMdd hh:mm:ss") );
             query.bindValue(":sender",0);
             query.bindValue(":isfile",msg.IsFile);
@@ -443,12 +444,14 @@ void chat::onReadyRead()
                 query.bindValue(":Seen",0);
 
                 for (int i = 0; i < ui->listWidget->count(); ++i) {
-                  UserBoxWidget *checkUser = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->item(i)));
-                  if(checkUser->lbl_name.text() == usernames_names[msg.getSender()])
-                  {
-                      checkUser->addUnReadmessageCount(1);
-                      break;
-                  }
+                    UserBoxWidget *checkUser = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->item(i)));
+                    if(checkUser->lbl_name.text() == usernames_names[msg.getSender()])
+                    {
+                        checkUser->addUnReadmessageCount(1);
+                        checkUser->lbl_TweLineOfLastMessages.setText(checkUser->getTweLine(msg.getMessage(),50));
+                        checkUser->lbl_time.setText(msg.timeSend.toString("hh:mm:ss"));
+                        break;
+                    }
                 }
                 //checkUser->addUnReadmessageCount(1);
 
@@ -1322,8 +1325,8 @@ void chat::on_pushButton_voice_clicked()
                     query.finish();
                     db.commit();
 
-//                    QString updateuserBox_str = QString("%1\n%2").arg(fmsg.getFileName(),currenttimestr);
-//                    ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
+                    //                    QString updateuserBox_str = QString("%1\n%2").arg(fmsg.getFileName(),currenttimestr);
+                    //                    ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
 
 
                 }
