@@ -1,15 +1,20 @@
 #include "userboxwidget.h"
 
-UserBoxWidget::UserBoxWidget(QPixmap ImageOfProfile,QString Name,QString TweLineOfLastMessage,QString time, QWidget* parent)
+UserBoxWidget::UserBoxWidget(QPixmap ImageOfProfile,QString Name,QString TweLineOfLastMessage,QString time,int unreadMessageCount, QWidget* parent)
     : QWidget(parent)
 {
+
+    //name
     lbl_name.setText(Name);
     lbl_name.setStyleSheet("border: 0px solid #cccccc;"
                            "font-size:20px;color:#000000 ;"
                            "padding: 3px;"
                            );
-    lbl_TweLineOfLastMessages.setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Fixed);
+    lbl_name.setAlignment(Qt::AlignmentFlag::AlignLeft);
+    lbl_name.setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Expanding);
 
+
+    //tweline
     const int WordWrapLen = 50;
     QStringList TweLines;
     if(TweLineOfLastMessage.length() > WordWrapLen)
@@ -24,21 +29,32 @@ UserBoxWidget::UserBoxWidget(QPixmap ImageOfProfile,QString Name,QString TweLine
         TweLineOfLastMessage +="\n ";
     }
 
+
+
     lbl_TweLineOfLastMessages.setText(TweLineOfLastMessage);
     lbl_TweLineOfLastMessages.setStyleSheet("border: 0px solid #cccccc;"
                                             "color:#666666 ;"
                                             "padding: 3px;"
-                                            );
-    lbl_TweLineOfLastMessages.setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Fixed);
 
+                                            );
+    lbl_TweLineOfLastMessages.setAlignment(Qt::AlignmentFlag::AlignTop | Qt::AlignmentFlag::AlignLeft);
+    lbl_TweLineOfLastMessages.setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Expanding);
+
+
+    //time
     lbl_time.setText(time);
     lbl_time.setStyleSheet("border: 0px solid #cccccc;"
                            "color:#666666 ;"
                            "padding: 3px;"
                            );
-    lbl_time.setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Fixed);
+    lbl_time.setAlignment(Qt::AlignmentFlag::AlignRight);
+    lbl_time.setMinimumWidth(30);
+    lbl_time.setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Expanding);
+
+    //lbl_time.setStyleSheet("background-color:black;");
 
 
+    //imgae
     lbl_image.setPixmap(ImageOfProfile);
     lbl_image.setFixedSize(100,100);
     lbl_image.setStyleSheet("border: 1px solid #cccccc;"
@@ -48,11 +64,45 @@ UserBoxWidget::UserBoxWidget(QPixmap ImageOfProfile,QString Name,QString TweLine
     lbl_image.setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Fixed);
 
 
+    //unread mesages
+    if(!unreadMessageCount)
+    {
+        lbl_UnreadMessagesCount.setMaximumWidth(0);
+    }
+    else
+    {
+        lbl_UnreadMessagesCount.setText(QString::number(unreadMessageCount));
+        lbl_UnreadMessagesCount.setAlignment(Qt::AlignmentFlag::AlignCenter);
+        lbl_UnreadMessagesCount.setFixedSize(QSize(30,30));
+        lbl_UnreadMessagesCount.setStyleSheet("background-color:#00A2E8;border-radius:15px;color:#ffffff");
+
+    }
+    lbl_UnreadMessagesCount.setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Fixed);
+
+    //fix name and time
+    nameANDtimeLayout.setParent(this);
+    nameANDtimeWidget.setParent(this);
+
+    nameANDtimeLayout.addWidget(&lbl_name);
+    nameANDtimeLayout.addWidget(&lbl_time);
+
+    nameANDtimeWidget.setLayout(&nameANDtimeLayout);
+
+
+    //fix tweline and unread messages
+    TweLineANDunreadMessagesLayout.addWidget(&lbl_TweLineOfLastMessages);
+    TweLineANDunreadMessagesLayout.addWidget(&lbl_UnreadMessagesCount);
+
+    TweLineANDunreadMessagesWidget.setLayout(&TweLineANDunreadMessagesLayout);
+
 
     // add in right layout
-    RightLayoutForObjects.addWidget(&lbl_name);
-    RightLayoutForObjects.addWidget(&lbl_TweLineOfLastMessages);
-    RightLayoutForObjects.addWidget(&lbl_time);
+
+    //RightLayoutForObjects.addWidget(&lbl_name);
+
+    RightLayoutForObjects.addWidget(&nameANDtimeWidget);
+    RightLayoutForObjects.addWidget(&TweLineANDunreadMessagesWidget);
+    //RightLayoutForObjects.addWidget(&lbl_time);
 
     complateRightObjects.setLayout(&RightLayoutForObjects);
     complateRightObjects.setStyleSheet("border: 0px solid #cccccc;");
@@ -71,88 +121,6 @@ UserBoxWidget::UserBoxWidget(QPixmap ImageOfProfile,QString Name,QString TweLine
     this->setLayout(&mainLayout);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //    // Create the text label
-    //    m_textLabel = new QLabel(messageLayer);
-
-
-    //    //m_textLabel->setMaximumWidth(parent->maximumWidth());
-    //    QFontMetrics fm(m_textLabel->font());
-    //    int Ach =fm.horizontalAdvance("W");
-
-
-
-    //    //word wrapping
-
-    //    int lenText = text.length();
-
-    //    QString newText=text;
-    //    if(newText.isEmpty()) newText =" ";
-    //    if(lenText > 50) newText = wordWrap(text,50);
-    //    m_textLabel->setWordWrap(true);
-
-
-    //    //fix message
-    //    m_textLabel->setText(newText);
-
-    //    m_textLabel->setSizePolicy(QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Maximum);
-    //    m_textLabel->setAlignment(Qt::AlignmentFlag::AlignRight | Qt::AlignmentFlag::AlignTop);
-
-    //    m_textLabel->setStyleSheet("background-color: "+background_color.name()+"; border: 0px solid #cccccc;padding: 10px;");
-
-
-    //    // Create the time label
-
-    //    m_timeLabel = new QLabel( messageLayer);
-    //    m_timeLabel->setText(time);
-    //    m_timeLabel->setFixedWidth(100);
-    //    m_timeLabel->setAlignment(Qt::AlignmentFlag::AlignRight | Qt::AlignmentFlag::AlignBottom);
-    //    m_timeLabel->setStyleSheet("background-color: "+background_color.name()+"; border: 0px solid #cccccc;padding: 2px;");
-
-    //    //create the layout of inside of messsage
-
-
-    //    layout_inside = new QVBoxLayout(messageLayer);
-
-    //    layout_inside->addWidget(m_textLabel);
-    //    layout_inside->addWidget(m_timeLabel);
-
-    //    setAlignmentOfmessage(layout_inside,IsSentMessage);
-    //    messageLayer->setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Fixed);
-
-
-
-    //    // Create the layout of all of message
-    //    QVBoxLayout* layout = new QVBoxLayout(this);
-
-    //    layout->addWidget(messageLayer);
-
-
-    //    setAlignmentOfmessage(layout,IsSentMessage);
-    //    //layout->setAlignment(Qt::AlignLeft);
-
-
-    //    this->setSizePolicy(QSizePolicy::Policy::Fixed,QSizePolicy::Policy::Fixed);
-
-
-    //    // Set the size and style
-
-    //    messageLayer->setStyleSheet("background-color: "+background_color.name()+"; border: 1px solid #cccccc; border-radius: 20px; padding: 10px;");
-
 }
 
 QString UserBoxWidget::wordWrap(QString inputText, int maxWidth)
@@ -166,12 +134,7 @@ QString UserBoxWidget::wordWrap(QString inputText, int maxWidth)
     int lenInputText = inputText.size();
     bool isAnySpace = false;
     for (int i = 0; i < lenInputText; i++) {
-        // qDebug() << "hello";
 
-        //oo oooo oo o  oooooo ppooooooooooooooooooooooooo ooo
-        //5
-        //o
-        //1
         QChar chTemp = inputText.at(i);
         if(lineLen >= maxWidth)
         {

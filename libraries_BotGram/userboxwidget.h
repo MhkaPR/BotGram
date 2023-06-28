@@ -12,7 +12,7 @@ class UserBoxWidget:public QWidget
 {
 public:
     explicit UserBoxWidget(QPixmap ImageOfProfile,QString Name,QString TweLineOfLastMessage,
-                  QString Time, QWidget* parent = nullptr);
+                           QString Time,int unreadMessageCount, QWidget* parent = nullptr);
 
     static QString wordWrap(QString inputText,int maxWidth);
     QString getTweLine(QString text,int len);
@@ -21,11 +21,15 @@ public:
     QLabel lbl_time;
     QLabel lbl_TweLineOfLastMessages;
     QLabel lbl_image;
+    QLabel lbl_UnreadMessagesCount;
 private:
 
     //QHBoxLayout NameTimeLayout;
     QVBoxLayout RightLayoutForObjects;
-
+    QHBoxLayout nameANDtimeLayout;
+    QWidget nameANDtimeWidget;
+    QHBoxLayout TweLineANDunreadMessagesLayout;
+    QWidget TweLineANDunreadMessagesWidget;
     QHBoxLayout mainLayout;
     QWidget complateRightObjects;
     //QWidget compareOfNameANDTime;

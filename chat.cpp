@@ -128,7 +128,7 @@ chat::chat(QWidget *parent) :
         //ui->listWidget->addItem(name+temp);
 
         QPixmap f;
-        UserBoxWidget *newUser = new UserBoxWidget(f,name,lastUpdateQuery.value("message").toString(),time,this);
+        UserBoxWidget *newUser = new UserBoxWidget(f,name,lastUpdateQuery.value("message").toString(),time,5,this);
         this->addUserBox(newUser);
 
     }
@@ -280,7 +280,7 @@ void chat::onDisconnected()
     }
     connectToServer();
 }
-
+//
 void chat::onReadyRead()
 {
     TextMessage msg;
@@ -330,7 +330,7 @@ void chat::onReadyRead()
 
             query.clear();
 
-            query.prepare("CREATE TABLE "+searching.name+" (message TEXT , time TEXT,sender INTEGER,isfile INTEGER)");
+            query.prepare("CREATE TABLE "+searching.name+" (message TEXT , time TEXT,sender INTEGER,isfile INTEGER,Seen INTEGER)");
             if(!query.exec())
             {
                 qDebug() << "Failed to create table: " << query.lastError().text();
@@ -696,11 +696,13 @@ void chat::on_pushButton_send_message_clicked()
         //save in database
 
         QSqlQuery query(db);
-        query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
+        query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile,Seen) VALUES (:message, :time,:sender,:isfile,:Seen)");
         query.bindValue(":message",messages.Message );
         query.bindValue(":time",messages.timeSend.toString("yyyyMMdd hh:mm:ss") );
         query.bindValue(":sender",1);
         query.bindValue(":isfile",0);
+        query.bindValue(":Seen",1);
+
 
         // Execute the query
         if (!query.exec()) {
@@ -883,11 +885,12 @@ void chat::on_photo_button_clicked()
     //save in database
 
     QSqlQuery query(db);
-    query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
+    query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile,Seen) VALUES (:message, :time,:sender,:isfile,:Seen)");
     query.bindValue(":message",fmsg.getFileName());
     query.bindValue(":time",fmsg.gettimeSend().toString("yyyyMMdd hh:mm:ss") );
     query.bindValue(":sender",1);
     query.bindValue(":isfile",1);
+    query.bindValue(":Seen",1);
 
     // Execute the query
     if (!query.exec()) {
@@ -1304,13 +1307,13 @@ void chat::on_pushButton_voice_clicked()
 
 
                     QSqlQuery query(db);
-                    query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile) VALUES (:message, :time,:sender,:isfile)");
+                    query.prepare("INSERT INTO "+selectedpvname+" (message, time,sender,isfile,Seen) VALUES (:message, :time,:sender,:isfile,:Seen)");
                     query.bindValue(":message",fmsg.getFileName());
 
                     query.bindValue(":time",fmsg.gettimeSend().toString("yyyyMMdd hh:mm:ss") );
                     query.bindValue(":sender",1);
                     query.bindValue(":isfile",1);
-
+                    query.bindValue(":Seen",1);
                     // Execute the query
                     if (!query.exec()) {
                         QMessageBox::information(this,"warning",query.lastError().text(),"ok");
