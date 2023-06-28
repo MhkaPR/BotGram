@@ -36,7 +36,7 @@
 #include <QAbstractItemView>
 #include <QWheelEvent>
 #include <QGuiApplication>
-
+#include<QDialogButtonBox>
 
 
 const int SERVER_PO= 9999;
@@ -65,6 +65,7 @@ chat::chat(QWidget *parent) :
     ui->pushButton_camera->hide();
     ui->pushButton_voice->hide();
     ui->search_line->hide();
+    ui->pushButton_2->hide();
 
 
     db = QSqlDatabase::addDatabase("QSQLITE");
@@ -174,6 +175,17 @@ chat::chat(QWidget *parent) :
                                         "QPushButton:hover {"
                                         "background-color: #E6E6E6;"
                                         "}");
+    ui->pushButton_2->setStyleSheet("QPushButton {"
+                                    "border: none;"
+                                    "background-image: url(:/icons/pin.png);"
+                                    "background-position: center;"
+                                    "background-color: rgba(255, 0, 0, 50%);"
+
+                                    "}"
+                                    "QPushButton:hover {"
+                                    "background-color: #00ff00;"
+                                    "}");
+
 
 
 
@@ -607,7 +619,7 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
         ui->pushButton_camera->show();
         ui->pushButton_voice->show();
         ui->label_onoroff->show();
-
+        ui->pushButton_2->show();
         //ui->label_selectchat->setText(name);
         //ui->label_selectchat->setAlignment(Qt::AlignHCenter);
         ui->label_selectchat->setText(name);
@@ -1518,3 +1530,62 @@ void chat::on_search_line_textChanged(const QString &arg1)
     }
 }
 
+
+void chat::on_pushButton_2_clicked()
+{
+    // Create a QDialog to display the emojis
+    QDialog* emojiDialog = new QDialog(this);
+    emojiDialog->setWindowTitle("Choose Emojis");
+
+    // Create a QGridLayout to hold the emojis
+    QGridLayout* gridLayout = new QGridLayout(emojiDialog);
+
+    // Add the emojis to the grid
+    QStringList emojiList = {
+        "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇",
+        "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚",
+        "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩",
+        "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣",
+        "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬",
+        "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🤗",
+        "🤔", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😷",
+        "🤒", "🤕", "🤢", "🤮", "🥴", "😵", "🤯", "🤪", "🥱", "🥳",
+        "🥺", "🤠", "🥶", "🥵", "🥊", "🦷", "🧸", "🎁", "🎉", "🎀",
+        "🎄", "🎃", "👻", "👽", "🤖", "🎵", "🎶", "🎼", "🎤", "🎧"
+    };
+    QList<QPushButton*> emojiButtons;
+    int row = 0;
+    int col = 0;
+    for (const QString& emoji : emojiList) {
+        QPushButton* emojiButton = new QPushButton(emoji, emojiDialog);
+        emojiButton->setFixedSize(40, 40);
+        QObject::connect(emojiButton, &QPushButton::clicked, [=]() {
+            // Append the selected emoji to the message_text
+            ui->message_text->insertPlainText(emojiButton->text());
+        });
+        emojiButtons.append(emojiButton);
+        gridLayout->addWidget(emojiButton, row, col);
+        col++;
+        if (col == 10) {
+            row++;
+            col = 0;
+        }
+    }
+
+    // Create a QDialogButtonBox to hold the OK and Cancel buttons
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok , Qt::Horizontal, emojiDialog);
+    QObject::connect(buttonBox, &QDialogButtonBox::accepted, [=]() {
+        // Close the dialog
+        emojiDialog->accept();
+    });
+    QObject::connect(buttonBox, &QDialogButtonBox::rejected, [=]() {
+        // Close the dialog
+        emojiDialog->reject();
+    });
+
+    // Add the button box to the layout
+    gridLayout->addWidget(buttonBox, row + 1, 0, 1, 10, Qt::AlignCenter);
+
+   // Show the dialog
+    emojiDialog->exec();
+}

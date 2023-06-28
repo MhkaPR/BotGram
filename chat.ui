@@ -483,6 +483,19 @@ color:white;</string>
      <string>search</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>402</x>
+      <y>570</y>
+      <width>71</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>emojies</string>
+    </property>
+   </widget>
    <zorder>label_selectchat</zorder>
    <zorder>message_text</zorder>
    <zorder>pushButton_send_message</zorder>
@@ -494,6 +507,7 @@ color:white;</string>
    <zorder>listWidget_2</zorder>
    <zorder>search_button</zorder>
    <zorder>search_line</zorder>
+   <zorder>pushButton_2</zorder>
   </widget>
  </widget>
  <resources/>
