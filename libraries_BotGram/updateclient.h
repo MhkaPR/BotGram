@@ -10,6 +10,8 @@
 #include "userboxwidget.h"
 #include "messagewidget.h"
 #include "filemessagewidget.h"
+#include <QDateTime>
+#include <QMap>
 
 
 class updateClient : public DataBase,public package
@@ -24,7 +26,7 @@ public:
     void setDocJson(QByteArray doc);
     void fixUpdates(QString username,QString RoomName);
 
-    void updateMessages(QSqlDatabase db,QListWidget *userBoxs);
+    void updateMessages(QSqlDatabase db,QListWidget *userBoxsListWidget,const QMap<QString,QString>& username_name,QString myUsername);
 
     int IsApply = 0;
 

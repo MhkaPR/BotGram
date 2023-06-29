@@ -229,7 +229,7 @@ void updateClient::updateMessages(QSqlDatabase db, QListWidget *userBoxsListWidg
 
                     UserBoxWidget* user = UserBoxes[RoomTableName];
                     user->addUnReadmessageCount(countOfUnSeenMessages);
-                    user->lbl_time.setText(LastTime);
+                    user->lbl_time.setText((QDateTime::fromString(LastTime,"yyyyMMdd hh:mm:ss")).toString("hh:mm:ss"));
                     user->lbl_TweLineOfLastMessages.setText(user->getTweLine(queryGetLastMessage.value("message").toString(),50));
 
                     queryGetLastMessage.finish();

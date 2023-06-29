@@ -382,8 +382,10 @@ void chat::onReadyRead()
 
 
 
-            sendmessage(ReceiveUpdates.getDocJson());
+            //sendmessage(ReceiveUpdates.getDocJson());
             // process on updates
+            ReceiveUpdates.updateMessages(db,ui->listWidget,usernames_names,myinformation["username"]);
+
 
 
             systemMessagePacket updateInServer;
