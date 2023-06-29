@@ -190,7 +190,7 @@ chat::chat(QWidget *parent) :
 
 
 
-    connectToServer();
+
 
 
 
@@ -218,7 +218,7 @@ chat::chat(QWidget *parent) :
 
 
 
-
+    connectToServer();
 
 }
 
@@ -290,213 +290,252 @@ void chat::onReadyRead()
     // Handle incoming data from the server
 
 
-    qDebug() << data[0];
+    qDebug() << data[0]<< "//";
 
     if(data[0] == '~')
     {
         return;
     }
-
-    QDataStream in(&data,QIODevice::ReadOnly);
-    in.setVersion(QDataStream::Qt_4_0);
-
-    short header;
-    in>>header;
-    switch (header) {
-    case package::SEARCHUSER:
+    else if(data[0] == '#')
     {
-        searchUserPackat searching;
-        searching.deserialize(data);
-        if(searching.name != "")
-        {
-            ui->listWidget->addItem(searching.name);
-            QSqlQuery query(db);
-            query.prepare("INSERT INTO userinformation (username, name,email) VALUES (:username, :name,:email)");
-            query.bindValue(":username", searching.username);
-            query.bindValue(":name", searching.name);
-            query.bindValue(":email",searching.getemail());
-
-
-
-            // Execute the query
-            if (!query.exec()) {
-                QMessageBox::information(this,"warning","Execute the query","ok");
-
-                return;
-            }
-
-            usernames_names[searching.username] = searching.name;
-            usernames_email[searching.email] = searching.email;
-
-
-            query.clear();
-
-            query.prepare("CREATE TABLE "+searching.name+" (message TEXT , time TEXT,sender INTEGER,isfile INTEGER,Seen INTEGER)");
-            if(!query.exec())
-            {
-                qDebug() << "Failed to create table: " << query.lastError().text();
-                return;
-            }
-
-        }
-        else
-        {
-            QMessageBox::information(this,"warning!","no user with this email found","ok");
-        }
-        break;
-
-
-
-
-    }
-    case package::FILEMESSAGE :
-    {
-
-        //deserialize
-
-        fileMessage fmsg("");
-
-        fmsg.deserialize(data);
-
-        static quint64 bufsize=0;
-        bufsize += static_cast<quint64>(data.size());
-
-
-
-        QDir cur(QDir::current());
-        cur.cd("files");
-
-
-
-
-        //send file, part i in hard
-        QFile fileReceiive(cur.path()+"/"+fmsg.getFileName());
-
-        //sendmessage(cur.path()+"/"+fmsg.getFileName());
-
-        if(!fileReceiive.open(QIODevice::Append | QIODevice::WriteOnly))
-        {
-            sendmessage("receive file:"+fileReceiive.errorString());
-            exit(1);
-        }
-        fileReceiive.write(fmsg.getData());
-        fileReceiive.close();
-
-        //recievebtn->setText(QString::number(bufsize/1024/1024.0));
-        //check if end of file
-        if(fmsg.IsEndFile())
-        {
-            //recievebtn->setEnabled(true);
-            //recievebtn->setText("Open");
-            emit fileEnded();
-            bufsize = 0;
-        }
-
-
-        socket->write("~");
+        updateClient ApplyUpdates;
+        ApplyUpdates.IsApply = 1;
+        QByteArray bufferApplyUpdate;
+        QDataStream outApplying(&bufferApplyUpdate,QIODevice::WriteOnly);
+        outApplying.setVersion(QDataStream::Qt_4_0);
+        outApplying<<static_cast<short>(ApplyUpdates.getheader())<<ApplyUpdates.serialize();
+        socket->write(bufferApplyUpdate);
         socket->waitForBytesWritten();
-        //sendmessage("hello filemessage");
 
-        //print how much data received
-        //fmsg.getFileName().remove(fmsg.getroom()+"---");
-        //(ui->listWidget_2->findItems(fmsg.getFileName(),Qt::MatchContains))[0]->setText(QString("received %1 MB").arg(bufsize/1024/1024));
+        //        if(!socket->waitForReadyRead())
+        //        {
+        //            sendmessage("Error in receive Updates");
+        //        }
+        qDebug() << "sent apply!";
+        //return;
 
-
-        break;
     }
-
-    default:
+    else
     {
 
-        // msg.deserialize(data);
-        QJsonDocument doc = QJsonDocument::fromJson(data);
-        QJsonArray messagesArray = doc.array();
 
-        int messagesCount = messagesArray.size();
-        for (int i= 0;i< messagesCount;i++)
+        QDataStream in(&data,QIODevice::ReadOnly);
+        in.setVersion(QDataStream::Qt_4_0);
+
+        short header;
+        in>>header;
+        qDebug() << "code of package: " << header;
+        switch (header) {
+        case package::SEARCHUSER:
         {
-
-            QJsonObject obj = messagesArray[i].toObject();
-            msg.sender = obj["username"].toString();
-            msg.Message = obj["message"].toString();
-            msg.timeSend = QDateTime::fromString(obj["date"].toString(),"yyyy.MM.dd-hh:mm:ss.zzz");
-            msg.IsFile = obj["isFile"].toBool();
-
-            qDebug() << msg.sender << msg.Message << msg.timeSend << obj["date"];
-            //messageWidget *ClinetMessage = new messageWidget(msg.Message,msg.timeSend.toString("hh:mm:ss"),this,false);
-            //ch->addMessage(ClinetMessage);
-            //this->addMessage(ClinetMessage);
-
-
-
-            QSqlQuery query(db);
-            sendmessage(usernames_names[msg.sender]);
-
-            query.prepare("INSERT INTO "+usernames_names[msg.sender]+" (message, time,sender,isfile,Seen) VALUES (:message, :time,:sender,:isfile,:Seen)");
-            query.bindValue(":message",msg.Message );
-
-            query.bindValue(":time",msg.timeSend.toString("yyyyMMdd hh:mm:ss") );
-            query.bindValue(":sender",0);
-            query.bindValue(":isfile",msg.IsFile);
-
-            UserBoxWidget *checkUserForCurrect = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
-            if(checkUserForCurrect->lbl_name.text() != usernames_names[msg.getSender()])
+            searchUserPackat searching;
+            searching.deserialize(data);
+            if(searching.name != "")
             {
-                query.bindValue(":Seen",0);
+                ui->listWidget->addItem(searching.name);
+                QSqlQuery query(db);
+                query.prepare("INSERT INTO userinformation (username, name,email) VALUES (:username, :name,:email)");
+                query.bindValue(":username", searching.username);
+                query.bindValue(":name", searching.name);
+                query.bindValue(":email",searching.getemail());
 
-                for (int i = 0; i < ui->listWidget->count(); ++i)
+
+
+                // Execute the query
+                if (!query.exec()) {
+                    QMessageBox::information(this,"warning","Execute the query","ok");
+
+                    return;
+                }
+
+                usernames_names[searching.username] = searching.name;
+                usernames_email[searching.email] = searching.email;
+
+
+                query.clear();
+
+                query.prepare("CREATE TABLE "+searching.name+" (message TEXT , time TEXT,sender INTEGER,isfile INTEGER,Seen INTEGER)");
+                if(!query.exec())
                 {
-                    UserBoxWidget *checkUser = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->item(i)));
-                    if(checkUser->lbl_name.text() == usernames_names[msg.getSender()])
-                    {
-                        checkUser->addUnReadmessageCount(1);
-                        checkUser->lbl_TweLineOfLastMessages.setText(checkUser->getTweLine(msg.getMessage(),50));
-                        checkUser->lbl_time.setText(msg.timeSend.toString("hh:mm:ss"));
-                        break;
-                    }
+                    qDebug() << "Failed to create table: " << query.lastError().text();
+                    return;
                 }
 
             }
             else
             {
-                if(msg.IsFile)
+                QMessageBox::information(this,"warning!","no user with this email found","ok");
+            }
+            break;
+
+
+
+
+        }
+        case package::SYSTEM:
+        {
+
+
+            break;
+        }
+        case package::UPDATE_CLIENT:
+        {
+
+            updateClient ReceiveUpdates;
+            ReceiveUpdates.deserialize(data);
+            sendmessage(ReceiveUpdates.getDocJson());
+            socket->write("U");
+            socket->waitForBytesWritten();
+            break;
+        }
+        case package::FILEMESSAGE :
+        {
+
+            //deserialize
+
+            fileMessage fmsg("");
+
+            fmsg.deserialize(data);
+
+            static quint64 bufsize=0;
+            bufsize += static_cast<quint64>(data.size());
+
+
+
+            QDir cur(QDir::current());
+            cur.cd("files");
+
+
+
+
+            //send file, part i in hard
+            QFile fileReceiive(cur.path()+"/"+fmsg.getFileName());
+
+            //sendmessage(cur.path()+"/"+fmsg.getFileName());
+
+            if(!fileReceiive.open(QIODevice::Append | QIODevice::WriteOnly))
+            {
+                sendmessage("receive file:"+fileReceiive.errorString());
+                exit(1);
+            }
+            fileReceiive.write(fmsg.getData());
+            fileReceiive.close();
+
+            //recievebtn->setText(QString::number(bufsize/1024/1024.0));
+            //check if end of file
+            if(fmsg.IsEndFile())
+            {
+                //recievebtn->setEnabled(true);
+                //recievebtn->setText("Open");
+                emit fileEnded();
+                bufsize = 0;
+            }
+
+
+            socket->write("~");
+            socket->waitForBytesWritten();
+            //sendmessage("hello filemessage");
+
+            //print how much data received
+            //fmsg.getFileName().remove(fmsg.getroom()+"---");
+            //(ui->listWidget_2->findItems(fmsg.getFileName(),Qt::MatchContains))[0]->setText(QString("received %1 MB").arg(bufsize/1024/1024));
+
+
+            break;
+        }
+
+        default:
+        {
+
+            // msg.deserialize(data);
+            QJsonDocument doc = QJsonDocument::fromJson(data);
+            QJsonArray messagesArray = doc.array();
+
+            int messagesCount = messagesArray.size();
+            for (int i= 0;i< messagesCount;i++)
+            {
+
+                QJsonObject obj = messagesArray[i].toObject();
+                msg.sender = obj["username"].toString();
+                msg.Message = obj["message"].toString();
+                msg.timeSend = QDateTime::fromString(obj["date"].toString(),"yyyy.MM.dd-hh:mm:ss.zzz");
+                msg.IsFile = obj["isFile"].toBool();
+
+                qDebug() << msg.sender << msg.Message << msg.timeSend << obj["date"];
+                //messageWidget *ClinetMessage = new messageWidget(msg.Message,msg.timeSend.toString("hh:mm:ss"),this,false);
+                //ch->addMessage(ClinetMessage);
+                //this->addMessage(ClinetMessage);
+
+
+
+                QSqlQuery query(db);
+                sendmessage(usernames_names[msg.sender]);
+
+                query.prepare("INSERT INTO "+usernames_names[msg.sender]+" (message, time,sender,isfile,Seen) VALUES (:message, :time,:sender,:isfile,:Seen)");
+                query.bindValue(":message",msg.Message );
+
+                query.bindValue(":time",msg.timeSend.toString("yyyyMMdd hh:mm:ss") );
+                query.bindValue(":sender",0);
+                query.bindValue(":isfile",msg.IsFile);
+
+                UserBoxWidget *checkUserForCurrect = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
+                if(checkUserForCurrect->lbl_name.text() != usernames_names[msg.getSender()])
                 {
-                    FileMessageWidget *ReceivedFileMessage = new FileMessageWidget("",msg.gettimeSend().toString("hh:mm:ss"),this,msg.getMessage(),false);
-                    this->addMessage(ReceivedFileMessage);
-                    checkUserForCurrect->lbl_TweLineOfLastMessages.setText(checkUserForCurrect->getTweLine(ReceivedFileMessage->lbl_title->text(),50));
-                    checkUserForCurrect->lbl_time.setText(ReceivedFileMessage->m_timeLabel->text());
+                    query.bindValue(":Seen",0);
+
+                    for (int i = 0; i < ui->listWidget->count(); ++i)
+                    {
+                        UserBoxWidget *checkUser = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->item(i)));
+                        if(checkUser->lbl_name.text() == usernames_names[msg.getSender()])
+                        {
+                            checkUser->addUnReadmessageCount(1);
+                            checkUser->lbl_TweLineOfLastMessages.setText(checkUser->getTweLine(msg.getMessage(),50));
+                            checkUser->lbl_time.setText(msg.timeSend.toString("hh:mm:ss"));
+                            break;
+                        }
+                    }
 
                 }
                 else
                 {
-                    messageWidget *ReceivedMessage = new messageWidget(msg.getMessage(),msg.gettimeSend().toString("hh:mm:ss"),this,false);
-                    this->addMessage(ReceivedMessage);
-                    checkUserForCurrect->lbl_TweLineOfLastMessages.setText(checkUserForCurrect->getTweLine(ReceivedMessage->m_textLabel->text(),50));
-                    checkUserForCurrect->lbl_time.setText(ReceivedMessage->m_timeLabel->text());
+                    if(msg.IsFile)
+                    {
+                        FileMessageWidget *ReceivedFileMessage = new FileMessageWidget("",msg.gettimeSend().toString("hh:mm:ss"),this,msg.getMessage(),false);
+                        this->addMessage(ReceivedFileMessage);
+                        checkUserForCurrect->lbl_TweLineOfLastMessages.setText(checkUserForCurrect->getTweLine(ReceivedFileMessage->lbl_title->text(),50));
+                        checkUserForCurrect->lbl_time.setText(ReceivedFileMessage->m_timeLabel->text());
 
+                    }
+                    else
+                    {
+                        messageWidget *ReceivedMessage = new messageWidget(msg.getMessage(),msg.gettimeSend().toString("hh:mm:ss"),this,false);
+                        this->addMessage(ReceivedMessage);
+                        checkUserForCurrect->lbl_TweLineOfLastMessages.setText(checkUserForCurrect->getTweLine(ReceivedMessage->m_textLabel->text(),50));
+                        checkUserForCurrect->lbl_time.setText(ReceivedMessage->m_timeLabel->text());
+
+                    }
+                    ui->listWidget_2->scrollToBottom();
                 }
-                ui->listWidget_2->scrollToBottom();
+
+                query.bindValue(":Seen",msg.IsFile);
+
+
+                // Execute the query
+                if (!query.exec()) {
+                    QMessageBox::information(this,"warning","Execute the query","ok");
+
+                    return;
+                }
+                query.finish();
+
             }
 
-            query.bindValue(":Seen",msg.IsFile);
 
 
-            // Execute the query
-            if (!query.exec()) {
-                QMessageBox::information(this,"warning","Execute the query","ok");
-
-                return;
-            }
-            query.finish();
-
+            break;
         }
-
-
-
-        break;
+        }
     }
-    }
-
     // Process the data
 }
 chat::~chat()

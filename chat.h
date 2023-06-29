@@ -11,6 +11,7 @@
 #include "Forms/chatpage.h"
 #include <libraries_BotGram/userboxwidget.h>
 #include <iostream>
+#include <libraries_BotGram/updateclient.h>
 
 
 

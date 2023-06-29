@@ -21,7 +21,7 @@ public:
         ROOMS,
         UPDATE_CLIENT,
         FILEMESSAGE,
-        SEARCHUSER,
+        SEARCHUSER
 
     };
     enum SEND_STATE : short
