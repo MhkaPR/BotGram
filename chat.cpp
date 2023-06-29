@@ -190,8 +190,7 @@ chat::chat(QWidget *parent) :
 
 
 
-
-
+    connectToServer();
 
 
     ui->listWidget_2->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -218,7 +217,7 @@ chat::chat(QWidget *parent) :
 
 
 
-    connectToServer();
+
 
 }
 
@@ -254,6 +253,7 @@ void chat::connectToServer()
         out<<static_cast<short>(conn.getheader())<<conn.serialize();
 
         socket->write(buf);
+        qDebug() << "sdfghm,fdsaasdfhjkkldsdfhk";
         socket->waitForBytesWritten();
 
     }
@@ -307,10 +307,6 @@ void chat::onReadyRead()
         socket->write(bufferApplyUpdate);
         socket->waitForBytesWritten();
 
-        //        if(!socket->waitForReadyRead())
-        //        {
-        //            sendmessage("Error in receive Updates");
-        //        }
         qDebug() << "sent apply!";
         //return;
 
@@ -383,8 +379,23 @@ void chat::onReadyRead()
 
             updateClient ReceiveUpdates;
             ReceiveUpdates.deserialize(data);
-            sendmessage(ReceiveUpdates.getDocJson());
-            socket->write("U");
+
+
+            // process on updates
+
+
+
+
+            systemMessagePacket updateInServer;
+            updateInServer.setSysmsg(package::SysCodes::update_In_last_in_Rooms);
+
+            QByteArray updateBuf;
+            QDataStream outUpdateInserver(&updateBuf,QIODevice::WriteOnly);
+            outUpdateInserver.setVersion(QDataStream::Qt_4_0);
+
+            outUpdateInserver << static_cast<short>(updateInServer.getheader()) << updateInServer.serialize();
+
+            socket->write(updateBuf);
             socket->waitForBytesWritten();
             break;
         }
@@ -541,6 +552,15 @@ void chat::onReadyRead()
 chat::~chat()
 {
     delete ui;
+
+    QString pythonScript = "freeMemory.py";
+
+    QProcess process;
+    process.start("python", QStringList() << pythonScript);
+
+    process.waitForFinished();
+    qDebug() << "Memory Free!";
+
     delete this;
 }
 

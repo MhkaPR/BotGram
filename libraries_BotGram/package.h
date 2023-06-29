@@ -42,6 +42,7 @@ public:
         s_send_apply_For_Link,
         get_name,
         send_file,
+        update_In_last_in_Rooms
 
     };
     enum RoomType :short
