@@ -381,9 +381,9 @@ void chat::onReadyRead()
             ReceiveUpdates.deserialize(data);
 
 
+
+            sendmessage(ReceiveUpdates.getDocJson());
             // process on updates
-
-
 
 
             systemMessagePacket updateInServer;
@@ -667,7 +667,7 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
         //QMessageBox::information(this,"sff",itemname);
 
         QSqlQuery query(db);
-        query.prepare("SELECT * FROM  "+selectedpvname);
+        query.prepare("SELECT * FROM  "+selectedpvname+ " ORDER BY time ASC" );
 
         // Execute the query
         if (!query.exec()) {

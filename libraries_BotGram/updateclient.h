@@ -24,7 +24,7 @@ public:
     void setDocJson(QByteArray doc);
     void fixUpdates(QString username,QString RoomName);
 
-    void updateMessages(QSqlDatabase db,QListWidget *userBoxs,QListWidget *chatPage);
+    void updateMessages(QSqlDatabase db,QListWidget *userBoxs);
 
     int IsApply = 0;
 
