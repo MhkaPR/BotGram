@@ -506,6 +506,18 @@ image: url(:/SearchIcon.png);</string>
       <height>28</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+ border: none;
+background-image: url(:/icons/pin.png);
+ background-position: center;
+background-color: rgba(255, 0, 0, 50%);
+}
+QPushButton:hover {
+background-color: #E6E6E6;
+color:black;
+ }</string>
+    </property>
     <property name="text">
      <string>Emojies</string>
     </property>

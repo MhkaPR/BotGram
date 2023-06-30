@@ -137,7 +137,7 @@ chat::chat(QWidget *parent) :
 
     ui->photo_button->setStyleSheet("QPushButton {"
                                     "border: none;"
-                                    "background-image: url(:/icons/pin.png);"
+
                                     "background-position: center;"
                                     "background-color: rgb(255, 255, 127);"
 
@@ -147,7 +147,7 @@ chat::chat(QWidget *parent) :
                                     "}");
     ui->pushButton_camera->setStyleSheet("QPushButton {"
                                          "border: none;"
-                                         "background-image: url(:/icons/pin.png);"
+
                                          "background-position: center;"
                                          "background-color: #4D98E8;"
 
@@ -157,7 +157,7 @@ chat::chat(QWidget *parent) :
                                          "}");
     ui->pushButton_voice->setStyleSheet("QPushButton {"
                                         "border: none;"
-                                        "background-image: url(:/icons/pin.png);"
+
                                         "background-position: center;"
                                         "background-color: rgb(255, 85, 255);"
 
