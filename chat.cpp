@@ -64,6 +64,8 @@ chat::chat(QWidget *parent) :
     ui->pushButton_voice->hide();
     ui->search_line->hide();
     ui->search_button->hide();
+    ui->scrollArea_Emojies->hide();
+    ui->btn_Emojies->hide();
 
 
     db = QSqlDatabase::addDatabase("QSQLITE");
@@ -113,16 +115,7 @@ chat::chat(QWidget *parent) :
         {
             time = lastUpdateQuery.value("max(time)").toString();
             time.remove(0,9);
-            // messageTweLine =getTweLine(lastUpdateQuery.value("message").toString(),50);
 
-            //            QString line1 = messageTweLine.remove(0,50);
-            //            QString line2 = messageTweLine.remove(0,qMin(50,messageTweLine.length()));
-            //            line1.remove("\n");
-
-
-
-            //            temp = QString("%1\n%2").arg(messageTweLine).arg(time);
-            //            temp = "\n" + temp;
         }
 
         //ui->listWidget->addItem(name+temp);
@@ -139,10 +132,6 @@ chat::chat(QWidget *parent) :
 
 
 
-    //    ui->pushButton_send_message->setStyleSheet(
-    //                " background-color: rgb(0, 170, 255);"
-    //                " background-image: url(:/new/prefix1/sendmessageIcon.png);"
-    //                "border-radius:5px;");
 
     ui->pushButton_send_message->setVisible(false);
 
@@ -215,13 +204,107 @@ chat::chat(QWidget *parent) :
     //    });
 
 
+    //add emojis to ram
+    QFile emojisFile("DataFiles\\Imojis.btg");
+
+    if(!emojisFile.open(QIODevice::ReadOnly))
+    {
+        ui->btn_Emojies->setVisible(false);
+    }
+    else
+    {
+        QString EmojiseData = emojisFile.readAll();
+        emojisFile.close();
+        Emojies = EmojiseData.split(" ").toSet();
+
+        int columnNum = 8;
+
+        ui->tableWidget_Emojies->setRowCount(Emojies.count()/columnNum);
+        ui->tableWidget_Emojies->setColumnCount(columnNum);
+        for (int i = 0; i < columnNum; ++i) {
+            ui->tableWidget_Emojies->setColumnWidth(i,87);
+        }
+
+        int counter_emojies=0;
+        int row=0;
+
+        foreach (const QString& emojie, Emojies)
+        {
+
+            if(emojie != "")
+            {
+                counter_emojies++;
+
+                if(counter_emojies==9)
+                {
+                    row++;
+                    counter_emojies=0;
+                }
+
+                QTableWidgetItem* item = new QTableWidgetItem(emojie);
+                item->setTextAlignment(Qt::AlignCenter);
+
+                ui->tableWidget_Emojies->setItem(row, counter_emojies-1, item);
+            }
+        }
+
+    }
 
 
+    //ui->tableWidget_Emojies->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+    connect( ui->tableWidget_Emojies, &QTableWidget::itemClicked, [=]() {
+        QList<QTableWidgetItem*> selectedItems = ui->tableWidget_Emojies->selectedItems();
+        if (!selectedItems.isEmpty()) {
+            QTableWidgetItem* selectedItem = selectedItems.first();
+            // Do something with the selected item
+            ui->message_text->insertPlainText(selectedItem->text());
+
+        }
+    });
 
 
+    //        QTableWidget* table = new QTableWidget();
+    //        table->setRowCount(Emojies.size());
+    //        table->setColumnCount(1);
+    //        table->setShowGrid(false); // hide the grid lines
+    //        table->setSelectionMode(QAbstractItemView::SingleSelection);
+    //        table->setHorizontalHeaderLabels({"Emojis"});
+
+    //        int row = 0;
+    //        foreach (const QString& emoji, Emojies) {
+    //            QTableWidgetItem* item = new QTableWidgetItem(emoji);
+    //            item->setTextAlignment(Qt::AlignCenter);
+    //            table->setItem(row++, 0, item);
+    //        }
+
+    //        QGridLayout* layout = new QGridLayout();
+    //        layout->addWidget(table);
+    //        ui->scrollArea_Emojies->setLayout(layout);
+    //        QTableWidget* table = new QTableWidget(Emojies.size(), 1);
+    //        table->setSelectionMode(QAbstractItemView::SingleSelection);
+    //        table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    //        table->setHorizontalHeaderLabels({"Emojis"});
+
+    //        int row = 0;
+    //        foreach (const QString& emoji, Emojies) {
+    //            QTableWidgetItem* item = new QTableWidgetItem(emoji);
+    //            table->setItem(row++, 0, item);
+    //        }
+
+    //        connect(table, &QTableWidget::itemSelectionChanged, [=]() {
+    //            QList<QTableWidgetItem*> selectedItems = table->selectedItems();
+    //            if (!selectedItems.isEmpty()) {
+    //                QTableWidgetItem* selectedItem = selectedItems.first();
+    //                qDebug() << "Selected emoji:" << selectedItem->text();
+    //            }
+    //        });
+
+    //        ui->scrollArea_Emojies->setWidget(table);
 
 
 }
+
 
 void chat::connectToServer()
 {
@@ -727,6 +810,9 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
         ui->pushButton_voice->show();
         ui->label_onoroff->show();
         ui->search_button->show();
+        ui->btn_Emojies->show();
+        ui->scrollArea_Emojies->hide();
+        ui->btn_Emojies->setText("Emojies");
 
         //ui->label_selectchat->setText(name);
         //ui->label_selectchat->setAlignment(Qt::AlignHCenter);
@@ -1655,4 +1741,18 @@ void chat::on_search_line_textChanged(const QString &arg1)
 
     }
     ui->listWidget_2->scrollToBottom();
+}
+
+void chat::on_btn_Emojies_clicked()
+{
+    if(ui->btn_Emojies->text() == "Emojies")
+    {
+        ui->btn_Emojies->setText("close");
+        ui->scrollArea_Emojies->show();
+    }
+    else
+    {
+        ui->btn_Emojies->setText("Emojies");
+        ui->scrollArea_Emojies->hide();
+    }
 }

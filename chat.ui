@@ -497,6 +497,97 @@ image: url(:/SearchIcon.png);</string>
      <string/>
     </property>
    </widget>
+   <widget class="QPushButton" name="btn_Emojies">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>570</y>
+      <width>61</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Emojies</string>
+    </property>
+   </widget>
+   <widget class="QScrollArea" name="scrollArea_Emojies">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>404</y>
+      <width>731</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="widgetResizable">
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>729</width>
+       <height>129</height>
+      </rect>
+     </property>
+     <widget class="QTableWidget" name="tableWidget_Emojies">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>731</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="tabKeyNavigation">
+       <bool>false</bool>
+      </property>
+      <property name="showDropIndicator" stdset="0">
+       <bool>false</bool>
+      </property>
+      <property name="dragDropOverwriteMode">
+       <bool>false</bool>
+      </property>
+      <property name="dragDropMode">
+       <enum>QAbstractItemView::NoDragDrop</enum>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <property name="verticalScrollMode">
+       <enum>QAbstractItemView::ScrollPerPixel</enum>
+      </property>
+      <property name="horizontalScrollMode">
+       <enum>QAbstractItemView::ScrollPerPixel</enum>
+      </property>
+      <property name="showGrid">
+       <bool>false</bool>
+      </property>
+      <property name="gridStyle">
+       <enum>Qt::NoPen</enum>
+      </property>
+      <attribute name="horizontalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+     </widget>
+    </widget>
+   </widget>
    <zorder>label_selectchat</zorder>
    <zorder>message_text</zorder>
    <zorder>pushButton_send_message</zorder>
@@ -508,6 +599,8 @@ image: url(:/SearchIcon.png);</string>
    <zorder>listWidget_2</zorder>
    <zorder>search_line</zorder>
    <zorder>search_button</zorder>
+   <zorder>btn_Emojies</zorder>
+   <zorder>scrollArea_Emojies</zorder>
   </widget>
  </widget>
  <resources/>

@@ -12,6 +12,10 @@
 #include <libraries_BotGram/userboxwidget.h>
 #include <iostream>
 #include <libraries_BotGram/updateclient.h>
+#include <QTableWidget>
+#include <QHeaderView>
+#include <QGridLayout>
+
 
 
 
@@ -87,6 +91,8 @@ private slots:
 
    void on_search_line_textChanged(const QString &arg1);
 
+   void on_btn_Emojies_clicked();
+
 private:
    void sendmessage(QString message);
     Ui::chat *ui;
@@ -103,6 +109,8 @@ private:
   chatPage *ch=nullptr;
   QListWidgetItem *LastItemChoosed = nullptr;
   QList<QListWidgetItem*> itemsOfListWidgetUsers;
+
+  QSet<QString> Emojies;
 
 };
 
