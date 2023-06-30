@@ -629,6 +629,11 @@ void chat::sendApplyForDownload(QString filename)
     socket->waitForBytesWritten();
     //    socket->waitForReadyRead();
 
+    qDebug() << "data[\"sender\"]" <<data["sender"];
+    qDebug() << "data[\"FileName\"]" <<data["FileName"];
+    qDebug() << "data[\"room\"]" <<data["room"];
+    qDebug() << "data[\"sender\"]" <<data["sender"];
+
 }
 
 void chat::OpenchatPage()
