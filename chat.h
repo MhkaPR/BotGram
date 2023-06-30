@@ -112,6 +112,8 @@ private:
 
   QSet<QString> Emojies;
 
+  bool AnyItemInListWidget1NoChoose = false;
+
 };
 
 #endif // CHAT_H

@@ -183,6 +183,8 @@ chat::chat(QWidget *parent) :
     ui->listWidget_2->setSelectionRectVisible(false);
     scrollBar->setSingleStep(20);  // set the scroll step to 1 pixel
 
+    ui->listWidget->setCurrentItem(nullptr);
+
     //add emojis to ram
     QFile emojisFile("DataFiles\\Imojis.btg");
 
@@ -407,7 +409,7 @@ void chat::onReadyRead()
             //sendmessage(ReceiveUpdates.getDocJson());
             // process on updates
             ReceiveUpdates.updateMessages(db,ui->listWidget,usernames_names,myinformation["username"]);
-
+            ui->listWidget->setCurrentItem(nullptr);
 
 
             systemMessagePacket updateInServer;
@@ -504,7 +506,7 @@ void chat::onReadyRead()
 
 
                 QSqlQuery query(db);
-                sendmessage(usernames_names[msg.sender]);
+
 
                 query.prepare("INSERT INTO "+usernames_names[msg.sender]+" (message, time,sender,isfile,Seen) VALUES (:message, :time,:sender,:isfile,:Seen)");
                 query.bindValue(":message",msg.Message );
@@ -513,8 +515,24 @@ void chat::onReadyRead()
                 query.bindValue(":sender",0);
                 query.bindValue(":isfile",msg.IsFile);
 
+
+
                 UserBoxWidget *checkUserForCurrect = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
-                if(checkUserForCurrect->lbl_name.text() != usernames_names[msg.getSender()])
+
+                //check if any item no choosed
+                QString nameForCheckCurrentItemToSetCountUnreaded;
+                if(!AnyItemInListWidget1NoChoose)
+                {
+                    ui->listWidget->setCurrentItem(nullptr);
+
+                }
+                else
+                {
+                    nameForCheckCurrentItemToSetCountUnreaded = checkUserForCurrect->lbl_name.text();
+                }
+
+
+                if(nameForCheckCurrentItemToSetCountUnreaded != usernames_names[msg.getSender()])
                 {
                     query.bindValue(":Seen",0);
 
@@ -533,6 +551,7 @@ void chat::onReadyRead()
                 }
                 else
                 {
+                    query.bindValue(":Seen",1);
                     if(msg.IsFile)
                     {
                         FileMessageWidget *ReceivedFileMessage = new FileMessageWidget("",msg.gettimeSend().toString("hh:mm:ss"),this,msg.getMessage(),false);
@@ -552,7 +571,7 @@ void chat::onReadyRead()
                     ui->listWidget_2->scrollToBottom();
                 }
 
-                query.bindValue(":Seen",msg.IsFile);
+
 
 
                 // Execute the query
@@ -666,6 +685,7 @@ int chat::countOfunreadMessages(QString name)
 
 void chat::on_listWidget_itemClicked(QListWidgetItem *item)
 {
+    AnyItemInListWidget1NoChoose =true;
 
     if(LastItemChoosed != item)
     {
