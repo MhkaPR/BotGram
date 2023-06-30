@@ -145,6 +145,7 @@ DISTFILES += \
     DataBases/data.btg \
     DataBases/dataMe.xml \
     DataBases/sample.xml \
+    DataFiles/SearchIcon.png \
     DataFiles/checkingcaptcha/Captcha.sln \
     DataFiles/checkingcaptcha/Captcha.vcxproj \
     DataFiles/checkingcaptcha/Generate VC Project.bat \

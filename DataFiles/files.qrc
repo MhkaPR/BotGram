@@ -19,4 +19,7 @@
         <file>noise4.png</file>
         <file>noise5.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>SearchIcon.png</file>
+    </qresource>
 </RCC>

@@ -1573,9 +1573,19 @@ void chat::addUserBox(UserBoxWidget *userBox)
 
 void chat::on_txt_searchUser_textChanged(const QString &arg1)
 {
+    // Create a regular expression from the search query
+      QRegExp regex(arg1, Qt::CaseInsensitive, QRegExp::FixedString);
 
+      // Iterate over the list widget items and show/hide them based on the search query
+      for (int i = 0; i < ui->listWidget->count(); i++) {
 
+          QListWidgetItem *item = ui->listWidget->item(i);
+          UserBoxWidget *matchUser = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(item));
+          QString nameUser = matchUser->lbl_name.text();
+                  // Use the regular expression to check if the item text contains the search query
+                  bool matches = regex.indexIn(nameUser) != -1;
 
-
-
+          // Show/hide the item based on whether it matches the search query
+          item->setHidden(!matches);
+      }
 }
