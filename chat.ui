@@ -439,7 +439,7 @@ color:white;</string>
      <string>Voice</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="txt_searchUser_2">
+   <widget class="QLineEdit" name="search_line">
     <property name="geometry">
      <rect>
       <x>350</x>
@@ -480,7 +480,7 @@ color:white;</string>
      <string>    Search</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btn_Search">
+   <widget class="QPushButton" name="search_button">
     <property name="geometry">
      <rect>
       <x>666</x>
@@ -490,7 +490,7 @@ color:white;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-radius:22px;
+     <string notr="true">border-radius:10px;
 image: url(:/SearchIcon.png);</string>
     </property>
     <property name="text">
@@ -506,8 +506,8 @@ image: url(:/SearchIcon.png);</string>
    <zorder>pushButton_camera</zorder>
    <zorder>pushButton_voice</zorder>
    <zorder>listWidget_2</zorder>
-   <zorder>txt_searchUser_2</zorder>
-   <zorder>btn_Search</zorder>
+   <zorder>search_line</zorder>
+   <zorder>search_button</zorder>
   </widget>
  </widget>
  <resources/>

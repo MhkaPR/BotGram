@@ -81,6 +81,10 @@ private slots:
 
    void on_txt_searchUser_textChanged(const QString &arg1);
 
+   void on_btn_Search_clicked();
+
+   void on_search_button_clicked();
+
 private:
    void sendmessage(QString message);
     Ui::chat *ui;

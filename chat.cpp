@@ -62,6 +62,8 @@ chat::chat(QWidget *parent) :
     ui->photo_button->hide();
     ui->pushButton_camera->hide();
     ui->pushButton_voice->hide();
+    ui->search_line->hide();
+    ui->search_button->hide();
 
 
     db = QSqlDatabase::addDatabase("QSQLITE");
@@ -724,6 +726,7 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
         ui->pushButton_camera->show();
         ui->pushButton_voice->show();
         ui->label_onoroff->show();
+        ui->search_button->show();
 
         //ui->label_selectchat->setText(name);
         //ui->label_selectchat->setAlignment(Qt::AlignHCenter);
@@ -1574,18 +1577,49 @@ void chat::addUserBox(UserBoxWidget *userBox)
 void chat::on_txt_searchUser_textChanged(const QString &arg1)
 {
     // Create a regular expression from the search query
-      QRegExp regex(arg1, Qt::CaseInsensitive, QRegExp::FixedString);
+    QRegExp regex(arg1, Qt::CaseInsensitive, QRegExp::FixedString);
 
-      // Iterate over the list widget items and show/hide them based on the search query
-      for (int i = 0; i < ui->listWidget->count(); i++) {
+    // Iterate over the list widget items and show/hide them based on the search query
+    for (int i = 0; i < ui->listWidget->count(); i++) {
 
-          QListWidgetItem *item = ui->listWidget->item(i);
-          UserBoxWidget *matchUser = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(item));
-          QString nameUser = matchUser->lbl_name.text();
-                  // Use the regular expression to check if the item text contains the search query
-                  bool matches = regex.indexIn(nameUser) != -1;
+        QListWidgetItem *item = ui->listWidget->item(i);
+        UserBoxWidget *matchUser = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(item));
+        QString nameUser = matchUser->lbl_name.text();
+        // Use the regular expression to check if the item text contains the search query
+        bool matches = regex.indexIn(nameUser) != -1;
 
-          // Show/hide the item based on whether it matches the search query
-          item->setHidden(!matches);
-      }
+        // Show/hide the item based on whether it matches the search query
+        item->setHidden(!matches);
+    }
+}
+
+void chat::on_btn_Search_clicked()
+{
+
+
+//    if(!ui->search_line->isHidden())
+//    {
+//        ui->search_button->setText("close");
+//    }
+//    else {
+//        ui->search_button->setText("search");
+//    }
+}
+
+void chat::on_search_button_clicked()
+{
+    if (ui->search_line->isHidden()) {
+
+        ui->search_line->setText("");
+        ui->search_line->show();
+        ui->search_button->setStyleSheet("border-radius:22px;"
+                                        " image: url(:/nextOfClickSearch.png);");
+
+    }
+    else
+    {
+        ui->search_line->hide();
+        ui->search_button->setStyleSheet("border-radius:10px;"
+                                        " image: url(:/SearchIcon.png);");
+    }
 }
