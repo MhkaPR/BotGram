@@ -1597,13 +1597,13 @@ void chat::on_btn_Search_clicked()
 {
 
 
-//    if(!ui->search_line->isHidden())
-//    {
-//        ui->search_button->setText("close");
-//    }
-//    else {
-//        ui->search_button->setText("search");
-//    }
+    //    if(!ui->search_line->isHidden())
+    //    {
+    //        ui->search_button->setText("close");
+    //    }
+    //    else {
+    //        ui->search_button->setText("search");
+    //    }
 }
 
 void chat::on_search_button_clicked()
@@ -1613,13 +1613,46 @@ void chat::on_search_button_clicked()
         ui->search_line->setText("");
         ui->search_line->show();
         ui->search_button->setStyleSheet("border-radius:22px;"
-                                        " image: url(:/nextOfClickSearch.png);");
+                                         " image: url(:/nextOfClickSearch.png);");
 
     }
     else
     {
         ui->search_line->hide();
         ui->search_button->setStyleSheet("border-radius:10px;"
-                                        " image: url(:/SearchIcon.png);");
+                                         " image: url(:/SearchIcon.png);");
     }
+}
+
+void chat::on_search_line_textChanged(const QString &arg1)
+{
+    QRegExp regex(arg1, Qt::CaseInsensitive, QRegExp::FixedString);
+
+    // Iterate over the list widget items and show/hide them based on the search query
+    for (int i = 0; i < ui->listWidget_2->count(); i++) {
+
+        QListWidgetItem *item = ui->listWidget_2->item(i);
+        messageWidget *matchUser = dynamic_cast<messageWidget*>(ui->listWidget_2->itemWidget(item));
+        FileMessageWidget *matchUserfile = dynamic_cast<FileMessageWidget*>(ui->listWidget_2->itemWidget(item));
+        QString text ;
+        if(matchUserfile==nullptr)
+        {
+
+            text = matchUser->m_textLabel->text();
+        }
+        else
+        {
+            text = matchUserfile->lbl_title->text();
+        }
+
+
+
+        // Use the regular expression to check if the item text contains the search query
+        bool matches = regex.indexIn(text) != -1;
+
+        // Show/hide the item based on whether it matches the search query
+        item->setHidden(!matches);
+
+    }
+    ui->listWidget_2->scrollToBottom();
 }
