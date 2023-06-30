@@ -167,13 +167,6 @@ chat::chat(QWidget *parent) :
                                         "}");
 
 
-
-
-
-    //QScrollBar * scroolBarOfchat = ui->listWidget_2->verticalScrollBar();
-    //    scroolBarOfchat->setSingleStep(50);
-    //    scroolBarOfchat->setPageStep(1);
-
     socket = new QTcpSocket(this);
     connect(socket, &QTcpSocket::connected, this, &chat::onConnected);
     connect(socket, &QTcpSocket::disconnected, this, &chat::onDisconnected);
@@ -189,20 +182,6 @@ chat::chat(QWidget *parent) :
     ui->listWidget_2->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
     ui->listWidget_2->setSelectionRectVisible(false);
     scrollBar->setSingleStep(20);  // set the scroll step to 1 pixel
-    //    scrollBar->setPageStep(ui->listWidget_2->height());  // set the page step to the height of the list widget
-    //      // set the scroll mode to ScrollPerPixel
-
-    //    // Connect the valueChanged signal of the scrollbar to a custom slot
-    //    QObject::connect(scrollBar, &QScrollBar::valueChanged, ui->listWidget_2, [=](int value) {
-    //        // Adjust the scroll position to scroll one pixel at a time
-    //        int delta = value - scrollBar->value();
-    //        if (delta > 1) {
-    //            scrollBar->setValue(value - 1);
-    //        } else if (delta < -1) {
-    //            scrollBar->setValue(value + 1);
-    //        }
-    //    });
-
 
     //add emojis to ram
     QFile emojisFile("DataFiles\\Imojis.btg");
@@ -250,9 +229,6 @@ chat::chat(QWidget *parent) :
 
     }
 
-
-    //ui->tableWidget_Emojies->setSelectionBehavior(QAbstractItemView::SelectRows);
-
     connect( ui->tableWidget_Emojies, &QTableWidget::itemClicked, [=]() {
         QList<QTableWidgetItem*> selectedItems = ui->tableWidget_Emojies->selectedItems();
         if (!selectedItems.isEmpty()) {
@@ -262,45 +238,6 @@ chat::chat(QWidget *parent) :
 
         }
     });
-
-
-    //        QTableWidget* table = new QTableWidget();
-    //        table->setRowCount(Emojies.size());
-    //        table->setColumnCount(1);
-    //        table->setShowGrid(false); // hide the grid lines
-    //        table->setSelectionMode(QAbstractItemView::SingleSelection);
-    //        table->setHorizontalHeaderLabels({"Emojis"});
-
-    //        int row = 0;
-    //        foreach (const QString& emoji, Emojies) {
-    //            QTableWidgetItem* item = new QTableWidgetItem(emoji);
-    //            item->setTextAlignment(Qt::AlignCenter);
-    //            table->setItem(row++, 0, item);
-    //        }
-
-    //        QGridLayout* layout = new QGridLayout();
-    //        layout->addWidget(table);
-    //        ui->scrollArea_Emojies->setLayout(layout);
-    //        QTableWidget* table = new QTableWidget(Emojies.size(), 1);
-    //        table->setSelectionMode(QAbstractItemView::SingleSelection);
-    //        table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    //        table->setHorizontalHeaderLabels({"Emojis"});
-
-    //        int row = 0;
-    //        foreach (const QString& emoji, Emojies) {
-    //            QTableWidgetItem* item = new QTableWidgetItem(emoji);
-    //            table->setItem(row++, 0, item);
-    //        }
-
-    //        connect(table, &QTableWidget::itemSelectionChanged, [=]() {
-    //            QList<QTableWidgetItem*> selectedItems = table->selectedItems();
-    //            if (!selectedItems.isEmpty()) {
-    //                QTableWidgetItem* selectedItem = selectedItems.first();
-    //                qDebug() << "Selected emoji:" << selectedItem->text();
-    //            }
-    //        });
-
-    //        ui->scrollArea_Emojies->setWidget(table);
 
 
 }
