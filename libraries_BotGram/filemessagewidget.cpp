@@ -113,7 +113,7 @@ void FileMessageWidget::btn_file_clicked()
             setIconOfCircle(false);
             downloaded =true;
             btn_file->setEnabled(false);
-            btn_file->setText("downloading");
+            btn_file->setText("??");
             qDebug()<<downloaded << 2;
             emit downloadFile();
 

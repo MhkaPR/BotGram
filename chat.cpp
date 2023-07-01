@@ -1,3 +1,4 @@
+
 #include "chat.h"
 #include "ui_chat.h"
 #include<QListWidget>
@@ -277,7 +278,7 @@ void chat::connectToServer()
         out<<static_cast<short>(conn.getheader())<<conn.serialize();
 
         socket->write(buf);
-        qDebug() << "sdfghm,fdsaasdfhjkkldsdfhk";
+        qDebug() << "### Write / Apply For Connect to server (281)###";
         socket->waitForBytesWritten();
 
     }
@@ -316,7 +317,7 @@ void chat::onReadyRead()
 
     qDebug() << data[0]<< "//";
 
-    if(data[0] == '~')
+    if(data[0] == '$')
     {
         return;
     }
@@ -329,6 +330,7 @@ void chat::onReadyRead()
         outApplying.setVersion(QDataStream::Qt_4_0);
         outApplying<<static_cast<short>(ApplyUpdates.getheader())<<ApplyUpdates.serialize();
         socket->write(bufferApplyUpdate);
+         qDebug() << "### Write / Apply For update (333)###";
         socket->waitForBytesWritten();
 
         qDebug() << "sent apply!";
@@ -422,6 +424,7 @@ void chat::onReadyRead()
             outUpdateInserver << static_cast<short>(updateInServer.getheader()) << updateInServer.serialize();
 
             socket->write(updateBuf);
+             qDebug() << "### Write / Apply For update IN SERVER (427)###";
             socket->waitForBytesWritten();
             break;
         }
@@ -469,13 +472,9 @@ void chat::onReadyRead()
             }
 
 
-            socket->write("~");
+            socket->write("$");
+             qDebug() << "### Write / send $ For That client  Receive part of file (476)###";
             socket->waitForBytesWritten();
-            //sendmessage("hello filemessage");
-
-            //print how much data received
-            //fmsg.getFileName().remove(fmsg.getroom()+"---");
-            //(ui->listWidget_2->findItems(fmsg.getFileName(),Qt::MatchContains))[0]->setText(QString("received %1 MB").arg(bufsize/1024/1024));
 
 
             break;
@@ -559,6 +558,17 @@ void chat::onReadyRead()
                         checkUserForCurrect->lbl_TweLineOfLastMessages.setText(checkUserForCurrect->getTweLine(ReceivedFileMessage->lbl_title->text(),50));
                         checkUserForCurrect->lbl_time.setText(ReceivedFileMessage->m_timeLabel->text());
 
+
+
+                        //connect them to can download from server
+                        connect(ReceivedFileMessage,&FileMessageWidget::downloadFile,[=](){
+
+                            this->sendApplyForDownload(ReceivedFileMessage->lbl_title->text());
+                             qDebug() << "### connect / Apply for new FileBox Received (564)###";
+
+                        });
+                        connect(this,&chat::fileEnded,ReceivedFileMessage,&FileMessageWidget::ActiveBtnToCauseOfFileEnded);
+
                     }
                     else
                     {
@@ -624,15 +634,16 @@ void chat::sendApplyForDownload(QString filename)
     out2.setVersion(QDataStream::Qt_4_0);
     out2 << static_cast<short>(msgpacket.getheader()) << msgpacket.serialize();
     //    sendmessage(filename);
+
+
     socket->write(msgbytearray);
+     qDebug() << "### Write / Apply For Download (333)###";
 
-    socket->waitForBytesWritten();
-    //    socket->waitForReadyRead();
+    if(socket->waitForBytesWritten())
+    {
 
-    qDebug() << "data[\"sender\"]" <<data["sender"];
-    qDebug() << "data[\"FileName\"]" <<data["FileName"];
-    qDebug() << "data[\"room\"]" <<data["room"];
-    qDebug() << "data[\"sender\"]" <<data["sender"];
+        qDebug() << msgbytearray;
+    }
 
 }
 
@@ -738,13 +749,12 @@ void chat::on_listWidget_itemClicked(QListWidgetItem *item)
                 FileMessageWidget *newFile_Before = new FileMessageWidget("",time,this,message,isMe);
 
                 this->addMessage(newFile_Before);
-                itemsOfListWidgetUsers.append(ui->listWidget->item(ui->listWidget->count()-1));
 
-                //ch->addMessage(newFile_Before);
-
+                //fix to can download file from server
                 connect(newFile_Before,&FileMessageWidget::downloadFile,[=](){
 
                     this->sendApplyForDownload(message);
+                     qDebug() << "### connect / Apply for file from dataBase (753)###";
                 });
                 connect(this,&chat::fileEnded,newFile_Before,&FileMessageWidget::ActiveBtnToCauseOfFileEnded);
             }
@@ -818,6 +828,7 @@ void chat::on_pushButton_send_message_clicked()
     out2.setVersion(QDataStream::Qt_4_0);
     out2<<static_cast<short>(messages.getheader())<<messages.serialize();
     socket->write(buff2);
+     qDebug() << "### Write / send message (831)###";
     if(socket->waitForBytesWritten())
     {
 
@@ -1079,7 +1090,7 @@ void chat::on_photo_button_clicked()
 
 
 
-    // ui->listWidget_2->scrollToBottom();
+
 
     QString filename = fmsg.getFileName();
 
@@ -1090,6 +1101,7 @@ void chat::on_photo_button_clicked()
 
     connect(newfile,&FileMessageWidget::downloadFile,[=](){
         this->sendApplyForDownload(filename);
+         qDebug() << "### connect / Apply for If file Sent remove We can to download it again (1099)###";
     });
     connect(this,&chat::fileEnded,newfile,&FileMessageWidget::ActiveBtnToCauseOfFileEnded);
 
@@ -1194,103 +1206,103 @@ void chat::on_message_text_textChanged()
 
 void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
 {
-    if (item->icon().isNull()) {
-        // If the clicked item does not contain an icon, it may contain text
-        QString text = item->text();
-        if (!text.isEmpty()) {
-            // Remove the timestamp from the text if it exists
-            text.remove(QRegularExpression("^\\[\\d{2}:\\d{2}:\\d{2}\\] "));
+//    if (item->icon().isNull()) {
+//        // If the clicked item does not contain an icon, it may contain text
+//        QString text = item->text();
+//        if (!text.isEmpty()) {
+//            // Remove the timestamp from the text if it exists
+//            text.remove(QRegularExpression("^\\[\\d{2}:\\d{2}:\\d{2}\\] "));
 
-            // If the item contains text, open a context menu to copy the text
-            QMenu menu(this);
-            QAction *copyAction = menu.addAction("Copy");
-            connect(copyAction, &QAction::triggered, [=]() {
-                QClipboard *clipboard = QGuiApplication::clipboard();
-                clipboard->setText(text);
-            });
-            menu.exec(QCursor::pos());
-        }
-        return;
-    }
+//            // If the item contains text, open a context menu to copy the text
+//            QMenu menu(this);
+//            QAction *copyAction = menu.addAction("Copy");
+//            connect(copyAction, &QAction::triggered, [=]() {
+//                QClipboard *clipboard = QGuiApplication::clipboard();
+//                clipboard->setText(text);
+//            });
+//            menu.exec(QCursor::pos());
+//        }
+//        return;
+//    }
 
-    // Get the filename from the clicked item
-    QString filename = item->text();
-    filename.remove(0,11);
+//    // Get the filename from the clicked item
+//    QString filename = item->text();
+//    filename.remove(0,11);
 
-    // Check if the file has already been downloaded
-    bool downloaded = downloadedFiles.contains(filename);
-    //QMessageBox::information(this,"dff",QString::number(downloaded),"sdd");
-    // Create a button to download or open the file, depending on the download status
-
-
+//    // Check if the file has already been downloaded
+//    bool downloaded = downloadedFiles.contains(filename);
+//    //QMessageBox::information(this,"dff",QString::number(downloaded),"sdd");
+//    // Create a button to download or open the file, depending on the download status
 
 
-    // connect(this,&FileMessageWidget::downloadFile,chat,&chat::btn_file_clicked);
 
 
-    QPushButton *fileButton = new QPushButton(downloaded ? "Open" : "Download", this);
-    recievebtn=fileButton;
-    connect(recievebtn, &QPushButton::clicked, [=]() {
-        ui->listWidget_2->setCurrentItem(item);
-        if (downloaded) {
-            // Check that the file exists before attempting to open it
-
-            //  Open the downloaded file
-            QString filePath = "files/" + filename;
-            //QProcess::startDetached("xdg-open", QStringList() << filePath);
-            QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
-        } else {
-            // Send a request to the server to receive the file
-            systemMessagePacket msgpacket;
-            msgpacket.setSysmsg(package::SysCodes::send_file);
-            QJsonObject data;
-            data["sender"] = TokenME;
-            data["FileName"] = filename;
-            UserBoxWidget *currentuserBoxForReceiveFile = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
-
-            data["room"] = "pv_"+myinformation["username"]+"_"+usernames_names.key(currentuserBoxForReceiveFile->lbl_name.text());
-            msgpacket.setinformation(QJsonDocument(data).toJson());
-
-            QByteArray msgbytearray;
-            QDataStream out2(&msgbytearray, QIODevice::WriteOnly);
-            out2.setVersion(QDataStream::Qt_4_0);
-            out2 << static_cast<short>(msgpacket.getheader()) << msgpacket.serialize();
-            sendmessage(filename);
-            socket->write(msgbytearray);
-            socket->waitForBytesWritten();
-            recievebtn->setEnabled(false);
-            // Wait for the file to be received
-            // socket->waitForReadyRead();
-
-            // Save the received file to the "files" directory
-            //QByteArray dataReceived = socket->readAll();
-            //  QString filePath = "files/" + filename;
-            //QFile file(filePath);
-            //if (file.open(QIODevice::WriteOnly)) {
-            //  file.write(dataReceived);
-            //file.close();
-            // Add the filename to the list of downloaded files
-            downloadedFiles.append(filename);
-            // Update the button text to "Open"
-            recievebtn->setText("Open");
-            //} else {
-            //  qDebug() << "Failed to save file:" << filePath;
-            //}
-            // QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
-
-        }
+//    // connect(this,&FileMessageWidget::downloadFile,chat,&chat::btn_file_clicked);
 
 
-    });
+//    QPushButton *fileButton = new QPushButton(downloaded ? "Open" : "Download", this);
+//    recievebtn=fileButton;
+//    connect(recievebtn, &QPushButton::clicked, [=]() {
+//        ui->listWidget_2->setCurrentItem(item);
+//        if (downloaded) {
+//            // Check that the file exists before attempting to open it
 
-    // Add the button to the item in the list
-    QWidget *widget = new QWidget;
-    QHBoxLayout *layout = new QHBoxLayout(widget);
-    layout->addWidget(recievebtn);
-    layout->addStretch();
-    item->setSizeHint(widget->sizeHint());
-    ui->listWidget_2->setItemWidget(item, widget);
-    // QDesktopServices::openUrl()
+//            //  Open the downloaded file
+//            QString filePath = "files/" + filename;
+//            //QProcess::startDetached("xdg-open", QStringList() << filePath);
+//            QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+//        } else {
+//            // Send a request to the server to receive the file
+////            systemMessagePacket msgpacket;
+////            msgpacket.setSysmsg(package::SysCodes::send_file);
+////            QJsonObject data;
+////            data["sender"] = TokenME;
+////            data["FileName"] = filename;
+////            UserBoxWidget *currentuserBoxForReceiveFile = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
+
+////            data["room"] = "pv_"+myinformation["username"]+"_"+usernames_names.key(currentuserBoxForReceiveFile->lbl_name.text());
+////            msgpacket.setinformation(QJsonDocument(data).toJson());
+
+////            QByteArray msgbytearray;
+////            QDataStream out2(&msgbytearray, QIODevice::WriteOnly);
+////            out2.setVersion(QDataStream::Qt_4_0);
+////            out2 << static_cast<short>(msgpacket.getheader()) << msgpacket.serialize();
+////            sendmessage(filename);
+////            socket->write(msgbytearray);
+////            socket->waitForBytesWritten();
+////            recievebtn->setEnabled(false);
+//            // Wait for the file to be received
+//            // socket->waitForReadyRead();
+
+//            // Save the received file to the "files" directory
+//            //QByteArray dataReceived = socket->readAll();
+//            //  QString filePath = "files/" + filename;
+//            //QFile file(filePath);
+//            //if (file.open(QIODevice::WriteOnly)) {
+//            //  file.write(dataReceived);
+//            //file.close();
+//            // Add the filename to the list of downloaded files
+//            //downloadedFiles.append(filename);
+//            // Update the button text to "Open"
+//            //recievebtn->setText("Open");
+//            ////} else {
+//            //  qDebug() << "Failed to save file:" << filePath;
+//            //}
+//            // QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+
+//        }
+
+
+//    });
+
+//    // Add the button to the item in the list
+//    QWidget *widget = new QWidget;
+//    QHBoxLayout *layout = new QHBoxLayout(widget);
+//    layout->addWidget(recievebtn);
+//    layout->addStretch();
+//    item->setSizeHint(widget->sizeHint());
+//    ui->listWidget_2->setItemWidget(item, widget);
+//    // QDesktopServices::openUrl()
 
 }
 // Declare a member variable to store the file button
@@ -1300,31 +1312,31 @@ void chat::on_listWidget_2_itemClicked(QListWidgetItem *item)
 
 void chat::on_listWidget_2_customContextMenuRequested(const QPoint &pos)
 {
-    QListWidgetItem *item = ui->listWidget_2->itemAt(pos);
-    if (item) {
-        QMenu menu(this);
-        QAction *copyAction = menu.addAction("Copy");
-        connect(copyAction, &QAction::triggered, [=]() {
-            QString text = item->text();
-            if (!text.isEmpty()) {
-                QClipboard *clipboard = QGuiApplication::clipboard();
-                clipboard->setText(text);
-            }
-        });
-        if (!item->icon().isNull()) {
-            QAction *saveAction = menu.addAction("Save Image");
-            connect(saveAction, &QAction::triggered, [=]() {
-                QPixmap photo = item->icon().pixmap(item->icon().availableSizes().first());
-                if (!photo.isNull()) {
-                    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"), "", tr("Images (*.png *.xpm *.jpg)"));
-                    if (!fileName.isEmpty()) {
-                        photo.save(fileName);
-                    }
-                }
-            });
-        }
-        menu.exec(ui->listWidget_2->mapToGlobal(pos));
-    }
+//    QListWidgetItem *item = ui->listWidget_2->itemAt(pos);
+//    if (item) {
+//        QMenu menu(this);
+//        QAction *copyAction = menu.addAction("Copy");
+//        connect(copyAction, &QAction::triggered, [=]() {
+//            QString text = item->text();
+//            if (!text.isEmpty()) {
+//                QClipboard *clipboard = QGuiApplication::clipboard();
+//                clipboard->setText(text);
+//            }
+//        });
+//        if (!item->icon().isNull()) {
+//            QAction *saveAction = menu.addAction("Save Image");
+//            connect(saveAction, &QAction::triggered, [=]() {
+//                QPixmap photo = item->icon().pixmap(item->icon().availableSizes().first());
+//                if (!photo.isNull()) {
+//                    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"), "", tr("Images (*.png *.xpm *.jpg)"));
+//                    if (!fileName.isEmpty()) {
+//                        photo.save(fileName);
+//                    }
+//                }
+//            });
+//        }
+//        menu.exec(ui->listWidget_2->mapToGlobal(pos));
+//    }
 }
 
 
@@ -1482,6 +1494,7 @@ void chat::on_pushButton_voice_clicked()
 
                     connect(VoiceFile,&FileMessageWidget::downloadFile,[=](){
                         this->sendApplyForDownload(filename);
+                        qDebug() << "### connect / Apply for Voice File ###";
                     });
                     connect(this,&chat::fileEnded,VoiceFile,&FileMessageWidget::ActiveBtnToCauseOfFileEnded);
 

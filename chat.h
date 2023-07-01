@@ -108,7 +108,7 @@ private:
   QMap<QString,QString> usernames_email;
   chatPage *ch=nullptr;
   QListWidgetItem *LastItemChoosed = nullptr;
-  QList<QListWidgetItem*> itemsOfListWidgetUsers;
+
 
   QSet<QString> Emojies;
 
