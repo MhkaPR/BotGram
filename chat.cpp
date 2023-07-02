@@ -354,7 +354,7 @@ void chat::onReadyRead()
             searching.deserialize(data);
             if(searching.name != "")
             {
-                ui->listWidget->addItem(searching.name);
+                //ui->listWidget->addItem(searching.name);
                 QSqlQuery query(db);
                 query.prepare("INSERT INTO userinformation (username, name,email) VALUES (:username, :name,:email)");
                 query.bindValue(":username", searching.username);
@@ -382,6 +382,11 @@ void chat::onReadyRead()
                     qDebug() << "Failed to create table: " << query.lastError().text();
                     return;
                 }
+
+                QPixmap p;
+                UserBoxWidget *newUser = new UserBoxWidget(p,searching.name,"","",0,this);
+                this->addUserBox(newUser);
+
 
             }
             else
@@ -1105,7 +1110,7 @@ void chat::on_photo_button_clicked()
     });
     connect(this,&chat::fileEnded,newfile,&FileMessageWidget::ActiveBtnToCauseOfFileEnded);
 
-    QString updateuserBox_str = QString("%1\n%2").arg(fmsg.getFileName(),timeString);
+    QString updateuserBox_str = fmsg.getFileName();
     //ui->listWidget->currentItem()->setText(ui->listWidget->currentItem()->text().split("\n")[0]+ "\n"+updateuserBox_str);
     UserBoxWidget *currentuserBox = dynamic_cast<UserBoxWidget*>(ui->listWidget->itemWidget(ui->listWidget->currentItem()));
     currentuserBox->lbl_TweLineOfLastMessages.setText(currentuserBox->getTweLine(updateuserBox_str,50));
